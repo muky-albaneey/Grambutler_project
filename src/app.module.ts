@@ -7,10 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'dpg-cq98u1jv2p9s73cfhb8g-a',
       port: 5432,
       username: 'muky_albany',
-      password: '_muky12',
+      password: 'iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0',
       database: 'grambutler',
       entities: [],
       synchronize: true,

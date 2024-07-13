@@ -25,5 +25,8 @@ services:
     environment:
       - PORT=3001
       - NODE_ENV=production
+      - DATABASE_USERNAME=muky_albany
+      - DATABASE_PASSWORD=iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
+      - DATABASE_NAME=grambutler
     volumes:
       - ./src:/usr/src/app/src
