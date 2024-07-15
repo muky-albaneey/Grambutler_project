@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
 
 
-@Controller('user')
+@Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService, private readonly configService: ConfigService, private readonly jwt: JwtService,) {}
 
