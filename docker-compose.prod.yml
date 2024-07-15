@@ -24,7 +24,7 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     ports:
-      - '${PORT}:${PORT}'
+      - '3001:3001'
     environment:
       - PORT=${PORT}
       - NODE_ENV=${NODE_ENV}
