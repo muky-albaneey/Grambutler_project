@@ -77,12 +77,12 @@ export class UserController {
 
   @Post('login')
   async login(@Body() createAuthDto: CreateAuthDto, @Res({ passthrough: true }) response: Response): Promise<any> {
-    console.log(createAuthDto.email)
-    console.log(createAuthDto.password)
+    // console.log(createAuthDto.email)
+    // console.log(createAuthDto.password)
   try {      
     
     const result = await this.userService.login(createAuthDto);
-    console.log(result)
+    // console.log(result)
     const  email =  result.email
     const  id =  result.id
     const  role =  result.role
@@ -133,7 +133,7 @@ export class UserController {
       // path: '/', 
       // sameSite: 'none',
     });
-return result;
+  return result;
   } catch (error) {
     console.error('User creation failed', error);
     throw error;
