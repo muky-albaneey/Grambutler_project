@@ -13,7 +13,7 @@ import type { Response } from 'express';
 export class UserController {
   constructor(private readonly userService: UserService, private readonly configService: ConfigService, private readonly jwt: JwtService,) {}
 
-  @Post()
+  @Post('create')
   async create(@Body() createAuthDto: CreateAuthDto, @Res({ passthrough: true }) response: Response): Promise<any> {
     try {      
       
