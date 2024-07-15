@@ -27,21 +27,18 @@ export class UserController {
       // Sign JWT for access token with a longer expiry time
       const jwtTokenKeys = await this.jwt.signAsync(payload, {
         expiresIn: '35s',
-        // secret: '192293@***@39EI49!!944121DKDJFJ##4555512',   
         secret: this.configService.get<string>('ACCESS_TOKEN'),   
       });
 
       // Sign JWT for refresh token with a longer expiry time
       const jwtRefreshTokenKeys = await this.jwt.signAsync(payload, {
-        expiresIn: '7d',
-        // secret: '192293@***@39EI49!!9R44121DKDJFJ##4555512',   
+        expiresIn: '7d',  
         secret: this.configService.get<string>('REFRESH_TOKEN'),   
       });
 
         // Sign JWT for role token with a longer expiry time
         const roleToken = await this.jwt.signAsync(rolePayload, {
           expiresIn: '7d',
-          // secret: '192293@***@39EI49!!9R44121DKDJFJ##4555512',   
           secret: this.configService.get<string>('ROLE_TOKEN'),   
         });
 
