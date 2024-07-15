@@ -37,7 +37,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install all dependencies
-RUN npm install
+RUN npm install --production
 
 # Copy local code to the container image
 COPY . .
@@ -45,11 +45,8 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Prune dev dependencies
-RUN npm prune --production
-
-# Remove source files if needed (Optional)
-# RUN rm -rf ./src
+# Remove unnecessary source files if needed
+RUN rm -rf ./src
 
 # Document that the service listens on port 3001
 EXPOSE 3001

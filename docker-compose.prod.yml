@@ -36,3 +36,4 @@ services:
       - ROLE_TOKEN=your_role_token_secret
     volumes:
       - ./src:/usr/src/app/src
+
