@@ -1,3 +1,21 @@
+# version: '3.8'
+
+# services:
+#   nestjs_api_prod:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.prod
+#     ports:
+#       - '3001:3001'
+#     environment:
+#       - PORT=3001
+#       - NODE_ENV=production
+#       - DATABASE_USERNAME=muky_albany
+#       - DATABASE_PASSWORD=iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
+#       - DATABASE_NAME=grambutler
+#     volumes:
+#       - ./src:/usr/src/app/src
+
 version: '3.8'
 
 services:
@@ -13,5 +31,8 @@ services:
       - DATABASE_USERNAME=muky_albany
       - DATABASE_PASSWORD=iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
       - DATABASE_NAME=grambutler
+      - ACCESS_TOKEN=your_access_token_secret
+      - REFRESH_TOKEN=your_refresh_token_secret
+      - ROLE_TOKEN=your_role_token_secret
     volumes:
       - ./src:/usr/src/app/src
