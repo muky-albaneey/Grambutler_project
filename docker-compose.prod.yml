@@ -31,9 +31,9 @@ services:
       - DATABASE_USERNAME=muky_albany
       - DATABASE_PASSWORD=iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
       - DATABASE_NAME=grambutler
-      - ACCESS_TOKEN=your_access_token_secret
-      - REFRESH_TOKEN=your_refresh_token_secret
-      - ROLE_TOKEN=your_role_token_secret
+      - ACCESS_TOKEN=192293@***@39EI49!!944121DKDJFJ##4555512
+      - REFRESH_TOKEN=DKDJFJP***4555@@@512
+      - ROLE_TOKEN=192293@***@39EI49!!9R44121DKDJFJ##4555512
     volumes:
       - ./src:/usr/src/app/src
 
