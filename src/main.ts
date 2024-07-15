@@ -27,7 +27,7 @@ async function bootstrap() {
   console.log('Database Username:', configService.get<string>('DATABASE_USERNAME'));
   console.log('Database Password:', configService.get<string>('DATABASE_PASSWORD'));
   console.log('Database Name:', configService.get<string>('DATABASE_NAME'));
-  const PORT = process.env.PORT || 3000;
+  const PORT = configService.get<string>('PORT') || 3000;
   await app.listen(PORT, '0.0.0.0', () => {
     console.log(`Running in ${process.env.NODE_ENV} on port ${PORT}`);
   });
