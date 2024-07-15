@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
+import { User } from './user/entities/user.entity';
 
 
 @Module({
@@ -14,12 +15,12 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forRoot({
       type: 'postgres',
       // host: 'dpg-cq98u1jv2p9s73cfhb8g-a',
-      host: 'db',
+      host: 'dpg-cq98u1jv2p9s73cfhb8g-a' || 'db',
       port: 5432,
       username: 'muky_albany',
       password: 'iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0',
       database: 'grambutler',
-      entities: [],
+      entities: [User],
       synchronize: true,
     }),
     UserModule,
