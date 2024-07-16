@@ -84,22 +84,23 @@ export class UserService {
     });
 
     if (!userValidate) {
-      throw new UnauthorizedException('The user does not exists!');
+      throw new UnauthorizedException('The email address does not exists!');
     }
-   // Generate a 5-digit token
-   const token = Math.floor(10000 + Math.random() * 90000).toString();
 
-   // Update the rememberToken field in the user entity
-    userValidate.rememberToken = token;
-    await this.userRepository.save(userValidate);
+    // Generate a 5-digit token
+    const token = Math.floor(10000 + Math.random() * 90000).toString();
 
-    // Send the token via email
-    await this.emailservice.dispatchEmail(
-      userValidate.email,
-      'FORGOT PASSWORD TOKEN',
-      'Here is your token for password reset.',
-      `<p>${token}</p>`
-   );
+    // Update the rememberToken field in the user entity
+      userValidate.rememberToken = token;
+      await this.userRepository.save(userValidate);
+
+      // Send the token via email
+      await this.emailservice.dispatchEmail(
+        userValidate.email,
+        'FORGOT PASSWORD TOKEN',
+        'Here is your token for password reset.',
+        `<h1 class>${token}</h1>`
+    );
   }
 
 }
