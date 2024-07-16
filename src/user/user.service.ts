@@ -126,21 +126,27 @@ export class UserService {
     return userValidate.rememberToken;
   }
 
-  async changePassword(tokenNum: string, password: string) {
-
+  async changePassword(tokenNum: string, newPassword: string) {
     const userValidate = await this.userRepository.findOne({
       where: { rememberToken: tokenNum },
     });
-
+  
+    console.log('Token:', tokenNum);
+    console.log('User found:', userValidate);
+  
     if (!userValidate) {
-      throw new UnauthorizedException('the tokens does lease confirm the tokenns sent to your mail !');
+      throw new UnauthorizedException('The tokens are incorrect!');
     }
-
-    userValidate.password = password;
+  
+    // Hash the new password
+    userValidate.password = await bcrypt.hash(newPassword, 10);
+  
     await this.userRepository.save(userValidate);
-    console.log(userValidate.password )
-    // Additional logic for changing the password
+    console.log('New hashed password:', userValidate.password);
+  
+    return userValidate;
   }
+  
 
 
 
