@@ -46,6 +46,8 @@ export class User {
     @Column({type: 'varchar', nullable : true})
     state?: string;
 
+    @Column({type: 'varchar', nullable : true})
+    rememberToken?: string;
     @Column({
         type: "enum",
         enum: UserRole,

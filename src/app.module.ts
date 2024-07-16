@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService,  } from '@nestjs/config';
 import { User } from './user/entities/user.entity';
+import { MailService } from './mail/mail.service';
 
 
 @Module({
@@ -29,6 +30,6 @@ import { User } from './user/entities/user.entity';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}

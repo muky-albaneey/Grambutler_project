@@ -36,3 +36,11 @@ export class LoginAuthDto {
     @IsString()  
     password : string
 }
+
+
+export class ForgotPass{
+    @IsNotEmpty({message : "The email field is empty "})
+    @IsEmail()
+    @IsString()    
+    email: string
+}
