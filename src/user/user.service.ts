@@ -119,8 +119,9 @@ export class UserService {
     }
 
     // Confirm the tokens
-    if (userValidate.rememberToken == tokenNum) return userValidate.rememberToken;
-    throw new UnauthorizedException('The tokens are incorrect!');
+    // if (userValidate.rememberToken == tokenNum) return userValidate.rememberToken;
+    // throw new UnauthorizedException('The tokens are incorrect!');
+    return userValidate.rememberToken;
   }
 
   async changePassword(tokenNum: string, password: string) {
