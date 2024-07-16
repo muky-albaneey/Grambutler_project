@@ -138,7 +138,7 @@ export class UserService {
 
     userValidate.password = password;
     await this.userRepository.save(userValidate);
-
+    console.log(userValidate.password )
     // Additional logic for changing the password
   }
 
