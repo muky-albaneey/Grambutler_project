@@ -95,11 +95,13 @@ export class UserService {
       await this.userRepository.save(userValidate);
 
       // Send the token via email
+      console.log(token);
+      
       await this.emailservice.dispatchEmail(
         userValidate.email,
         'FORGOT PASSWORD TOKEN',
-        'Here is your token for password reset.',
-        `<h1 class>${token}</h1>`
+        `Here is your token for password reset: ${token}`,
+        `<h1>${token}</h1>`
     );
 
     return `Message has been sent to ur email mr: ${userValidate.full_name}`;
