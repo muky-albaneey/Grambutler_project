@@ -54,6 +54,7 @@ export class UserService {
       const userValidate = await this.userRepository.findOne({
         where: { email: createAuthDto.email },
       });
+console.log(userValidate.password);
 
       if (!userValidate) {
         throw new UnauthorizedException('The user does not exists!');
