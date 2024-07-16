@@ -28,7 +28,7 @@ export class MailService {
 
         try {
             await this.transporter.sendMail(mail);
-            console.log('email');
+            console.log('email is working');
             
         } catch (error) {
             console.log(error, 'in sending emails');
