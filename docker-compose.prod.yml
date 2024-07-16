@@ -27,7 +27,7 @@ services:
       - '3001:3001'
     environment:
       - PORT=${PORT}
-      - NODE_ENV=${NODE_ENV}
+      - NODE_ENV=production
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${DATABASE_NAME}

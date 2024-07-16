@@ -20,12 +20,16 @@ export class CreateAuthDto {
     password : string
 
     @IsOptional()
+    @IsString() 
+    rememberToken?: string
+
+    @IsOptional()
     @IsString()     
-    country : string;
+    country?: string;
    
     @IsOptional()
     @IsString()  
-    state : string
+    state?: string
 }
 
 export class LoginAuthDto {

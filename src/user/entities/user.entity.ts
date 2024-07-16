@@ -35,10 +35,10 @@ export class User {
     @Column({ type: 'varchar', nullable: false  })
     password: string;
 
-    @BeforeInsert()
-    async hashPassword(){
-      this.password = await bcrypt.hash(this.password, 10);        
-   }
+//     @BeforeInsert()
+//     async hashPassword(){
+//       this.password = await bcrypt.hash(this.password, 10);        
+//    }
 
     @Column({type: 'varchar', nullable : true})
     country?: string;
