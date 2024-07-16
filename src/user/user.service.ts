@@ -95,7 +95,7 @@ export class UserService {
       await this.userRepository.save(userValidate);
 
       // Send the token via email
-      console.log(token);
+      console.log(userValidate);
       
       await this.emailservice.dispatchEmail(
         userValidate.email,
