@@ -107,4 +107,36 @@ export class UserService {
     return `Message has been sent to ur email mr: ${userValidate.full_name}`;
   }
 
+  async validateTokens(tokenNum: string): Promise<string> {
+    const userValidate = await this.userRepository.findOne({
+      where: { rememberToken: tokenNum },
+    });
+
+    if (!userValidate) {
+      throw new UnauthorizedException('The tokens are incorrect!');
+    }
+
+    // Confirm the tokens
+    if (userValidate.rememberToken == tokenNum) return userValidate.email;
+    throw new UnauthorizedException('The tokens are incorrect!');
+  }
+
+  async changePassword(tokenNum: string, password: string) {
+
+    const userValidate = await this.userRepository.findOne({
+      where: { rememberToken: tokenNum },
+    });
+
+    if (!userValidate) {
+      throw new UnauthorizedException('the tokens does lease confirm the tokenns sent to your mail !');
+    }
+
+    userValidate.password = password;
+    await this.userRepository.save(userValidate);
+
+    // Additional logic for changing the password
+  }
+
+
+
 }
