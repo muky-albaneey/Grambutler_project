@@ -101,6 +101,8 @@ export class UserService {
         'Here is your token for password reset.',
         `<h1 class>${token}</h1>`
     );
+
+    return `Message has been sent to ur email mr: ${userValidate.full_name}`;
   }
 
 }

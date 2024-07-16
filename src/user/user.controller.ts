@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateAuthDto,  } from './dto/create-user.dto';
+import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 // import { Response } from 'express';
@@ -141,4 +141,8 @@ export class UserController {
 }
 
 
+@Patch('reset')
+async resetPassword(@Body() userEmail: ForgotPass) {
+  return this.userService.forgotPassword(userEmail)
+}
 }
