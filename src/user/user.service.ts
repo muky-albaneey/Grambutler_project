@@ -136,7 +136,7 @@ export class UserService {
     console.log(newPassword);
 
     
-    if (!userValidate) {```````````````
+    if (!userValidate) {
       throw new UnauthorizedException('The tokens are incorrect!');
     }
   
