@@ -262,16 +262,24 @@ export class UserService {
   }
 
   async changePassword(tokenNum: string, newPassword: string) {
+    console.log('Changing password for token:', tokenNum);
+
     const userValidate = await this.userRepository.findOne({
       where: { rememberToken: tokenNum },
     });
 
-    if (!userValidate) {
+    if (!userValidate || tokenNum == undefined || tokenNum == null || tokenNum == '') {
       throw new UnauthorizedException('The tokens are incorrect!');
     }
 
+    console.log('User found for password change:', userValidate);
+
     userValidate.password = await this.hashPassword(newPassword);
+    userValidate.rememberToken = ''; // Clear token after successful password change
     await this.userRepository.save(userValidate);
+
+    console.log('Password changed and token cleared for user:', userValidate);
+    return userValidate;
 
     return userValidate;
   }
