@@ -133,14 +133,19 @@ export class UserService {
   
     console.log('Token:', tokenNum);
     console.log('User found:', userValidate);
-  
-    if (!userValidate) {
+    console.log(newPassword);
+
+    
+    if (!userValidate) {```````````````
       throw new UnauthorizedException('The tokens are incorrect!');
     }
   
+    console.log(userValidate.password);
     // Hash the new password
     userValidate.password = await bcrypt.hash(newPassword, 10);
   
+    console.log(userValidate.password);
+    
     await this.userRepository.save(userValidate);
     console.log('New hashed password:', userValidate.password);
   
