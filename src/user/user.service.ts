@@ -78,7 +78,9 @@ export class UserService {
     // return 'This action adds a new auth';
   }
 
-  async forgotPassword(userEmail: ForgotPass){
+
+  // FORGGOT PASSWORD SECTION
+  async getTokens(userEmail: ForgotPass){
     const userValidate = await this.userRepository.findOne({
       where: { email: userEmail.email },
     });
@@ -117,7 +119,7 @@ export class UserService {
     }
 
     // Confirm the tokens
-    if (userValidate.rememberToken == tokenNum) return userValidate.email;
+    if (userValidate.rememberToken == tokenNum) return userValidate.rememberToken;
     throw new UnauthorizedException('The tokens are incorrect!');
   }
 

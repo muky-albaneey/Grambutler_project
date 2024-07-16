@@ -140,18 +140,19 @@ export class UserController {
   }
 }
 
+// FORGOT PASSWORD SECTION
 
 @Patch('get_tokens')
 async resetPassword(@Body() userEmail: ForgotPass) {
-  return this.userService.forgotPassword(userEmail)
+  return this.userService.getTokens(userEmail)
 }
 
-@Patch('validateTokens')
+@Get('validateTokens')
 async reset(@Body() tokens: string) {
   return this.userService.validateTokens(tokens);
 }
 
-@Patch('update-password')
+@Patch('update_password')
   async updatePassword(@Body() body: { tokens: string; newPassword: string }) {
     await this.userService.changePassword(body.tokens, body.newPassword);
     return { message: 'Password updated successfully' };
