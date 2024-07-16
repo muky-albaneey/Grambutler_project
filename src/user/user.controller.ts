@@ -148,8 +148,9 @@ async resetPassword(@Body() userEmail: ForgotPass) {
 }
 
 @Get('validateTokens')
-async reset(@Body() tokens: string) {
-  return this.userService.validateTokens(tokens);
+async reset(@Body() body: { token: string }) {
+  console.log('Received token:', body.token);
+  return this.userService.validateTokens(body.token);
 }
 
 @Patch('update_password')

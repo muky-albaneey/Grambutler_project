@@ -103,17 +103,19 @@ export class UserService {
         userValidate.email,
         'FORGOT PASSWORD TOKEN',
         `Here is your token for password reset: ${token}`,
-        `<h1>${token}</h1>`
+        `<h1>${userValidate.rememberToken }</h1>`
     );
 
     return `Message has been sent to ur email mr: ${userValidate.full_name}`;
   }
 
   async validateTokens(tokenNum: string): Promise<string> {
+    console.log('Searching for token:', tokenNum);
     const userValidate = await this.userRepository.findOne({
       where: { rememberToken: tokenNum },
     });
 
+    console.log('Query result:', userValidate);
     if (!userValidate) {
       throw new UnauthorizedException('The tokens are incorrect!');
     }
