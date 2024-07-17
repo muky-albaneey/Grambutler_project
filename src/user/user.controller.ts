@@ -140,6 +140,24 @@ export class UserController {
   }
 }
 
+//LOGOUT
+@Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response): Promise<any> {
+    response.cookie('accessToken', '', {
+      maxAge: 0,
+    });
+
+    response.cookie('refreshToken', '', {
+      maxAge: 0,
+    });
+
+    response.cookie('roleToken', '', {
+      maxAge: 0,
+    });
+
+    return { message: 'Logout successful' };
+  }
+
 // FORGOT PASSWORD SECTION
 
 @Patch('get_tokens')
