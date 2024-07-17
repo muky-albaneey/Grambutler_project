@@ -282,7 +282,5 @@ export class UserService {
 
     console.log('Password changed and token cleared for user:', userValidate);
     return userValidate;
-
-    return userValidate;
   }
 }
