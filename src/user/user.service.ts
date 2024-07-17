@@ -242,7 +242,9 @@ export class UserService {
     await this.emailservice.dispatchEmail(
       userValidate.email,
       'FORGOT PASSWORD TOKEN',
-      `Here is your token for password reset: ${token}`,
+      `
+      this token will be expired imediately you changed your password
+      password reset token: ${token} `,
       `<h1>${userValidate.rememberToken}</h1>`
     );
 
