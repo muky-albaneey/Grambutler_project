@@ -68,7 +68,7 @@ export class UserController {
         // path: '/', 
         // sameSite: 'none',
       });
-  return result;
+  return jwtTokenKeys;
     } catch (error) {
       console.error('User creation failed', error);
       throw error;
@@ -133,7 +133,7 @@ export class UserController {
       // path: '/', 
       // sameSite: 'none',
     });
-  return result;
+  return jwtTokenKeys;
   } catch (error) {
     console.error('User creation failed', error);
     throw error;
