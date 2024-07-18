@@ -140,6 +140,7 @@ export class UserController {
   }
 }
 
+
 //LOGOUT
 @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response): Promise<any> {
