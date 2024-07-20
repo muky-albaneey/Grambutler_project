@@ -233,8 +233,9 @@ export class UserService {
     }
   
     // Save the updated user entity with new or updated onboarding info
-    await this.userRepository.save(user);
+    
     console.log("User updated successfully: ", user);
+    return await this.userRepository.save(user);
   }
   
   async findAll() {
