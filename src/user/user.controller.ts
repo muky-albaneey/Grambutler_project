@@ -185,7 +185,7 @@ async reset(@Body() body: { token: string }) {
 
   @Patch('onboard/:id')
   async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto){
-    await this.userService.updateOnboarding(id, body)
+    return await this.userService.updateOnboarding(id, body)
   }
 
 }
