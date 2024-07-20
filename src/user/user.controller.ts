@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseUUIDPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { OnboardingDto, UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 // import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
@@ -176,6 +176,16 @@ async reset(@Body() body: { token: string }) {
   async updatePassword(@Body() body: { tokens: string; newPassword: string }) {
     await this.userService.changePassword(body.tokens, body.newPassword);
     return { message: 'Password updated successfully' };
+  }
+
+    @Get('all')
+    findAll() {
+      return this.userService.findAll();
+    }
+
+  @Patch('onboard/:id')
+  async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto){
+    await this.userService.updateOnboarding(id, body)
   }
 
 }

@@ -10,6 +10,7 @@ import {
     OneToMany
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Onboarding } from './onoard.entity';
 // import { ProfileBg } from './profile-bg.entity';
 // import { ProfileImage } from './profile-image.entity';
 // import { File } from 'src/files/entities/file.entity';
@@ -55,9 +56,9 @@ export class User {
     })
     role: UserRole
 
-    // @OneToOne(() => ProfileBg, { cascade: true, nullable: true })
-    // @JoinColumn()
-    // profile_bg?: ProfileBg;
+    @OneToOne(() => Onboarding, { cascade: true, nullable: true })
+    @JoinColumn()
+    onboard_info?: Onboarding;
 
     // @OneToOne(() => ProfileImage, { cascade: true , nullable: true})
     // @JoinColumn()
