@@ -164,7 +164,7 @@ export class UserService {
   
   
       // Save the updated profile image entity to the database
-      await this.onboardingRepository.save(user.onboard_info);
+      return await this.onboardingRepository.save(user.onboard_info);
     } else {
       // Create new profile image entity
         const newonboarding = new Onboarding({
@@ -187,7 +187,7 @@ export class UserService {
         });
   
        // Save the new profile image entity to the database
-       user.onboard_info = await this.onboardingRepository.save(newonboarding);
+       return user.onboard_info = await this.onboardingRepository.save(newonboarding);
     }
   }
 
