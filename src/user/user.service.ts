@@ -6,7 +6,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 import { OnboardingDto } from './dto/update-user.dto';
 import { Onboarding } from './entities/onoard.entity';
 
@@ -15,7 +14,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Onboarding)
     private readonly onboardingRepository: Repository<Onboarding>,
+    
     @InjectRepository(Onboarding)
     private readonly emailservice: MailService
   ) {}
