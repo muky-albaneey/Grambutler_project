@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseUUIDPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
-import { OnboardingDto, UpdateUserDto } from './dto/update-user.dto';
+import { OnboardingDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 // import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
