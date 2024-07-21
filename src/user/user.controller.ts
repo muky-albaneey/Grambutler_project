@@ -185,7 +185,7 @@ async reset(@Body() body: { token: string }) {
 
     @Get(':id/single_user')
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
-      return await this.userService.findOne();
+      return await this.userService.findOne(id);
     }
   @Patch(':id/onboard')
   async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto){
