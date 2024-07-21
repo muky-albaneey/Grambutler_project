@@ -44,29 +44,29 @@ export class UserController {
 
         // Set HttpOnly cookie for the access token
       response.cookie('accessToken', jwtTokenKeys, {
-        // httpOnly: false,
-        // secure: false,
+        httpOnly: false,
+        secure: false,
         maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
         // path: '/',
-        // sameSite: 'none',
+        sameSite: 'none',
       });
 
       // Set HttpOnly cookie for the refresh token (if needed)
       response.cookie('refreshToken', jwtRefreshTokenKeys, {
-        // httpOnly: false,
-        // secure: false,
+        httpOnly: false,
+        secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         // path: '/', 
-        // sameSite: 'none',
+        sameSite: 'none',
       });
 
       // Set HttpOnly cookie for the role token (if needed)
       response.cookie('roleToken', roleToken, {
-        // httpOnly: true,
-        // secure: true,
+        httpOnly: true,
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         // path: '/', 
-        // sameSite: 'none',
+        sameSite: 'none',
       });
   return jwtTokenKeys;
     } catch (error) {
@@ -109,29 +109,29 @@ export class UserController {
 
       // Set HttpOnly cookie for the access token
     response.cookie('accessToken', jwtTokenKeys, {
-      // httpOnly: false,
-      // secure: false,
+      httpOnly: false,
+      secure: false,
       maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
       // path: '/',
-      // sameSite: 'none',
+      sameSite: 'none',
     });
 
     // Set HttpOnly cookie for the refresh token (if needed)
     response.cookie('refreshToken', jwtRefreshTokenKeys, {
-      // httpOnly: false,
-      // secure: false,
+      httpOnly: false,
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       // path: '/', 
-      // sameSite: 'none',
+      sameSite: 'none',
     });
 
     // Set HttpOnly cookie for the role token (if needed)
     response.cookie('roleToken', roleToken, {
-      // httpOnly: true,
-      // secure: true,
+      httpOnly: true,
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       // path: '/', 
-      // sameSite: 'none',
+      sameSite: 'none',
     });
   return jwtTokenKeys;
   } catch (error) {
@@ -179,11 +179,15 @@ async reset(@Body() body: { token: string }) {
   }
 
     @Get('all')
-    findAll() {
-      return this.userService.findAll();
+    async findAll() {
+      return await this.userService.findAll();
     }
 
-  @Patch('onboard/:id')
+    @Get(':id/single_user')
+    async findOne(@Param('id', ParseUUIDPipe) id: string) {
+      return await this.userService.findOne();
+    }
+  @Patch(':id/onboard')
   async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto){
     return await this.userService.updateOnboarding(id, body)
   }

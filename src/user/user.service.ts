@@ -237,6 +237,20 @@ export class UserService {
     console.log("User updated successfully: ", user);
     return await this.userRepository.save(user);
   }
+  async findOne(id){
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['onboard_info'],
+    });
+  
+    console.log("User found: ", user);
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
   
   async findAll() {
     const user = await this.userRepository.find({      
