@@ -109,8 +109,8 @@ export class UserController {
 
       // Set HttpOnly cookie for the access token
     response.cookie('accessToken', jwtTokenKeys, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
       // path: '/',
       sameSite: 'none',
@@ -118,8 +118,8 @@ export class UserController {
 
     // Set HttpOnly cookie for the refresh token (if needed)
     response.cookie('refreshToken', jwtRefreshTokenKeys, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       // path: '/', 
       sameSite: 'none',
@@ -178,15 +178,16 @@ async reset(@Body() body: { token: string }) {
     return { message: 'Password updated successfully' };
   }
 
-    @Get('all')
-    async findAll() {
+  @Get('all')
+  async findAll() {
       return await this.userService.findAll();
     }
 
-    @Get(':id/single_user')
-    async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @Get(':id/single_user')
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
       return await this.userService.findOne(id);
     }
+
   @Patch(':id/onboard')
   async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto){
     return await this.userService.updateOnboarding(id, body)
