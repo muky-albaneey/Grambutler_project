@@ -45,7 +45,7 @@ export class UserController {
         // Set HttpOnly cookie for the access token
       response.cookie('accessToken', jwtTokenKeys, {
         httpOnly: false,
-        secure: false,
+        secure: true,
         maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
         // path: '/',
         sameSite: 'none',
@@ -54,7 +54,7 @@ export class UserController {
       // Set HttpOnly cookie for the refresh token (if needed)
       response.cookie('refreshToken', jwtRefreshTokenKeys, {
         httpOnly: false,
-        secure: false,
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         // path: '/', 
         sameSite: 'none',
@@ -62,7 +62,7 @@ export class UserController {
 
       // Set HttpOnly cookie for the role token (if needed)
       response.cookie('roleToken', roleToken, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
         // path: '/', 
@@ -109,7 +109,7 @@ export class UserController {
 
       // Set HttpOnly cookie for the access token
     response.cookie('accessToken', jwtTokenKeys, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
       // path: '/',
@@ -118,7 +118,7 @@ export class UserController {
 
     // Set HttpOnly cookie for the refresh token (if needed)
     response.cookie('refreshToken', jwtRefreshTokenKeys, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       // path: '/', 
@@ -127,7 +127,7 @@ export class UserController {
 
     // Set HttpOnly cookie for the role token (if needed)
     response.cookie('roleToken', roleToken, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       // path: '/', 
