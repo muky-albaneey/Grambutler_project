@@ -138,7 +138,7 @@ export class UserController {
       sameSite: 'none',
     });
   return {
-    jwtTokens : result,
+    jwtTokens : jwtTokenKeys,
     refreshToken : jwtRefreshTokenKeys,
     roleToken : roleToken,
   };
