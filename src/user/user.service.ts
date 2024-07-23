@@ -131,65 +131,7 @@ export class UserService {
     return userValidate;
   }
 
-  // async updateOnboarding(id, body : OnboardingDto){
-  //   const user = await this.userRepository.findOne({
-  //     where: { id },
-  //     relations: ['onboard_info'],
-  //   });
-  //   console.log(user)
-  //   // return user
 
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-
-  //      if (user.onboard_info) {
-  //         // Update existing profile image entity
-  //         user.onboard_info.marketing_objectives = body.marketing_objectives;
-  //         user.onboard_info.target_audience = body.target_audience;
-  //         user.onboard_info.campaigns = body.campaigns;
-  //         user.onboard_info.social_media_business = body.social_media_business;
-  //         user.onboard_info.info_caption = body.info_caption;
-  //         user.onboard_info.marketing_challenges = body.marketing_challenges;
-  //         user.onboard_info.marketing_or_sales = body.marketing_or_sales;
-  //         user.onboard_info.dashoard_roles = body.dashoard_roles;
-  //         user.onboard_info.members_dashoard = body.members_dashoard;
-  //         user.onboard_info.current_workflow = body.current_workflow;
-  //         user.onboard_info.type_of_support = body.type_of_support;
-  //         user.onboard_info.recommend_dashboard = body.recommend_dashboard;
-  //         user.onboard_info.immediate_questions = body.immediate_questions;
-  //         user.onboard_info.personalized_training = body.personalized_training;
-  //         user.onboard_info.about_new_features = body.about_new_features;
-  //         user.onboard_info.contact_information = body.contact_information;
-  
-  
-  //     // Save the updated profile image entity to the database
-  //     return await this.onboardingRepository.save(user.onboard_info);
-  //   } else {
-  //     // Create new profile image entity
-  //       const newonboarding = new Onboarding({
-  //           marketing_objectives : body.marketing_objectives,
-  //           target_audience : body.target_audience,
-  //           campaigns : body.campaigns,
-  //           social_media_business : body.social_media_business,
-  //           info_caption : body.info_caption,
-  //           marketing_challenges : body.marketing_challenges,
-  //           marketing_or_sales : body.marketing_or_sales,
-  //           dashoard_roles : body.dashoard_roles,
-  //           members_dashoard : body.members_dashoard,
-  //           current_workflow : body.current_workflow,
-  //           type_of_support : body.type_of_support,
-  //           recommend_dashboard : body.recommend_dashboard,
-  //           immediate_questions : body.immediate_questions,
-  //           personalized_training : body.personalized_training,
-  //           about_new_features : body.about_new_features,
-  //           contact_information : body.contact_information,
-  //       });
-  
-  //      // Save the new profile image entity to the database
-  //      return user.onboard_info = await this.onboardingRepository.save(newonboarding);
-  //   }
-  // }
   async updateOnboarding(id, body: OnboardingDto) {
     // Find the user with the given id and their associated onboarding information
     const user = await this.userRepository.findOne({
