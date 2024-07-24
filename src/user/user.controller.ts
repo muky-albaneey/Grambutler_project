@@ -46,7 +46,7 @@ export class UserController {
       response.cookie('accessToken', jwtTokenKeys, {
         httpOnly: false,
         secure: true,
-        maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
+        maxAge: 7 * 12 * 60 * 60 * 1000,  // 7 hours in milliseconds
         // path: '/',
         sameSite: 'none',
       });
@@ -115,7 +115,7 @@ export class UserController {
     response.cookie('accessToken', jwtTokenKeys, {
       httpOnly: false,
       secure: true,
-      maxAge: 7 * 60 * 60 * 1000,  // 7 hours in milliseconds
+      maxAge: 7 * 12 * 60 * 60 * 1000,  // 7 hours in milliseconds
       // path: '/',
       sameSite: 'none',
     });
