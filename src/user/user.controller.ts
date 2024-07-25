@@ -70,7 +70,7 @@ export class UserController {
       });
         return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
-        message: 'User successfully login',
+        message: 'User created successfully',
         jwtTokens: jwtTokenKeys,
         roleToken: roleToken,
       });
@@ -140,7 +140,7 @@ export class UserController {
     });
   return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
-        message: 'User created successfully',
+        message: 'User successfully login',
         jwtTokens: jwtTokenKeys,
         roleToken: roleToken,
       });
