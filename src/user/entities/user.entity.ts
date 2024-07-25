@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Onboarding } from './onoard.entity';
+import { ProfileImage } from './profile.entity';
 // import { ProfileBg } from './profile-bg.entity';
 // import { ProfileImage } from './profile-image.entity';
 // import { File } from 'src/files/entities/file.entity';
