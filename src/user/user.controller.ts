@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseUUIDPipe, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto } from './dto/update-user.dto';
@@ -46,7 +46,7 @@ export class UserController {
       response.cookie('accessToken', jwtTokenKeys, {
         httpOnly: false,
         secure: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 hours in milliseconds
+        maxAge:  7 * 24 * 60 * 60 * 1000,  // 7 hours in milliseconds
         // path: '/',
         sameSite: 'none',
       });
@@ -70,7 +70,6 @@ export class UserController {
       });
       return {
         jwtTokens : jwtTokenKeys,
-        refreshToken : jwtRefreshTokenKeys,
         roleToken : roleToken,
       };
     } catch (error) {
@@ -137,11 +136,12 @@ export class UserController {
       // path: '/', 
       sameSite: 'none',
     });
-  return {
-    jwtTokens : jwtTokenKeys,
-    refreshToken : jwtRefreshTokenKeys,
-    roleToken : roleToken,
-  };
+  return response.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        message: 'User created successfully',
+        jwtTokens: jwtTokenKeys,
+        roleToken: roleToken,
+      });
   } catch (error) {
     console.error('User creation failed', error);
     throw error;
