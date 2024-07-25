@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService,  } from '@nestjs/config';
 import { User } from './user/entities/user.entity';
 import { MailService } from './mail/mail.service';
 import { Onboarding } from './user/entities/onoard.entity';
+import { ProfileImage } from './user/entities/profile.entity';
 
 
 @Module({
@@ -24,7 +25,7 @@ import { Onboarding } from './user/entities/onoard.entity';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [User, Onboarding],
+        entities: [User, Onboarding, ProfileImage],
         synchronize: true,
       }),
     }),
