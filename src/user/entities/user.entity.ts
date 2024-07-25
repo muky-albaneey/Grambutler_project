@@ -60,9 +60,9 @@ export class User {
     @JoinColumn()
     onboard_info?: Onboarding;
 
-    // @OneToOne(() => ProfileImage, { cascade: true , nullable: true})
-    // @JoinColumn()
-    // profile_image?: ProfileImage;
+    @OneToOne(() => ProfileImage, { cascade: true , nullable: true})
+    @JoinColumn()
+    profile_image?: ProfileImage;
 
     // @OneToMany(() => File, file => file.user, { cascade: true })
     // files?: File[];

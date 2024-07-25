@@ -5,6 +5,6 @@ import { AbstractFileEntity } from './astract.entity';
 
 
 @Entity()
-export class ProfileBg extends AbstractFileEntity<ProfileBg> {
+export class ProfileImage extends AbstractFileEntity<ProfileImage> {
     
 }
