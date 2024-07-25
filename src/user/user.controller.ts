@@ -68,10 +68,12 @@ export class UserController {
         // path: '/', 
         sameSite: 'none',
       });
-      return {
-        jwtTokens : jwtTokenKeys,
-        roleToken : roleToken,
-      };
+        return response.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        message: 'User successfully login',
+        jwtTokens: jwtTokenKeys,
+        roleToken: roleToken,
+      });
     } catch (error) {
       console.error('User creation failed', error);
       throw error;
