@@ -26,7 +26,7 @@ export class UserController {
 
       // Sign JWT for access token with a longer expiry time
       const jwtTokenKeys = await this.jwt.signAsync(payload, {
-        expiresIn: '35s',
+        expiresIn: '1d',
         secret: this.configService.get<string>('ACCESS_TOKEN'),   
       });
 
@@ -96,7 +96,7 @@ export class UserController {
 
     // Sign JWT for access token with a longer expiry time
     const jwtTokenKeys = await this.jwt.signAsync(payload, {
-      expiresIn: '35s',
+      expiresIn: '1d',
       secret: this.configService.get<string>('ACCESS_TOKEN'),   
     });
 
