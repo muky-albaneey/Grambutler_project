@@ -203,8 +203,8 @@ async reset(@Body() body: { token: string }) {
     return await this.userService.updateOnboarding(id, body)
   }
 
-  @Patch('profiles/:id')
-  @UseInterceptors(FileInterceptor ('avatar'))
+  @Patch(':id/profileImg')
+  @UseInterceptors(FileInterceptor ('profile'))
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadProfile(@Param('id', ParseUUIDPipe) id: string, @UploadedFile() file: Express.Multer.File) {
   // async createProfileImg(@Param('id', ParseUUIDPipe) id: string, @Body() createFileDto) {  
