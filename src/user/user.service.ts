@@ -28,7 +28,7 @@ export class UserService {
     private readonly ProfileBgRepository: Repository<ProfileImage>,
 
     @InjectRepository(Settings)
-    private readonly SettingsRepository: Repository<Settings>,
+    private readonly SettingsRepository: Repository<Settings>
     
   ) {}
 
