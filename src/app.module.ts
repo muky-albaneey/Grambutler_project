@@ -25,7 +25,7 @@ import { ProfileImage } from './user/entities/profile.entity';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [User, Onboarding, ProfileImage],
+        entities: [User, Onboarding, ProfileImage, ProfileImage],
         synchronize: true,
       }),
     }),

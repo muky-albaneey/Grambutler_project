@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { OnboardingDto } from './dto/update-user.dto';
 import { Onboarding } from './entities/onoard.entity';
+import * as path from 'path';
+import { ProfileImage } from './entities/profile.entity';
 
 @Injectable()
 export class UserService {
@@ -18,8 +20,14 @@ export class UserService {
     @InjectRepository(Onboarding)
     private readonly onboardingRepository: Repository<Onboarding>,
     
-    @InjectRepository(Onboarding)
-    private readonly emailservice: MailService
+    // @InjectRepository(MailService)
+    private readonly emailservice: MailService,
+
+    @InjectRepository(ProfileImage)
+    private readonly ProfileBgRepository: Repository<ProfileImage>,
+
+    
+
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -199,5 +207,50 @@ export class UserService {
       relations: {onboard_info: true}
     });
     return user
+  }
+
+  
+  async updateProfileBg(id, image: { originalname: string, buffer: Buffer }): Promise<User> {
+    // Check if the user exists    
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['profile_image'],
+      // relations: {profile_bg: true, profile_image : true},
+    });
+    
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    // Validate image file format
+    if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].includes(path.extname(image.originalname).toLowerCase())) {
+      throw new BadRequestException('Invalid image file format');
+    }
+  
+    if (user.profile_image) {
+      // Update existing profile background entity
+      user.profile_image.name = image.originalname;
+      user.profile_image.content = image.buffer;
+      user.profile_image.ext = path.extname(image.originalname).toLowerCase().slice(1).trim();
+      user.profile_image.base64 = image.buffer.toString('base64');
+  
+      // Save the updated profile background entity to the database
+      await this.ProfileBgRepository.save(user.profile_image);
+    } else {
+      // Create new profile background entity
+      const newProfileBg = new ProfileImage({
+        name: image.originalname,
+        content: image.buffer,
+        ext: path.extname(image.originalname).toLowerCase().slice(1).trim(),
+        base64: image.buffer.toString('base64'),
+      });
+  
+      // Save the new profile background entity to the database
+      user.profile_image = await this.ProfileBgRepository.save(newProfileBg);
+    }
+  
+    // Save the updated user entity to the database
+    return await this.userRepository.save(user);
   }
 }

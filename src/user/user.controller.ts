@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseUUIDPipe, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto } from './dto/update-user.dto';
@@ -7,7 +7,7 @@ import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
-
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
@@ -201,6 +201,17 @@ async reset(@Body() body: { token: string }) {
   @Patch(':id/onboard')
   async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto){
     return await this.userService.updateOnboarding(id, body)
+  }
+
+  @Patch('profiles/:id')
+  @UseInterceptors(FileInterceptor ('avatar'))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async uploadProfile(@Param('id', ParseUUIDPipe) id: string, @UploadedFile() file: Express.Multer.File) {
+  // async createProfileImg(@Param('id', ParseUUIDPipe) id: string, @Body() createFileDto) {  
+    
+    const result = await this.userService.updateProfileBg(id, file); 
+    console.log(result)
+    return result;
   }
 
 }
