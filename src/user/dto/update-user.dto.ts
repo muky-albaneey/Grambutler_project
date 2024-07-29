@@ -68,3 +68,32 @@ export class OnboardingDto {
     @IsString()    
     contact_information: string;
 }
+
+
+/* eslint-disable prettier/prettier */
+
+
+export class SettingDto {
+    
+    @IsOptional()
+    @IsString()    
+    firstname: string;
+
+    @IsOptional()
+    @IsString()    
+    lastname: string;
+
+    @IsOptional()
+    @IsString()    
+    email: string;
+
+    @IsOptional()
+    @IsString()    
+    username: string;
+
+    @IsOptional()
+    @IsString()    
+    location: string;
+
+   
+}

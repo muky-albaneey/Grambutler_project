@@ -12,6 +12,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Onboarding } from './onoard.entity';
 import { ProfileImage } from './profile.entity';
+import { Settings } from './setting.entity';
 // import { ProfileBg } from './profile-bg.entity';
 // import { ProfileImage } from './profile-image.entity';
 // import { File } from 'src/files/entities/file.entity';
@@ -64,6 +65,10 @@ export class User {
     @OneToOne(() => ProfileImage, { cascade: true , nullable: true})
     @JoinColumn()
     profile_image?: ProfileImage;
+
+    @OneToOne(() => Settings, { cascade: true, nullable: true })
+    @JoinColumn()
+    settings?: Settings;
 
     // @OneToMany(() => File, file => file.user, { cascade: true })
     // files?: File[];

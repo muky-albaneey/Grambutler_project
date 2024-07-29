@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
-import { OnboardingDto } from './dto/update-user.dto';
+import { OnboardingDto, SettingDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 // import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
@@ -213,5 +213,11 @@ async reset(@Body() body: { token: string }) {
     console.log(result)
     return result;
   }
+
+  @Patch(':id/settings')
+  async userSetting(@Param('id', ParseUUIDPipe) id: string, @Body() body : SettingDto){
+    return await this.userService.updateSetting(id, body)
+  }
+
 
 }

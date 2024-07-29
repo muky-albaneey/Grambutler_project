@@ -6,10 +6,11 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
-import { OnboardingDto } from './dto/update-user.dto';
+import { OnboardingDto, SettingDto } from './dto/update-user.dto';
 import { Onboarding } from './entities/onoard.entity';
 import * as path from 'path';
 import { ProfileImage } from './entities/profile.entity';
+import { Settings } from './entities/setting.entity';
 
 @Injectable()
 export class UserService {
@@ -26,8 +27,9 @@ export class UserService {
     @InjectRepository(ProfileImage)
     private readonly ProfileBgRepository: Repository<ProfileImage>,
 
+    @InjectRepository(Settings)
+    private readonly SettingsRepository: Repository<Settings>,
     
-
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -180,6 +182,43 @@ export class UserService {
   
       console.log("Creating new onboarding info: ", newonboarding);
       user.onboard_info = await this.onboardingRepository.save(newonboarding);
+    }
+  
+    // Save the updated user entity with new or updated onboarding info
+    
+    console.log("User updated successfully: ", user);
+    return await this.userRepository.save(user);
+  }
+
+  async updateSetting(id, body: SettingDto) {
+    // Find the user with the given id and their associated onboarding information
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['settings'],
+    });
+  
+    console.log("User found: ", user);
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    if (user.onboard_info) {
+      // Update existing onboarding entity
+      user.settings.firstname = body.firstname;
+      user.settings.lastname = body.lastname;
+      user.settings.email = body.email;
+      user.settings.username = body.username;
+      user.settings.location = body.location;
+      
+      console.log("Updating existing profile info: ", user.settings);
+      await this.SettingsRepository.save(user.settings);
+    } else {
+      // Create new onboarding entity
+      const newsettings = this.SettingsRepository.create(body);
+  
+      console.log("Creating new onboarding info: ", newsettings);
+      user.settings = await this.SettingsRepository.save(newsettings);
     }
   
     // Save the updated user entity with new or updated onboarding info
