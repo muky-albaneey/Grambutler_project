@@ -9,10 +9,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailService } from 'src/mail/mail.service';
 import { Onboarding } from './entities/onoard.entity';
 import { ProfileImage } from './entities/profile.entity';
+import { Settings } from './entities/setting.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Onboarding, ProfileImage]),
+    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings]),
     ConfigModule, // Ensure ConfigModule is imported
     JwtModule.registerAsync({
       imports: [ConfigModule],

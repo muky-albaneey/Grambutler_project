@@ -55,6 +55,7 @@ export class UserService {
       return { user: userSaved };
     } catch (error) {
       console.error('User creation failed', error);
+      console.error('User creation failed', error);
       throw error;
     }
   }
