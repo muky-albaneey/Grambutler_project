@@ -195,8 +195,7 @@ export class UserService {
     // Find the user with the given id and their associated onboarding information
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['settings'],
-    });
+      relations: {onboard_info: true, profile_image: true, settings: true}    });
   
     console.log("User found: ", user);
   
@@ -254,8 +253,7 @@ export class UserService {
     // Check if the user exists    
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['profile_image'],
-      // relations: {profile_bg: true, profile_image : true},
+      relations: {onboard_info: true, profile_image: true, settings: true}      // relations: {profile_bg: true, profile_image : true},
     });
     
     
