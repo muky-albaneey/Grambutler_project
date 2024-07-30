@@ -14,7 +14,7 @@ export class OnboardingDto {
 
     @IsOptional()
     @IsString()    
-    campaigns:? string;
+    campaigns?: string;
 
     @IsOptional()
     @IsString()    
