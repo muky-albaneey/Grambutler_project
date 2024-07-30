@@ -205,7 +205,9 @@ export class UserService {
   
     if (user.onboard_info) {
       // Update existing onboarding entity
-      if(body.firstname !== "") user.settings.firstname = body?.firstname;
+      if(body.firstname !== "") user.settings.firstname = body?.firstname 
+      else user.settings.firstname = user.settings.firstname;
+      
       if(body.lastname !== "") user.settings.lastname = body?.lastname;
       if(body.email !== "") user.settings.email = body?.email;
       if(body.username !== "") user.settings.username = body?.username;
