@@ -203,16 +203,23 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
   
-    if (user.onboard_info) {
+    if (user.settings) {
       // Update existing onboarding entity
       if(body.firstname !== "") user.settings.firstname = body?.firstname 
       else user.settings.firstname = user.settings.firstname;
-      
-      if(body.lastname !== "") user.settings.lastname = body?.lastname;
+
+      if(body.lastname !== "") user.settings.lastname = body?.lastname
+      else user.settings.lastname = user.settings.lastname;
+
       if(body.email !== "") user.settings.email = body?.email;
+      else user.settings.email = user.settings.email;
+
       if(body.username !== "") user.settings.username = body?.username;
+      else user.settings.username  = user.settings.username;
+
       if(body.location !== "") user.settings.location = body?.location;
-      
+      else user.settings.location = user.settings.location;
+
       // user.settings.lastname = body?.lastname;
       // user.settings.email = body?.email;
       // user.settings.username = body?.username;
