@@ -243,11 +243,16 @@ export class UserService {
     return await this.userRepository.save(user);
   }
   async findOne(id){
+    // const user = await this.userRepository.findOne({
+    //   where: { id },
+    //   relations: ['onboard_info'],
+      
+    // });
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['onboard_info'],
+      relations: {onboard_info: true, profile_image: true, settings: true}      // relations: {profile_bg: true, profile_image : true},
     });
-  
+    
     console.log("User found: ", user);
   
     if (!user) {
