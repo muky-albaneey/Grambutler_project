@@ -6,67 +6,67 @@ export class OnboardingDto {
     
     @IsOptional()
     @IsString()    
-    marketing_objectives: string;
+    marketing_objectives?: string;
 
     @IsOptional()
     @IsString()    
-    target_audience: string;
+    target_audience?: string;
 
     @IsOptional()
     @IsString()    
-    campaigns: string;
+    campaigns:? string;
 
     @IsOptional()
     @IsString()    
-    social_media_business: string;
+    social_media_business?: string;
 
     @IsOptional()
     @IsString()    
-    info_caption: string;
+    info_caption?: string;
 
     @IsOptional()
     @IsString()    
-    marketing_challenges: string;
+    marketing_challenges?: string;
 
     @IsOptional()
     @IsString()    
-    marketing_or_sales: string;
+    marketing_or_sales?: string;
 
     @IsOptional()
     @IsString()    
-    dashoard_roles: string;
+    dashoard_roles?: string;
 
     @IsOptional()
     @IsString()    
-    members_dashoard: string;
+    members_dashoard?: string;
 
     @IsOptional()
     @IsString()    
-    current_workflow: string;
+    current_workflow?: string;
 
     @IsOptional()
     @IsString()    
-    type_of_support: string;
+    type_of_support?: string;
 
     @IsOptional()
     @IsString()    
-    recommend_dashboard: string;
+    recommend_dashboard?: string;
 
     @IsOptional()
     @IsString()    
-    immediate_questions: string;
+    immediate_questions?: string;
 
     @IsOptional()
     @IsString()    
-    personalized_training: string;
+    personalized_training?: string;
 
     @IsOptional()
     @IsString()    
-    about_new_features: string;
+    about_new_features?: string;
 
     @IsOptional()
     @IsString()    
-    contact_information: string;
+    contact_information?:string;
 }
 
 
@@ -77,23 +77,24 @@ export class SettingDto {
     
     @IsOptional()
     @IsString()    
-    firstname: string;
+    firstname?: string;
 
     @IsOptional()
     @IsString()    
-    lastname: string;
+    lastname?: string;
+
+    @IsOptional()
+    @IsEmail()    
+    @IsString()    
+    email?: string;
 
     @IsOptional()
     @IsString()    
-    email: string;
+    username?: string;
 
     @IsOptional()
     @IsString()    
-    username: string;
-
-    @IsOptional()
-    @IsString()    
-    location: string;
+    location?: string;
 
    
 }

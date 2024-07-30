@@ -205,11 +205,16 @@ export class UserService {
   
     if (user.onboard_info) {
       // Update existing onboarding entity
-      user.settings.firstname = body.firstname;
-      user.settings.lastname = body.lastname;
-      user.settings.email = body.email;
-      user.settings.username = body.username;
-      user.settings.location = body.location;
+      if(body.firstname !== "") user.settings.firstname = body?.firstname;
+      if(body.lastname !== "") user.settings.lastname = body?.lastname;
+      if(body.email !== "") user.settings.email = body?.email;
+      if(body.username !== "") user.settings.username = body?.username;
+      if(body.location !== "") user.settings.location = body?.location;
+      
+      // user.settings.lastname = body?.lastname;
+      // user.settings.email = body?.email;
+      // user.settings.username = body?.username;
+      // user.settings.location = body?.location;
       
       console.log("Updating existing profile info: ", user.settings);
       await this.SettingsRepository.save(user.settings);
