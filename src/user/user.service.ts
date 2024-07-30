@@ -204,6 +204,8 @@ export class UserService {
     }
   
     if (user.settings) {
+      console.log(user.settings.firstname );
+      
       // Update existing onboarding entity
       if(body.firstname !== "") user.settings.firstname = body?.firstname 
       else user.settings.firstname = user.settings.firstname;
