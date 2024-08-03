@@ -85,7 +85,7 @@ export class StripeService {
     try {
       event = this.stripe.webhooks.constructEvent(payload, sig, this.endpointSecret);
     } catch (err) {
-      console.error(`Webhook Error: ${err.message}`);
+      console.error(`Webhook Error is here: ${err.message}`);
       throw new Error(`Webhook Error: ${err.message}`);
     }
 
