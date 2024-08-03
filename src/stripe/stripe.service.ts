@@ -42,10 +42,9 @@ export class StripeService {
         },
       ],
       mode: 'payment',
-      success_url: "http://localhost:3000/stripe/session?session_id={CHECKOUT_SESSION_ID}",
-
-      // success_url: 'http://localhost:3000/stripe?session_id={CHECKOUT_SESSION_ID}', // Include the session ID in the success URL
-      cancel_url: 'http://localhost:3000/cancel',
+      // success_url: "https://grambutler-project.onrender.com/stripe/session?session_id={CHECKOUT_SESSION_ID}",
+      success_url: 'https://grambutler-project.onrender.com/stripe/session?session_id={CHECKOUT_SESSION_ID}', // Include the session ID in the success URL
+      cancel_url: 'https://grambutler-project.onrender.com/stripe/cancel',
     });
 
     return session.url;
