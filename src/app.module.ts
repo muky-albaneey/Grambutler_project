@@ -9,6 +9,7 @@ import { MailService } from './mail/mail.service';
 import { Onboarding } from './user/entities/onoard.entity';
 import { ProfileImage } from './user/entities/profile.entity';
 import { Settings } from './user/entities/setting.entity';
+import { StripeModule } from './stripe/stripe.module';
 
 
 @Module({
@@ -31,6 +32,7 @@ import { Settings } from './user/entities/setting.entity';
       }),
     }),
     UserModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService, MailService],
@@ -44,7 +46,7 @@ export class AppModule {}
 // import { UserModule } from './user/user.module';
 // import { User } from './user/entities/user.entity';
 // import { MailService } from './mail/mail.service';
-
+// 
 // @Module({
 //   imports: [
 //     ConfigModule.forRoot({
