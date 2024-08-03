@@ -55,6 +55,30 @@ export class StripeService {
     return await this.stripe.checkout.sessions.retrieve(sessionId);
   }
 
+  // handleWebhook(payload: Buffer, sig: string): string {
+  //   let event: Stripe.Event;
+
+  //   try {
+  //     event = this.stripe.webhooks.constructEvent(payload, sig, this.endpointSecret);
+  //   } catch (err) {
+  //     console.error(`Webhook Error: ${err.message}`);
+  //     throw new Error(`Webhook Error: ${err.message}`);
+  //   }
+
+  //   // Handle the event
+  //   switch (event.type) {
+  //     case 'checkout.session.completed':
+  //       const session = event.data.object as Stripe.Checkout.Session;
+  //       console.log('Checkout Session completed:', session);
+  //       // Handle the successful payment here, e.g., update order status in database
+  //       break;
+  //     // Handle other event types if needed
+  //     default:
+  //       console.warn(`Unhandled event type ${event.type}`);
+  //   }
+
+  //   return 'Success';
+  // }
   handleWebhook(payload: Buffer, sig: string): string {
     let event: Stripe.Event;
 
@@ -70,7 +94,7 @@ export class StripeService {
       case 'checkout.session.completed':
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('Checkout Session completed:', session);
-        // Handle the successful payment here, e.g., update order status in database
+        // Handle the successful payment here, e.g., update order status in the database
         break;
       // Handle other event types if needed
       default:
