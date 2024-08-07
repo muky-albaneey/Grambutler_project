@@ -43,20 +43,17 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Middleware to parse raw body for Stripe webhooks
-  app.use(express.json({
-    verify: (req: express.Request, res: express.Response, buf: Buffer) => {
-      if (req.originalUrl.startsWith('/stripe/webhook')) {
-        (req as any).rawBody = buf; // Correctly store the raw body as a Buffer
-      }
-    }
-  }));
+  app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+
+  // Default JSON body parser for other routes
+  app.use(express.json());
 
   app.use(cookieParser());
 
   app.enableCors({
     origin: true,
     credentials: true,
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'], // Include 'PATCH' in the allowed methods
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   });
 
   app.useGlobalPipes(new ValidationPipe({

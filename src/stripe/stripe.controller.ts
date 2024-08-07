@@ -25,13 +25,15 @@ export class StripeController {
   @Post('webhook')
   async handleWebhook(@Req() req: Request, @Headers('stripe-signature') sig: string, @Res() res: Response) {
     try {
-      const rawBody = req.rawBody;
-      if (typeof rawBody === 'string') {
-        throw new Error('rawBody should be a Buffer');
+      const rawBody = req.body; // Ensure this is accessed correctly
+      console.log('Raw Body:', rawBody); // Log raw body for debugging
+      if (!rawBody) {
+        throw new Error('rawBody is undefined');
       }
       const result = await this.stripeService.handleWebhook(rawBody, sig);
       res.status(200).send(result);
     } catch (err) {
+      console.error(`Webhook Error: ${err.message}`); // Log error for debugging
       res.status(400).send(`Webhook Error: ${err.message}`);
     }
   }
