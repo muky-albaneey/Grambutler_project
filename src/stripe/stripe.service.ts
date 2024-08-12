@@ -105,57 +105,28 @@ export class StripeService {
 
     // return 'Success';
     switch (event.type) {
-      case 'account.updated':
-        const accountUpdated = event.data.object;
-        // Then define and call a function to handle the event account.updated
-        break;
-      case 'account.external_account.created':
-        const accountExternalAccountCreated = event.data.object;
-        // Then define and call a function to handle the event account.external_account.created
-        break;
-      case 'account.external_account.deleted':
-        const accountExternalAccountDeleted = event.data.object;
-        // Then define and call a function to handle the event account.external_account.deleted
-        break;
-      case 'account.external_account.updated':
-        const accountExternalAccountUpdated = event.data.object;
-        // Then define and call a function to handle the event account.external_account.updated
-        break;
       case 'balance.available':
         const balanceAvailable = event.data.object;
         // Then define and call a function to handle the event balance.available
-        break;
-      case 'checkout.session.async_payment_failed':
-        const checkoutSessionAsyncPaymentFailed = event.data.object;
-        // Then define and call a function to handle the event checkout.session.async_payment_failed
-        break;
-      case 'checkout.session.async_payment_succeeded':
-        const checkoutSessionAsyncPaymentSucceeded = event.data.object;
-        // Then define and call a function to handle the event checkout.session.async_payment_succeeded
         break;
       case 'checkout.session.completed':
         const checkoutSessionCompleted = event.data.object;
         // Then define and call a function to handle the event checkout.session.completed
         break;
-      case 'checkout.session.expired':
-        const checkoutSessionExpired = event.data.object;
-        // Then define and call a function to handle the event checkout.session.expired
+      case 'invoice.created':
+        const invoiceCreated = event.data.object;
+        // Then define and call a function to handle the event invoice.created
         break;
-      case 'payment_link.created':
-        const paymentLinkCreated = event.data.object;
-        // Then define and call a function to handle the event payment_link.created
-        break;
-      case 'payment_link.updated':
-        const paymentLinkUpdated = event.data.object;
-         
-        // Then define and call a function to handle the event payment_link.updated
+      case 'payment_intent.created':
+        const paymentIntentCreated = event.data.object;
+        // Then define and call a function to handle the event payment_intent.created
         break;
       // ... handle other event types
       default:
         console.log(`Unhandled event type ${event.type}`);
-    }
   
     // Return a 200 response to acknowledge receipt of the event
     return  'successfull'
   }
+}
 }
