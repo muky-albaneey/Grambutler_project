@@ -1,8 +1,3 @@
-// import { Injectable } from '@nestjs/common';
-
-// @Injectable()
-// export class StripeService {}
-// src/stripe/stripe.service.ts
 import { Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 
@@ -56,30 +51,6 @@ export class StripeService {
     return await this.stripe.checkout.sessions.retrieve(sessionId);
   }
 
-  // handleWebhook(payload: Buffer, sig: string): string {
-  //   let event: Stripe.Event;
-
-  //   try {
-  //     event = this.stripe.webhooks.constructEvent(payload, sig, this.endpointSecret);
-  //   } catch (err) {
-  //     console.error(`Webhook Error: ${err.message}`);
-  //     throw new Error(`Webhook Error: ${err.message}`);
-  //   }
-
-  //   // Handle the event
-  //   switch (event.type) {
-  //     case 'checkout.session.completed':
-  //       const session = event.data.object as Stripe.Checkout.Session;
-  //       console.log('Checkout Session completed:', session);
-  //       // Handle the successful payment here, e.g., update order status in database
-  //       break;
-  //     // Handle other event types if needed
-  //     default:
-  //       console.warn(`Unhandled event type ${event.type}`);
-  //   }
-
-  //   return 'Success';
-  // }
   handleWebhook(payload: Buffer, sig: string): string {
     let event: Stripe.Event;
 
@@ -90,35 +61,26 @@ export class StripeService {
       throw new Error(`Webhook Error: ${err.message}`);
     }
 
-    // Handle the event
-    // switch (event.type) {
-    //   case 'checkout.session.completed':
-    //     const session = event.data.object as Stripe.Checkout.Session;
-    //     console.log('Checkout Session completed:', session);
-    //     // Handle the successful payment here, e.g., update order status in the database
-    //     break;
-    //   // Handle other event types if needed
-    //   default:
-    //     console.warn(`Unhandled event type ${event.type}`);
-    // }
-    
-
     // return 'Success';
     switch (event.type) {
       case 'balance.available':
         const balanceAvailable = event.data.object;
+        console.log(balanceAvailable)
         // Then define and call a function to handle the event balance.available
         break;
       case 'checkout.session.completed':
         const checkoutSessionCompleted = event.data.object;
+        console.log(checkoutSessionCompleted);
         // Then define and call a function to handle the event checkout.session.completed
         break;
       case 'invoice.created':
         const invoiceCreated = event.data.object;
+        console.log(invoiceCreated)
         // Then define and call a function to handle the event invoice.created
         break;
       case 'payment_intent.created':
         const paymentIntentCreated = event.data.object;
+        console.log(paymentIntentCreated)
         // Then define and call a function to handle the event payment_intent.created
         break;
       // ... handle other event types

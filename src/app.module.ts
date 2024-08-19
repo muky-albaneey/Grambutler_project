@@ -39,33 +39,3 @@ import { StripeModule } from './stripe/stripe.module';
   providers: [AppService, MailService],
 })
 export class AppModule {}
-// import { Module } from '@nestjs/common';
-// import { ConfigModule } from '@nestjs/config';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
-// import { UserModule } from './user/user.module';
-// import { User } from './user/entities/user.entity';
-// import { MailService } from './mail/mail.service';
-// 
-// @Module({
-//   imports: [
-//     ConfigModule.forRoot({
-//       isGlobal: true,
-//     }),
-//     TypeOrmModule.forRoot({
-//       type: 'postgres',
-//       host: process.env.DB_HOST || 'db',
-//       port: parseInt(process.env.DB_PORT, 10) || 5432,
-//       username: process.env.DB_USERNAME || 'muky_albany',
-//       password: process.env.DB_PASSWORD || 'iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0',
-//       database: process.env.DB_NAME || 'grambutler',
-//       entities: [User],
-//       synchronize: true,
-//     }),
-//     UserModule,
-//   ],
-//   controllers: [AppController],
-//   providers: [AppService, MailService],
-// })
-// export class AppModule {}
