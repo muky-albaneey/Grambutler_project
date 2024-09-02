@@ -10,6 +10,7 @@ import { Onboarding } from './user/entities/onoard.entity';
 import { ProfileImage } from './user/entities/profile.entity';
 import { Settings } from './user/entities/setting.entity';
 import { StripeModule } from './stripe/stripe.module';
+import { OpenaiModule } from './openai/openai.module';
 
 
 @Module({
@@ -34,6 +35,7 @@ import { StripeModule } from './stripe/stripe.module';
     }),
     UserModule,
     StripeModule,
+    OpenaiModule,
   ],
   controllers: [AppController],
   providers: [AppService, MailService],
