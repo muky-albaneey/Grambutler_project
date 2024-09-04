@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 
-import { IsNotEmpty, IsString, IsEmail, MinLength, MaxLength, IsOptional  } from 'class-validator';
+// import { IsNotEmpty, IsString, IsEmail, MinLength, MaxLength, IsOptional  } from 'class-validator';
+
+import { IsOptional, IsString, IsNotEmpty, IsEmail, MinLength, MaxLength, IsArray } from 'class-validator';
 
 export class CreateAuthDto {
     
@@ -8,20 +10,20 @@ export class CreateAuthDto {
     @IsString()    
     full_name: string;
 
-    @IsNotEmpty({message : "The email field is empty "})
+    @IsNotEmpty({ message: "The email field is empty" })
     @IsEmail()
     @IsString()    
-    email : string;
+    email: string;
    
-    @IsNotEmpty({message : "The password field is empty"})
-    @MinLength(6, {message : "The password should exceed 5"})
-    @MaxLength(14, {message : "The password should not exceed 14"})     
+    @IsNotEmpty({ message: "The password field is empty" })
+    @MinLength(6, { message: "The password should exceed 5 characters" })
+    @MaxLength(14, { message: "The password should not exceed 14 characters" })     
     @IsString()  
-    password : string
+    password: string;
 
     @IsOptional()
     @IsString() 
-    rememberToken?: string
+    rememberToken?: string;
 
     @IsOptional()
     @IsString()     
@@ -29,12 +31,14 @@ export class CreateAuthDto {
    
     @IsOptional()
     @IsString()  
-    state?: string
+    state?: string;
 
     @IsOptional()
-    @IsString()  
-    responses?: string[]
+    @IsArray()
+    @IsString({ each: true })  // Validates each element in the array is a string
+    responses?: string[];
 }
+
 
 export class LoginAuthDto {
    
