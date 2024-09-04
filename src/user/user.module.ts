@@ -10,10 +10,11 @@ import { MailService } from 'src/mail/mail.service';
 import { Onboarding } from './entities/onoard.entity';
 import { ProfileImage } from './entities/profile.entity';
 import { Settings } from './entities/setting.entity';
+import { ResponseEntity } from './entities/response.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings]),
+    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity]),
     ConfigModule, // Ensure ConfigModule is imported
     JwtModule.registerAsync({
       imports: [ConfigModule],
