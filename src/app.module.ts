@@ -11,6 +11,7 @@ import { ProfileImage } from './user/entities/profile.entity';
 import { Settings } from './user/entities/setting.entity';
 import { StripeModule } from './stripe/stripe.module';
 import { OpenaiModule } from './openai/openai.module';
+import { ResponseEntity } from './user/entities/response.entity';
 
 
 @Module({
@@ -29,7 +30,7 @@ import { OpenaiModule } from './openai/openai.module';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [User, Onboarding, ProfileImage, ProfileImage, Settings],
+        entities: [User, Onboarding, ProfileImage, ProfileImage, Settings, ResponseEntity],
         synchronize: true,
       }),
     }),
