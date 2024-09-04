@@ -11,4 +11,5 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   providers: [OpenaiService],
   controllers: [OpenaiController]
 })
+
 export class OpenaiModule {}
