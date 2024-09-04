@@ -10,17 +10,16 @@ export class OpenaiController {
     @Body('prompt') prompt: string,
     @Body('no_of_captions') no_of_captions: number,
     @Body('words_per_caption') words_per_caption: number,
-    @Body('customEmojis') customEmojis: string[] = ['🔥', '🚀', '🎉'],
-    @Body('customHashtags') customHashtags: string[] = ['OpenAI', 'AI', 'Tech']
+    @Body('customEmojis') customEmojis?: string[],  // Optional
+    @Body('customHashtags') customHashtags?: string[]  // Optional
   ): Promise<string> {
-    const result = await this.openaiService.getChatCompletion(
+    // Pass parameters directly to the service
+    return this.openaiService.getChatCompletion(
       prompt,
       no_of_captions,
       words_per_caption,
       customEmojis,
       customHashtags,
     );
-
-    return result;
   }
 }

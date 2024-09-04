@@ -10,12 +10,12 @@ export class OpenaiService {
     prompt: string, 
     no_of_captions: number = 3, 
     words_per_caption: number = 20,
-    customEmojis: string[] = [],
-    customHashtags: string[] = []
+    customEmojis?: string[],  // Optional
+    customHashtags?: string[]  // Optional
   ): Promise<string> {
-    // Prepare the emojis and hashtags as a string
-    const emojis = customEmojis.join(' ');
-    const hashtags = customHashtags.map(tag => `#${tag}`).join(' ');
+    // Assign default values if not provided
+    const emojis = customEmojis && customEmojis.length > 0 ? customEmojis : ['🔥', '🚀', '🎉'];
+    const hashtags = customHashtags && customHashtags.length > 0 ? customHashtags : ['OpenAI', 'AI', 'Tech'];
 
     const data = {
       model: 'gpt-4-turbo',
@@ -27,8 +27,8 @@ export class OpenaiService {
           - Number of captions: ${no_of_captions}
           - Number of words per caption: ${words_per_caption} words
           - Tone: Friendly and professional
-          - Include the following emojis: ${emojis}
-          - Include the following hashtags: ${hashtags}
+          - Include the following emojis: ${emojis.join(' ')}
+          - Include the following hashtags: ${hashtags.map(tag => `#${tag}`).join(' ')}
           - Ensure contacts are added if mentioned
           `,
         },
