@@ -33,10 +33,7 @@ export class CreateAuthDto {
     @IsString()  
     state?: string;
 
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })  // Validates each element in the array is a string
-    responses?: string[];
+ 
 }
 
 
