@@ -264,7 +264,7 @@ export class UserService {
   
   async findAll() {
     const user = await this.userRepository.find({      
-      relations: {onboard_info: true, profile_image: true, settings: true}
+      relations: {onboard_info: true, profile_image: true, settings: true, responses: true}  
     });
     return user
   }
