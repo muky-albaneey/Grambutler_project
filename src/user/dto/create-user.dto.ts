@@ -30,6 +30,10 @@ export class CreateAuthDto {
     @IsOptional()
     @IsString()  
     state?: string
+
+    @IsOptional()
+    @IsString()  
+    responses?: string[]
 }
 
 export class LoginAuthDto {
