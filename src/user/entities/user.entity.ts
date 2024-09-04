@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { Onboarding } from './onoard.entity';
 import { ProfileImage } from './profile.entity';
 import { Settings } from './setting.entity';
+import { ResponseEntity } from './response.entity';
 // import { ProfileBg } from './profile-bg.entity';
 // import { ProfileImage } from './profile-image.entity';
 // import { File } from 'src/files/entities/file.entity';
@@ -70,6 +71,8 @@ export class User {
     @JoinColumn()
     settings?: Settings;
 
+    @OneToMany(() => ResponseEntity, (response) => response.user, { cascade: true })
+    responses?: ResponseEntity[];
     // @OneToMany(() => File, file => file.user, { cascade: true })
     // files?: File[];
 
