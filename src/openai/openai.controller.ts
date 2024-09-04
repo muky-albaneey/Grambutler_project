@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
 
 @Controller('openai')
@@ -7,7 +7,7 @@ export class OpenaiController {
   constructor(private readonly openaiService: OpenaiService) {}
 
   
-  @Get('chat-completion')
+  @Post('chat-completion')
   async getChatCompletion(@Body('prompt') prompt: string): Promise<string> {
     const customEmojis = ['🔥', '🚀', '🎉'];
     const customHashtags = ['OpenAI', 'AI', 'Tech'];
