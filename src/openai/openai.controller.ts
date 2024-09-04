@@ -3,7 +3,6 @@ import { OpenaiService } from './openai.service';
 
 @Controller('openai')
 export class OpenaiController {
-
   constructor(private readonly openaiService: OpenaiService) {}
 
   @Post('chat-completion')
@@ -12,7 +11,7 @@ export class OpenaiController {
     @Body('no_of_captions') no_of_captions: number,
     @Body('words_per_caption') words_per_caption: number,
     @Body('customEmojis') customEmojis: string[] = ['🔥', '🚀', '🎉'],
-    @Body('customHashtags') customHashtags: string[] = ['OpenAI', 'AI', 'Tech'],
+    @Body('customHashtags') customHashtags: string[] = ['OpenAI', 'AI', 'Tech']
   ): Promise<string> {
     const result = await this.openaiService.getChatCompletion(
       prompt,
