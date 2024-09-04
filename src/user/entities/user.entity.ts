@@ -73,6 +73,9 @@ export class User {
 
     @OneToMany(() => ResponseEntity, (response) => response.user, { cascade: true })
     responses?: ResponseEntity[];
+
+    // @OneToMany(() => ResponseEntity, (response) => response.user)
+    // responses: ResponseEntity[];
     // @OneToMany(() => File, file => file.user, { cascade: true })
     // files?: File[];
 
