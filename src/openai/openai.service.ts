@@ -81,7 +81,7 @@ export class OpenaiService {
 
   async getChatCompletion(
     prompt: string,
-    userId: string, // Add userId as a parameter
+    userId: number, // Add userId as a parameter
     no_of_captions: number = 3,
     words_per_caption: number = 20,
     customEmojis?: string[],

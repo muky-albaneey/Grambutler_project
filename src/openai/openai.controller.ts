@@ -33,7 +33,7 @@ export class OpenaiController {
   @Post('chat-completion')
   async getChatCompletion(
     @Body('prompt') prompt: string,
-    @Body('userId') userId: string, // Accept userId in the request body
+    @Body('userId') userId: number, // Accept userId in the request body
     @Body('no_of_captions') no_of_captions: number,
     @Body('words_per_caption') words_per_caption: number,
     @Body('customEmojis') customEmojis?: string[],
