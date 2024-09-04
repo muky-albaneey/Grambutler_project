@@ -13,7 +13,7 @@ export class OpenaiController {
     const customHashtags = ['OpenAI', 'AI', 'Tech'];
     
     const result = await this.openaiService.getChatCompletion(
-      'What are the latest AI trends?',
+      prompt,
       3,
       25,
       customEmojis,
