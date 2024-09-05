@@ -7,9 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user/user.module';
 import { User } from 'src/user/entities/user.entity';
 import { PromptModule } from './prompt/prompt.module';
+import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([ResponseEntity, User]),HttpModule, UserModule, PromptModule],
+  imports: [ TypeOrmModule.forFeature([ResponseEntity, User, PromptEntity]),HttpModule, UserModule, PromptModule],
   exports: [TypeOrmModule],
   providers: [OpenaiService],
   controllers: [OpenaiController]

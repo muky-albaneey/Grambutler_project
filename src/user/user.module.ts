@@ -11,10 +11,11 @@ import { Onboarding } from './entities/onoard.entity';
 import { ProfileImage } from './entities/profile.entity';
 import { Settings } from './entities/setting.entity';
 import { ResponseEntity } from './entities/response.entity';
+import { PromptEntity } from './entities/reponse_prompt.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity]),
+    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity, PromptEntity]),
     ConfigModule, // Ensure ConfigModule is imported
     JwtModule.registerAsync({
       imports: [ConfigModule],
