@@ -116,7 +116,7 @@ export class OpenaiService {
       const response = await axios.post(
         this.openaiApiUrl,
         {
-          model: 'gpt-3',
+          model: 'gpt-4',
           messages: [{ role: 'user', content: prompt }],
         },
         {
