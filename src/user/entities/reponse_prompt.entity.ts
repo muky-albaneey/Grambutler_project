@@ -1,20 +1,20 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
+// import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+// import { User } from './user.entity';
 
-@Entity()
-export class PromptEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+// @Entity()
+// export class ResponseEntity {
+//   @PrimaryGeneratedColumn('uuid')
+//   id: string;
 
-  @Column()
-  prompt: string;
+//   @Column()
+//   prompt: string;
 
-  @Column()
-  response: string;
+//   @Column()
+//   response: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+//   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+//   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.prompt_responses, { eager: true })
-  user: User;
-}
+//   @ManyToOne(() => User, (user) => user.caption_responses, { eager: true })
+//   user: User;
+// }

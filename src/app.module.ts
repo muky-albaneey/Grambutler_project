@@ -32,6 +32,7 @@ import { ResponseEntity } from './user/entities/response.entity';
         database: configService.get<string>('DATABASE_NAME'),
         entities: [User, Onboarding, ProfileImage, ProfileImage, Settings, ResponseEntity],
         synchronize: true,
+        migrations: ['src/migrations/*.ts'],
       }),
     }),
     UserModule,
