@@ -71,11 +71,11 @@ export class User {
     @JoinColumn()
     settings?: Settings;
 
-    @OneToMany(() => ResponseEntity, (response) => response.user, { cascade: true })
-    responses?: ResponseEntity[];
-    
-    // @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
-    // caption_responses?: ResponseEntity[];
+    // @OneToMany(() => ResponseEntity, (response) => response.user, { cascade: true })
+    // responses?: ResponseEntity[];
+
+    @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
+    caption_responses?: ResponseEntity[];
 
     // @OneToMany(() => ResponseEntity, (response) => response.user)
     // responses: ResponseEntity[];

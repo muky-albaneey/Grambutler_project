@@ -15,6 +15,6 @@ export class ResponseEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.responses, { eager: true })
+  @ManyToOne(() => User, (user) => user.caption_responses, { eager: true })
   user: User;
 }
