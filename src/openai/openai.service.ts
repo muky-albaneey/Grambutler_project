@@ -104,45 +104,45 @@ export class OpenaiService {
     }
   }
 
-  async promptAi(prompt: string, userId: number, ): Promise<string> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
-    try {
-      const response = await axios.post(
-        this.openaiApiUrl,
-        {
-          model: 'gpt-3',
-          messages: [{ role: 'user', content: prompt }],
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${this.openaiApiKey}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+  // async promptAi(prompt: string, userId: number, ): Promise<string> {
+  //   const user = await this.userRepository.findOne({ where: { id: userId } });
+  //   if (!user) {
+  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  //   }
+  //   try {
+  //     const response = await axios.post(
+  //       this.openaiApiUrl,
+  //       {
+  //         model: 'gpt-3',
+  //         messages: [{ role: 'user', content: prompt }],
+  //       },
+  //       {
+  //         headers: {
+  //           'Authorization': `Bearer ${this.openaiApiKey}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       },
+  //     );
       
 
-      // Extract the completion text from the response
-      const completion = response.data.choices[0].message.content;
+  //     // Extract the completion text from the response
+  //     const completion = response.data.choices[0].message.content;
 
-      const responseEntity = this.responseRepository.create({
-        prompt,
-        response: completion,
-        createdAt: new Date(),
-        user, // Associate the response with the user
-      });
+  //     const responseEntity = this.responseRepository.create({
+  //       prompt,
+  //       response: completion,
+  //       createdAt: new Date(),
+  //       user, // Associate the response with the user
+  //     });
 
-      return completion;
-    } catch (error) {
-      console.error('Error communicating with OpenAI:', error);
-      throw new HttpException(
-        'Failed to communicate with OpenAI',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
+  //     return completion;
+  //   } catch (error) {
+  //     console.error('Error communicating with OpenAI:', error);
+  //     throw new HttpException(
+  //       'Failed to communicate with OpenAI',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 
 }

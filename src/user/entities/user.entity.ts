@@ -75,10 +75,10 @@ export class User {
 
     @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
     caption_responses?: ResponseEntity[];
-    
 
-    @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
-    prompt_responses?: PromptEntity[];
+
+    // @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
+    // prompt_responses?: PromptEntity[];
 
     // @OneToMany(() => ResponseEntity, (response) => response.user)
     // responses: ResponseEntity[];

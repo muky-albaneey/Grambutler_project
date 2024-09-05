@@ -31,8 +31,8 @@ export class OpenaiController {
   }
 
 
-  @Post('prompt')
-  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: number,): Promise<string> {
-    return this.openaiService.promptAi(prompt, userId);
-  }
+  // @Post('prompt')
+  // async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: number,): Promise<string> {
+  //   return this.openaiService.promptAi(prompt, userId);
+  // }
 }
