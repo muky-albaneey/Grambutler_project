@@ -42,7 +42,7 @@ export class OpenaiService {
           Phone: ${user.country || 'N/A'}
         `;
     const data = {
-      model: 'gpt-4-turbo',
+      model: 'gpt-4',
       messages: [
         {
           role: 'system',
