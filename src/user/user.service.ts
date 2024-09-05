@@ -250,7 +250,7 @@ export class UserService {
     // });
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: {onboard_info: true, profile_image: true, settings: true, responses: true}      // relations: {profile_bg: true, profile_image : true},
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true}      // relations: {profile_bg: true, profile_image : true},
     });
     
     console.log("User found: ", user);
@@ -264,7 +264,7 @@ export class UserService {
   
   async findAll() {
     const user = await this.userRepository.find({      
-      relations: {onboard_info: true, profile_image: true, settings: true, responses: true}  
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true}  
     });
     return user
   }
