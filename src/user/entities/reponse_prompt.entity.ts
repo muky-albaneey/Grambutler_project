@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
-export class ResponseEntity {
+export class PromptEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -15,6 +15,6 @@ export class ResponseEntity {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.caption_responses, { eager: true })
+  @ManyToOne(() => User, (user) => user.prompt_responses, { eager: true })
   user: User;
 }

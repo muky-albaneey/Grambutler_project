@@ -14,6 +14,7 @@ import { Onboarding } from './onoard.entity';
 import { ProfileImage } from './profile.entity';
 import { Settings } from './setting.entity';
 import { ResponseEntity } from './response.entity';
+import { PromptEntity } from './reponse_prompt.entity';
 // import { ProfileBg } from './profile-bg.entity';
 // import { ProfileImage } from './profile-image.entity';
 // import { File } from 'src/files/entities/file.entity';
@@ -71,8 +72,13 @@ export class User {
     @JoinColumn()
     settings?: Settings;
 
-    @OneToMany(() => ResponseEntity, (response) => response.user, { cascade: true })
-    responses?: ResponseEntity[];
+
+    @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
+    caption_responses?: ResponseEntity[];
+    
+
+    @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
+    prompt_responses?: PromptEntity[];
 
     // @OneToMany(() => ResponseEntity, (response) => response.user)
     // responses: ResponseEntity[];
