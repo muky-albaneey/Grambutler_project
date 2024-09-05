@@ -29,6 +29,18 @@ export class OpenaiService {
     const emojis = customEmojis && customEmojis.length > 0 ? customEmojis : ['🔥', '🚀', '🎉'];
     const hashtags = customHashtags && customHashtags.length > 0 ? customHashtags : ['OpenAI', 'AI', 'Tech'];
 
+     // Find the user by ID
+     const user = await this.userRepository.findOne({ where: { id: userId } });
+     if (!user) {
+       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+     }
+
+          const contactInfo = `
+          Contact Information:
+          Name: ${user.full_name || 'N/A'}
+          Email: ${user.email || 'N/A'}
+          Phone: ${user.country || 'N/A'}
+        `;
     const data = {
       model: 'gpt-4-turbo',
       messages: [
@@ -42,10 +54,12 @@ export class OpenaiService {
           - Include the following emojis: ${emojis.join(' ')}
           - Include the following hashtags: ${hashtags.map(tag => `#${tag}`).join(' ')}
 
-           - Ensure contacts are added if mentioned:
+          - Ensure contacts are added if mentioned:
             - If a person is mentioned by name, include their contact details (e.g., email or phone number) if provided in the prompt.
             - If a company or organization is mentioned, include relevant contact information such as a website or support email.
             - If no specific contact details are provided, suggest generic contact methods (e.g., "Reach out via our website or email us at support@example.com").
+
+          ${contactInfo}
           `,
         },
         { role: 'user', content: prompt },
@@ -66,11 +80,7 @@ export class OpenaiService {
 
       const completion = response.data.choices[0].message.content;
 
-      // Find the user by ID
-      const user = await this.userRepository.findOne({ where: { id: userId } });
-      if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
+     
 
       // Save the prompt and response to the database, associated with the user
       const responseEntity = this.responseRepository.create({
