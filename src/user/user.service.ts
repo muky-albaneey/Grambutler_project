@@ -147,7 +147,7 @@ export class UserService {
     // Find the user with the given id and their associated onboarding information
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['onboard_info'],
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
     });
   
     console.log("User found: ", user);
@@ -195,7 +195,8 @@ export class UserService {
     // Find the user with the given id and their associated onboarding information
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: {onboard_info: true, profile_image: true, settings: true}    });
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
+     });
   
     console.log("User found: ", user);
   
@@ -250,7 +251,7 @@ export class UserService {
     // });
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true}      // relations: {profile_bg: true, profile_image : true},
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}      // relations: {profile_bg: true, profile_image : true},
     });
     
     console.log("User found: ", user);
@@ -264,7 +265,7 @@ export class UserService {
   
   async findAll() {
     const user = await this.userRepository.find({      
-      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true}  
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
     });
     return user
   }
@@ -274,7 +275,8 @@ export class UserService {
     // Check if the user exists    
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: {onboard_info: true, profile_image: true, settings: true}      // relations: {profile_bg: true, profile_image : true},
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
+      // relations: {profile_bg: true, profile_image : true},
     });
     
     
