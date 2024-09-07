@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { User } from 'src/user/entities/user.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
@@ -191,6 +191,28 @@ export class OpenaiService {
     });
 
     return promptResponses;
+  }
+
+  async countEntitiesToday(): Promise<number[]> {
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)); // Start of the day
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999)); // End of the day
+  
+    const responseCountToday = await this.responseRepository.count({
+      where: {
+        createdAt: Between(startOfDay, endOfDay)
+      }
+    });
+  
+    const promptCountToday = await this.promptRepository.count({
+      where: {
+        createdAt: Between(startOfDay, endOfDay)
+      }
+    });
+  
+    console.log(`Responses added today: ${responseCountToday}`);
+    console.log(`Prompts added today: ${promptCountToday}`);
+  
+    return [responseCountToday, promptCountToday];
   }
   
 

@@ -1,5 +1,7 @@
 import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
+import { ResponseEntity } from 'src/user/entities/response.entity';
+import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
 
 @Controller('openai')
 export class OpenaiController {
@@ -36,9 +38,8 @@ export class OpenaiController {
     return this.openaiService.promptAi(prompt, userId);
   }
 
-  
   @Get(':id/caption-responses')
-  async getLastTenCaptionResponses(@Param('id') userId: number) {
+  async getLastTenCaptionResponses(@Param('id') userId: number): Promise<ResponseEntity[]> {
     try {
       const captionResponses = await this.openaiService.findLastTenCaptionResponses(userId);
       return captionResponses;
@@ -47,9 +48,9 @@ export class OpenaiController {
     }
   }
 
-
+  // New endpoint to get the last ten prompt_responses
   @Get(':id/prompt-responses')
-  async getLastTenPromptResponses(@Param('id') userId: number) {
+  async getLastTenPromptResponses(@Param('id') userId: number): Promise<PromptEntity[]> {
     try {
       const promptResponses = await this.openaiService.findLastTenPromptResponses(userId);
       return promptResponses;
