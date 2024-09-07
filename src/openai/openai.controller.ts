@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
 
 @Controller('openai')
@@ -35,4 +35,27 @@ export class OpenaiController {
   async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: number,): Promise<string> {
     return this.openaiService.promptAi(prompt, userId);
   }
+
+  
+  @Get(':id/caption-responses')
+  async getLastTenCaptionResponses(@Param('id') userId: number) {
+    try {
+      const captionResponses = await this.openaiService.findLastTenCaptionResponses(userId);
+      return captionResponses;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
+
+  @Get(':id/prompt-responses')
+  async getLastTenPromptResponses(@Param('id') userId: number) {
+    try {
+      const promptResponses = await this.openaiService.findLastTenPromptResponses(userId);
+      return promptResponses;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
 }

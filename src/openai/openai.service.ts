@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -158,5 +158,40 @@ export class OpenaiService {
       );
     }
   }
+
+  async findLastTenCaptionResponses(userId: number): Promise<ResponseEntity[]> {
+    // Ensure the user exists
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Fetch the last ten caption_responses
+    const captionResponses = await this.responseRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+      take: 10,
+    });
+
+    return captionResponses;
+  }
+
+  async findLastTenPromptResponses(userId: number): Promise<PromptEntity[]> {
+    // Ensure the user exists
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Fetch the last ten prompt_responses
+    const promptResponses = await this.promptRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+      take: 10,
+    });
+
+    return promptResponses;
+  }
+  
 
 }
