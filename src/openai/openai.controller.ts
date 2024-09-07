@@ -59,4 +59,9 @@ export class OpenaiController {
     }
   }
 
+  @Get('count-today')
+  async getCountEntitiesToday(): Promise<number[]> {
+    return this.openaiService.countEntitiesToday();
+  }
+
 }
