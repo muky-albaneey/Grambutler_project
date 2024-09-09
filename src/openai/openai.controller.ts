@@ -34,7 +34,7 @@ export class OpenaiController {
   // @Param('id', ParseUUIDPipe)
 
   @Post('prompt')
-  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: string,): Promise<string> {
+  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: number,): Promise<string> {
     return this.openaiService.promptAi(prompt, userId);
   }
 
@@ -50,7 +50,7 @@ export class OpenaiController {
 
   // New endpoint to get the last ten prompt_responses
   @Get(':id/prompt-responses')
-  async getLastTenPromptResponses(@Param('id', ParseUUIDPipe) userId: number): Promise<PromptEntity[]> {
+  async getLastTenPromptResponses(@Param('id', ParseUUIDPipe) userId: string): Promise<PromptEntity[]> {
     try {
       const promptResponses = await this.openaiService.findLastTenPromptResponses(userId);
       return promptResponses;
