@@ -17,9 +17,11 @@ import { PromptEntity } from './user/entities/reponse_prompt.entity';
 
 @Module({
   imports: [
+    
     ConfigModule.forRoot({
       isGlobal : true
     }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
