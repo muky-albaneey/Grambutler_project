@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
@@ -31,15 +31,15 @@ export class OpenaiController {
 
     return result;
   }
-
+  // @Param('id', ParseUUIDPipe)
 
   @Post('prompt')
-  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: number,): Promise<string> {
+  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: string,): Promise<string> {
     return this.openaiService.promptAi(prompt, userId);
   }
 
   @Get(':id/caption-responses')
-  async getLastTenCaptionResponses(@Param('id') userId: number): Promise<ResponseEntity[]> {
+  async getLastTenCaptionResponses(@Param('id', ParseUUIDPipe) userId: string): Promise<ResponseEntity[]> {
     try {
       const captionResponses = await this.openaiService.findLastTenCaptionResponses(userId);
       return captionResponses;
@@ -50,7 +50,7 @@ export class OpenaiController {
 
   // New endpoint to get the last ten prompt_responses
   @Get(':id/prompt-responses')
-  async getLastTenPromptResponses(@Param('id') userId: number): Promise<PromptEntity[]> {
+  async getLastTenPromptResponses(@Param('id', ParseUUIDPipe) userId: number): Promise<PromptEntity[]> {
     try {
       const promptResponses = await this.openaiService.findLastTenPromptResponses(userId);
       return promptResponses;

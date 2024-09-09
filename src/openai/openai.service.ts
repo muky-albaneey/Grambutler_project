@@ -159,7 +159,7 @@ export class OpenaiService {
     }
   }
 
-  async findLastTenCaptionResponses(userId: number): Promise<ResponseEntity[]> {
+  async findLastTenCaptionResponses(userId): Promise<ResponseEntity[]> {
     // Ensure the user exists
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -176,7 +176,7 @@ export class OpenaiService {
     return captionResponses;
   }
 
-  async findLastTenPromptResponses(userId: number): Promise<PromptEntity[]> {
+  async findLastTenPromptResponses(userId): Promise<PromptEntity[]> {
     // Ensure the user exists
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
