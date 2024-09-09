@@ -33,7 +33,7 @@ import { PromptEntity } from './user/entities/reponse_prompt.entity';
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
         entities: [User, Onboarding, ProfileImage, ProfileImage, Settings, ResponseEntity, PromptEntity],
-        synchronize: false,
+        synchronize: true,
         migrations: ['src/migrations/*.ts'],
       }),
     }),

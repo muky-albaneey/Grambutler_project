@@ -249,7 +249,7 @@ export class UserService {
     //   relations: ['onboard_info'],
       
     // });
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({  
       where: { id },
       relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}      // relations: {profile_bg: true, profile_image : true},
     });
