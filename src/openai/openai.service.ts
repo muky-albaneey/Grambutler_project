@@ -193,10 +193,46 @@ export class OpenaiService {
     return promptResponses;
   }
 
-  async countEntitiesToday(): Promise<number[]> {
+  // async countEntitiesToday(): Promise<number[]> {
+  //   const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)); // Start of the day
+  //   const endOfDay = new Date(new Date().setHours(23, 59, 59, 999)); // End of the day
+  
+  //   const responseCountToday = await this.responseRepository.count({
+  //     where: {
+  //       createdAt: Between(startOfDay, endOfDay)
+  //     }
+  //   });
+  
+  //   const promptCountToday = await this.promptRepository.count({
+  //     where: {
+  //       createdAt: Between(startOfDay, endOfDay)
+  //     }
+  //   });
+  
+  //   console.log(`Responses added today: ${responseCountToday}`);
+  //   console.log(`Prompts added today: ${promptCountToday}`);
+  
+  //   return [responseCountToday, promptCountToday];
+  // }
+  
+  async countEntitiesTodayAndWeek(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
+    // Helper function to get the name of the day
+    const getDayName = (date: Date) => {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return days[date.getDay()];
+    };
+  
+    // Start and end of the day
     const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)); // Start of the day
     const endOfDay = new Date(new Date().setHours(23, 59, 59, 999)); // End of the day
   
+    // Start and end of the week (assuming the week starts on Sunday)
+    const currentDate = new Date();
+    const firstDayOfWeek = currentDate.getDate() - currentDate.getDay(); // Get the first day of the current week
+    const startOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek)).setHours(0, 0, 0, 0)); // Start of the week
+    const endOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek + 6)).setHours(23, 59, 59, 999)); // End of the week
+  
+    // Count for today
     const responseCountToday = await this.responseRepository.count({
       where: {
         createdAt: Between(startOfDay, endOfDay)
@@ -209,11 +245,32 @@ export class OpenaiService {
       }
     });
   
+    // Count for this week
+    const responseCountWeek = await this.responseRepository.count({
+      where: {
+        createdAt: Between(startOfWeek, endOfWeek)
+      }
+    });
+  
+    const promptCountWeek = await this.promptRepository.count({
+      where: {
+        createdAt: Between(startOfWeek, endOfWeek)
+      }
+    });
+  
+    const dayName = getDayName(new Date());
+  
+    console.log(`Today is: ${dayName}`);
     console.log(`Responses added today: ${responseCountToday}`);
     console.log(`Prompts added today: ${promptCountToday}`);
+    console.log(`Responses added this week: ${responseCountWeek}`);
+    console.log(`Prompts added this week: ${promptCountWeek}`);
   
-    return [responseCountToday, promptCountToday];
+    return {
+      day: dayName, // Name of the day (e.g., Monday)
+      dayCount: [responseCountToday, promptCountToday], // Count for today
+      weekCount: [responseCountWeek, promptCountWeek] // Count for this week
+    };
   }
   
-
 }
