@@ -279,7 +279,7 @@ export class UserService {
   
   async findAll() {
     const user = await this.userRepository.find({      
-      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
+      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true, followers:true, following:true, posts:true, comments:true}  
     });
     return user
   }
@@ -331,7 +331,7 @@ export class UserService {
 
   // In your UserService
 
-    async followUser(userId: number, targetUserId: number): Promise<void> {
+    async followUser(userId, targetUserId): Promise<void> {
       const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
       const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
 
@@ -341,41 +341,81 @@ export class UserService {
       }
     }
 
-    async unfollowUser(userId: number, targetUserId: number): Promise<void> {
-      const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
-      const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
+    // async unfollowUser(userId, targetUserId): Promise<void> {
+    //   const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
+    //   const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
 
-      if (user && targetUser && user.following.includes(targetUser)) {
-        user.following = user.following.filter(u => u.id !== targetUserId);
-        await this.userRepository.save(user);
+    //   if (user && targetUser && user.following.includes(targetUser)) {
+    //     user.following = user.following.filter(u => u.id !== targetUserId);
+    //     await this.userRepository.save(user);
+    //   }
+    // }
+    async unfollowUser(userId: string, targetUserId: string): Promise<void> {
+      // Find the user with the following relationship
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['following'],
+      });
+    
+      // Find the target user
+      const targetUser = await this.userRepository.findOne({
+        where: { id: targetUserId },
+      });
+    
+      if (!user || !targetUser) {
+        console.log('User or Target User not found.');
+        return;
       }
+    
+      console.log('Following List Before:', user.following);
+    
+      // Check if the target user is in the following list
+      const isFollowing = user.following.some(followingUser => followingUser.id === targetUserId);
+    
+      if (!isFollowing) {
+        console.log('Target user is not in the following list.');
+        return;
+      }
+    
+      // Remove the target user from the following list
+      user.following = user.following.filter(followingUser => followingUser.id !== targetUserId);
+    
+      console.log('Following List After:', user.following);
+    
+      // Save the updated user with the modified following list
+      await this.userRepository.save(user);
+    
+      console.log('Successfully unfollowed the user.');
     }
+    
+    
+    
 
-    async getFollowers(userId: number): Promise<User[]> {
+    async getFollowers(userId: string): Promise<User[]> {
       const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['followers'] });
       return user.followers;
     }
 
-    async getFollowing(userId: number): Promise<User[]> {
+    async getFollowing(userId: string): Promise<User[]> {
       const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
       return user.following;
     }
 
 
     // Create a new post
-  async createPost(userId: number, title: string, content: string): Promise<Post> {
+  async createPost(userId: string, title: string, content: string): Promise<Post> {
     const post = this.postRepository.create({ title, content, user: { id: userId } });
     return await this.postRepository.save(post);
   }
 
   // Add a comment to a post
-  async addComment(postId: number, userId: number, content: string): Promise<Comment> {
+  async addComment(postId, userId, content: string): Promise<Comment> {
     const comment = this.commentRepository.create({ content, post: { id: postId }, user: { id: userId } });
     return await this.commentRepository.save(comment);
   }
 
   // Like a post
-  async likePost(postId: number, userId: number): Promise<Like> {
+  async likePost(postId, userId): Promise<Like> {
     const existingLike = await this.likeRepository.findOne({ where: { post: { id: postId }, user: { id: userId } } });
     if (!existingLike) {
       const like = this.likeRepository.create({ post: { id: postId }, user: { id: userId } });
@@ -385,11 +425,29 @@ export class UserService {
   }
 
   // Get all posts from users that the current user follows
-  async getPostsFromFollowedUsers(userId: number): Promise<Post[]> {
-    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following', 'following.posts'] });
+  // async getPostsFromFollowedUsers(userId: string): Promise<Post[]> {
+  //   const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following', 'following.posts'] });
+  //   const followedUsers = user.following;
+  //   const posts = followedUsers.flatMap(followedUser => followedUser.posts);
+  //   return posts;
+  // }
+  async getPostsFromFollowedUsers(userId: string): Promise<Post[]> {
+    // Get the user with followed users, followed users' posts, and for each post, include comments and likes
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: [
+        'following',               // Get the users the current user is following
+        'following.posts',          // Get the posts of followed users
+        'following.posts.comments', // Get the comments for each post
+        'following.posts.likes',    // Get the likes for each post
+      ],
+    });
+  
+    // Get all posts from the followed users
     const followedUsers = user.following;
     const posts = followedUsers.flatMap(followedUser => followedUser.posts);
+  
     return posts;
   }
-
+  
 }

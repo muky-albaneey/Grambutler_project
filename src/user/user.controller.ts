@@ -222,57 +222,72 @@ async reset(@Body() body: { token: string }) {
   // In your UserController
 
 @Post(':userId/follow/:targetUserId')
-async followUser(@Param('userId') userId: number, @Param('targetUserId') targetUserId: number) {
+async followUser(@Param('userId', ParseUUIDPipe) userId: string, @Param('targetUserId', ParseUUIDPipe) targetUserId: string) {
+  console.log(userId, targetUserId  )
   await this.userService.followUser(userId, targetUserId);
   return { message: 'Successfully followed the user' };
 }
 
+// @Post(':userId/unfollow/:targetUserId')
+// async unfollowUser(@Param('userId', ParseUUIDPipe) userId: string, @Param('targetUserId', ParseUUIDPipe) targetUserId: string) {
+//   console.log(userId, targetUserId  )
+//   await this.userService.unfollowUser(userId, targetUserId);
+//   return { message: 'Successfully unfollowed the user' };
+// }
 @Post(':userId/unfollow/:targetUserId')
-async unfollowUser(@Param('userId') userId: number, @Param('targetUserId') targetUserId: number) {
+async unfollowUser(
+  @Param('userId', ParseUUIDPipe) userId: string, 
+  @Param('targetUserId', ParseUUIDPipe) targetUserId: string
+) {
+  console.log('Unfollow Request - userId:', userId, 'targetUserId:', targetUserId);
   await this.userService.unfollowUser(userId, targetUserId);
   return { message: 'Successfully unfollowed the user' };
 }
 
+
 @Get(':userId/followers')
-async getFollowers(@Param('userId') userId: number) {
+async getFollowers(@Param('userId',ParseUUIDPipe) userId: string) {
   const followers = await this.userService.getFollowers(userId);
   return followers;
 }
 
 @Get(':userId/following')
-async getFollowing(@Param('userId') userId: number) {
+async getFollowing(@Param('userId',ParseUUIDPipe) userId: string) {
   const following = await this.userService.getFollowing(userId);
   return following;
 }
-
-@Post()
+ // Create a new post
+@Post('post_create')
   async createPost(
-    @Body('userId') userId: number,
+    @Body('userId') userId: string,
     @Body('title') title: string,
     @Body('content') content: string
   ) {
     return await this.userService.createPost(userId, title, content);
   }
 
+  //Add a comment to a post
   @Post(':postId/comments')
   async addComment(
-    @Param('postId') postId: number,
-    @Body('userId') userId: number,
+    @Param('postId',ParseUUIDPipe) postId: string,
+    @Body('userId') userId: string,
     @Body('content') content: string
   ) {
     return await this.userService.addComment(postId, userId, content);
   }
 
+    // Like a post
   @Post(':postId/like')
   async likePost(
-    @Param('postId') postId: number,
-    @Body('userId') userId: number
+    @Param('postId') postId: string,
+    @Body('userId') userId: string
   ) {
     return await this.userService.likePost(postId, userId);
   }
 
+    // Get all posts from users that the current user follows
   @Get('/followed/:userId')
-  async getPostsFromFollowedUsers(@Param('userId') userId: number) {
+  async getPostsFromFollowedUsers(@Param('userId') userId: string) {
     return await this.userService.getPostsFromFollowedUsers(userId);
   }
 

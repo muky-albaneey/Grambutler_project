@@ -23,23 +23,40 @@ import { Like } from './user/entities/like.entity';
     ConfigModule.forRoot({
       isGlobal : true
     }),
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        // host:  configService.get<string>('DATABASE_DEV_HOST'),
-        host: configService.get<string>('DATABASE_HOST'),
+        host: configService.get<string>('DATABASE_DEV_HOST') || 'db', // Use 'db' as the default
         port: configService.get<number>('DATABASE_PORT'),
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
         entities: [User, Onboarding, ProfileImage, ProfileImage, Settings, ResponseEntity, PromptEntity, Post, Comment, Like],
         synchronize: true,
-        migrations: ['src/migrations/*.ts'],
+        // migrations: ['src/migrations/*.ts'],
       }),
     }),
+    
+    
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => ({
+    //     type: 'postgres',
+    //     // host:  configService.get<string>('DATABASE_DEV_HOST'),
+    //     host: '127.0.0.1',
+    //     // host: configService.get<string>('DATABASE_HOST'),
+    //     port: configService.get<number>('DATABASE_PORT'),
+    //     username: configService.get<string>('DATABASE_USERNAME'),
+    //     password: configService.get<string>('DATABASE_PASSWORD'),
+    //     database: configService.get<string>('DATABASE_NAME'),
+    //     entities: [User, Onboarding, ProfileImage, ProfileImage, Settings, ResponseEntity, PromptEntity],
+    //     synchronize: true,
+    //     migrations: ['src/migrations/*.ts'],
+    //   }),
+    // }),
     UserModule,
     StripeModule,
     OpenaiModule,

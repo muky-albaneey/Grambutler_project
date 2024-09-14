@@ -34,7 +34,7 @@ export enum UserRole {
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column({nullable : true, type : 'varchar'})
     full_name?: string;
@@ -85,22 +85,39 @@ export class User {
     prompt_responses?: PromptEntity[];
 
      // Many-to-Many relation for followers and following
-     @ManyToMany(() => User, (user) => user.following)
-     @JoinTable({
-         name: 'user_followers', // Custom table name for the relation
-         joinColumn: {
-             name: 'userId',
-             referencedColumnName: 'id',
-         },
-         inverseJoinColumn: {
-             name: 'followerId',
-             referencedColumnName: 'id',
-         },
-     })
-     followers: User[];
+    //  @ManyToMany(() => User, (user) => user.following)
+    //  @JoinTable({
+    //      name: 'user_followers', // Custom table name for the relation
+    //      joinColumn: {
+    //          name: 'userId',
+    //          referencedColumnName: 'id',
+    //      },
+    //      inverseJoinColumn: {
+    //          name: 'followerId',
+    //          referencedColumnName: 'id',
+    //      },
+    //  })
+    //  followers: User[];
  
-     @ManyToMany(() => User, (user) => user.followers)
-     following: User[];
+    //  @ManyToMany(() => User, (user) => user.followers)
+    //  following: User[];
+    @ManyToMany(() => User, (user) => user.followers)
+@JoinTable({
+    name: 'user_followers',
+    joinColumn: {
+        name: 'userId',
+        referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+        name: 'followerId',
+        referencedColumnName: 'id',
+    },
+})
+following: User[];
+
+@ManyToMany(() => User, (user) => user.following)
+followers: User[];
+
 
      @OneToMany(() => Post, (post) => post.user, { cascade: true })
      posts: Post[];

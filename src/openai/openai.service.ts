@@ -23,7 +23,7 @@ export class OpenaiService {
 
   async captionsAi(
     prompt: string,
-    userId: number, // Add userId as a parameter
+    userId: string, // Add userId as a parameter
     no_of_captions: number,
     words_per_caption: number,
     tone: string,
@@ -107,7 +107,7 @@ export class OpenaiService {
     }
   }
 
-  async promptAi(prompt: string, userId: number, ): Promise<string> {
+  async promptAi(prompt: string, userId: string, ): Promise<string> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

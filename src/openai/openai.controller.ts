@@ -10,7 +10,7 @@ export class OpenaiController {
   @Post('captions')
   async getChatCompletion(
     @Body('prompt') prompt: string,
-    @Body('userId') userId: number, // Accept userId in the request body
+    @Body('userId') userId: string, // Accept userId in the request body
     @Body('no_of_captions') no_of_captions: number,
     @Body('words_per_caption') words_per_caption: number,
     @Body('tone') tone: string,
@@ -34,7 +34,7 @@ export class OpenaiController {
   // @Param('id', ParseUUIDPipe)
 
   @Post('prompt')
-  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: number,): Promise<string> {
+  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: string,): Promise<string> {
     return this.openaiService.promptAi(prompt, userId);
   }
 

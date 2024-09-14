@@ -1,33 +1,33 @@
-version: '3.8'
+# version: '3.8'
 
-services:
-  nestjs_api_dev:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    environment:
-      PORT: 3000
-      NODE_ENV: development
-    volumes:
-      - ./src:/usr/src/app/src
+# services:
+#   nestjs_api_dev:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - '3000:3000'
+#     environment:
+#       PORT: 3000
+#       NODE_ENV: development
+#     volumes:
+#       - ./src:/usr/src/app/src
 
-  db:
-    image: postgres
-    restart: always
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_PASSWORD: iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
-      POSTGRES_USER: muky_albany
-      POSTGRES_DB: grambutler
+#   db:
+#     image: postgres
+#     restart: always
+#     ports:
+#       - '5432:5432'
+#     environment:
+#       POSTGRES_PASSWORD: iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
+#       POSTGRES_USER: muky_albany
+#       POSTGRES_DB: grambutler
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - '8080:8080'
+#   adminer:
+#     image: adminer
+#     restart: always
+#     ports:
+#       - '8080:8080'
 # services:
 #   nestjs_api_dev:
 #     build:
@@ -58,3 +58,44 @@ services:
 #     restart: always
 #     ports:
 #       - '8080:8080'
+version: '3.8'
+services:
+  nestjs_api_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      DATABASE_HOST: db
+    volumes:
+      - ./src:/usr/src/app/src
+    # command: ["sh", "-c", "npx typeorm migration:run -d src/data-source.ts && npm run start:dev"]
+    networks:
+      - grambutler_project_default
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: iOoWAcFOvQUPnqooXU9II2kvNLgd7KQ0
+      POSTGRES_USER: muky_albany
+      POSTGRES_DB: grambutler
+    networks:
+      - grambutler_project_default
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '8080:8080'
+    networks:
+      - grambutler_project_default
+
+networks:
+  grambutler_project_default:
+    driver: bridge
