@@ -12,10 +12,13 @@ import { ProfileImage } from './entities/profile.entity';
 import { Settings } from './entities/setting.entity';
 import { ResponseEntity } from './entities/response.entity';
 import { PromptEntity } from './entities/reponse_prompt.entity';
+import { Post } from './entities/post.entity';
+import { Comment } from './entities/comment.entity';
+import { Like } from './entities/like.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity, PromptEntity]),
+    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity, PromptEntity, Post, Comment, Like]),
     ConfigModule, // Ensure ConfigModule is imported
     JwtModule.registerAsync({
       imports: [ConfigModule],
