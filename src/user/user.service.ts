@@ -263,9 +263,32 @@ export class UserService {
     //   relations: ['onboard_info'],
       
     // });
-    const user = await this.userRepository.findOne({  
+    // const user = await this.userRepository.findOne({  
+    //   where: { id },
+    //   relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true,
+    //     following : true,   
+    //     followers:true,            // Get the users the current user is following
+    //     posts:true,         // Get the posts of followed users
+        
+    //   }      // relations: {profile_bg: true, profile_image : true},
+    // });
+    const user = await this.userRepository.findOne({
       where: { id },
-      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}      // relations: {profile_bg: true, profile_image : true},
+      relations: [
+        'onboard_info',
+        'profile_image',
+        'settings',
+        'caption_responses',
+        'prompt_responses',
+        'following',
+        'following.posts',
+        'following.posts.comments',
+        'following.posts.likes',
+        'followers',
+        'posts',
+        'posts.comments',
+        'posts.likes'
+      ],
     });
     
     console.log("User found: ", user);
@@ -278,9 +301,28 @@ export class UserService {
   }
   
   async findAll() {
-    const user = await this.userRepository.find({      
-      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true, followers:true, following:true, posts:true, comments:true}  
+    // const user = await this.userRepository.find({      
+    //   relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true, followers:true, following:true, posts:true, comments:true}  
+    // });
+    const user = await this.userRepository.find({
+  
+      relations: [
+        'onboard_info',
+        'profile_image',
+        'settings',
+        'caption_responses',
+        'prompt_responses',
+        'following',
+        'following.posts',
+        'following.posts.comments',
+        'following.posts.likes',
+        'followers',
+        'posts',
+        'posts.comments',
+        'posts.likes'
+      ],
     });
+    
     return user
   }
 

@@ -28,7 +28,8 @@ import { Like } from './user/entities/like.entity';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DATABASE_DEV_HOST') || 'db', // Use 'db' as the default
+        host: configService.get<string>('DATABASE_HOST'),
+        // host: configService.get<string>('DATABASE_DEV_HOST') || 'db', // Use 'db' as the default
         port: configService.get<number>('DATABASE_PORT'),
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
