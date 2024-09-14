@@ -11,6 +11,9 @@ import { Onboarding } from './entities/onoard.entity';
 import * as path from 'path';
 import { ProfileImage } from './entities/profile.entity';
 import { Settings } from './entities/setting.entity';
+import { Post } from './entities/post.entity';
+import { Comment } from './entities/comment.entity';
+import { Like } from './entities/like.entity';
 
 @Injectable()
 export class UserService {
@@ -28,7 +31,18 @@ export class UserService {
     private readonly ProfileBgRepository: Repository<ProfileImage>,
 
     @InjectRepository(Settings)
-    private readonly SettingsRepository: Repository<Settings>
+    private readonly SettingsRepository: Repository<Settings>,
+    
+    @InjectRepository(Post)
+    @InjectRepository(Post) private postRepository: Repository<Post>,
+
+    
+    @InjectRepository(Comment)
+    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
+
+
+    @InjectRepository(Like)
+    @InjectRepository(Like) private likeRepository: Repository<Like>,
     
   ) {}
 
@@ -314,4 +328,68 @@ export class UserService {
     // Save the updated user entity to the database
     return await this.userRepository.save(user);
   }
+
+  // In your UserService
+
+    async followUser(userId: number, targetUserId: number): Promise<void> {
+      const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
+      const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
+
+      if (user && targetUser && !user.following.includes(targetUser)) {
+        user.following.push(targetUser);
+        await this.userRepository.save(user);
+      }
+    }
+
+    async unfollowUser(userId: number, targetUserId: number): Promise<void> {
+      const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
+      const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
+
+      if (user && targetUser && user.following.includes(targetUser)) {
+        user.following = user.following.filter(u => u.id !== targetUserId);
+        await this.userRepository.save(user);
+      }
+    }
+
+    async getFollowers(userId: number): Promise<User[]> {
+      const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['followers'] });
+      return user.followers;
+    }
+
+    async getFollowing(userId: number): Promise<User[]> {
+      const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
+      return user.following;
+    }
+
+
+    // Create a new post
+  async createPost(userId: number, title: string, content: string): Promise<Post> {
+    const post = this.postRepository.create({ title, content, user: { id: userId } });
+    return await this.postRepository.save(post);
+  }
+
+  // Add a comment to a post
+  async addComment(postId: number, userId: number, content: string): Promise<Comment> {
+    const comment = this.commentRepository.create({ content, post: { id: postId }, user: { id: userId } });
+    return await this.commentRepository.save(comment);
+  }
+
+  // Like a post
+  async likePost(postId: number, userId: number): Promise<Like> {
+    const existingLike = await this.likeRepository.findOne({ where: { post: { id: postId }, user: { id: userId } } });
+    if (!existingLike) {
+      const like = this.likeRepository.create({ post: { id: postId }, user: { id: userId } });
+      return await this.likeRepository.save(like);
+    }
+    return existingLike; // User has already liked the post
+  }
+
+  // Get all posts from users that the current user follows
+  async getPostsFromFollowedUsers(userId: number): Promise<Post[]> {
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following', 'following.posts'] });
+    const followedUsers = user.following;
+    const posts = followedUsers.flatMap(followedUser => followedUser.posts);
+    return posts;
+  }
+
 }

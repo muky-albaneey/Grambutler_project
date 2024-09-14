@@ -219,5 +219,63 @@ async reset(@Body() body: { token: string }) {
     return await this.userService.updateSetting(id, body)
   }
 
+  // In your UserController
+
+@Post(':userId/follow/:targetUserId')
+async followUser(@Param('userId') userId: number, @Param('targetUserId') targetUserId: number) {
+  await this.userService.followUser(userId, targetUserId);
+  return { message: 'Successfully followed the user' };
+}
+
+@Post(':userId/unfollow/:targetUserId')
+async unfollowUser(@Param('userId') userId: number, @Param('targetUserId') targetUserId: number) {
+  await this.userService.unfollowUser(userId, targetUserId);
+  return { message: 'Successfully unfollowed the user' };
+}
+
+@Get(':userId/followers')
+async getFollowers(@Param('userId') userId: number) {
+  const followers = await this.userService.getFollowers(userId);
+  return followers;
+}
+
+@Get(':userId/following')
+async getFollowing(@Param('userId') userId: number) {
+  const following = await this.userService.getFollowing(userId);
+  return following;
+}
+
+@Post()
+  async createPost(
+    @Body('userId') userId: number,
+    @Body('title') title: string,
+    @Body('content') content: string
+  ) {
+    return await this.userService.createPost(userId, title, content);
+  }
+
+  @Post(':postId/comments')
+  async addComment(
+    @Param('postId') postId: number,
+    @Body('userId') userId: number,
+    @Body('content') content: string
+  ) {
+    return await this.userService.addComment(postId, userId, content);
+  }
+
+  @Post(':postId/like')
+  async likePost(
+    @Param('postId') postId: number,
+    @Body('userId') userId: number
+  ) {
+    return await this.userService.likePost(postId, userId);
+  }
+
+  @Get('/followed/:userId')
+  async getPostsFromFollowedUsers(@Param('userId') userId: number) {
+    return await this.userService.getPostsFromFollowedUsers(userId);
+  }
+
+
 
 }

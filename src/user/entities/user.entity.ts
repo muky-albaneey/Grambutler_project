@@ -7,7 +7,9 @@ import {
     OneToOne,
     JoinColumn,
     BeforeInsert,
-    OneToMany
+    OneToMany,
+    ManyToMany,
+    JoinTable
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Onboarding } from './onoard.entity';
@@ -15,6 +17,9 @@ import { ProfileImage } from './profile.entity';
 import { Settings } from './setting.entity';
 import { ResponseEntity } from './response.entity';
 import { PromptEntity } from './reponse_prompt.entity';
+import { Post } from './post.entity';
+import { Comment } from './comment.entity';
+import { Like } from './like.entity';
 // import { ProfileBg } from './profile-bg.entity';
 // import { ProfileImage } from './profile-image.entity';
 // import { File } from 'src/files/entities/file.entity';
@@ -72,19 +77,39 @@ export class User {
     @JoinColumn()
     settings?: Settings;
 
-    // @OneToMany(() => ResponseEntity, (response) => response.user, { cascade: true })
-    // responses?: ResponseEntity[];
-
+   
     @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
     caption_responses?: ResponseEntity[];
 
     @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
     prompt_responses?: PromptEntity[];
 
-    // @OneToMany(() => ResponseEntity, (response) => response.user)
-    // responses: ResponseEntity[];
-    // @OneToMany(() => File, file => file.user, { cascade: true })
-    // files?: File[];
+     // Many-to-Many relation for followers and following
+     @ManyToMany(() => User, (user) => user.following)
+     @JoinTable({
+         name: 'user_followers', // Custom table name for the relation
+         joinColumn: {
+             name: 'userId',
+             referencedColumnName: 'id',
+         },
+         inverseJoinColumn: {
+             name: 'followerId',
+             referencedColumnName: 'id',
+         },
+     })
+     followers: User[];
+ 
+     @ManyToMany(() => User, (user) => user.followers)
+     following: User[];
+
+     @OneToMany(() => Post, (post) => post.user, { cascade: true })
+     posts: Post[];
+   
+     @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
+     comments: Comment[];
+   
+     @OneToMany(() => Like, (like) => like.user, { cascade: true })
+     likes: Like[];
 
     constructor(user :Partial<User>){
         Object.assign(this, user)
@@ -92,10 +117,3 @@ export class User {
    
 }
 
-
-// @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
-// caption_responses?: ResponseEntity[];
-
-
-// @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
-// prompt_responses?: PromptEntity[];
