@@ -22,6 +22,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { Task } from './tasks/entities/task.entity';
 
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,6 +48,7 @@ import { Task } from './tasks/entities/task.entity';
     StripeModule,
     OpenaiModule,
     TasksModule,
+   
   ],
   controllers: [AppController],
   providers: [AppService, MailService],
