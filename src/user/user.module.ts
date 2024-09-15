@@ -15,11 +15,14 @@ import { PromptEntity } from './entities/reponse_prompt.entity';
 import { Post } from './entities/post.entity';
 import { Comment } from './entities/comment.entity';
 import { Like } from './entities/like.entity';
+import { Category } from './entities/category.entity';
+import { PostImage } from './entities/post-image.entity';
+import { Task } from 'src/tasks/entities/task.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity, PromptEntity, Post, Comment, Like]),
-    ConfigModule, // Ensure ConfigModule is imported
+    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity, PromptEntity, Post, Comment, Like, Category, PostImage, Task]),
+    ConfigModule, 
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

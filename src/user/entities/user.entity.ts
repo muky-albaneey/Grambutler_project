@@ -20,9 +20,7 @@ import { PromptEntity } from './reponse_prompt.entity';
 import { Post } from './post.entity';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
-// import { ProfileBg } from './profile-bg.entity';
-// import { ProfileImage } from './profile-image.entity';
-// import { File } from 'src/files/entities/file.entity';
+import { Task } from 'src/tasks/entities/task.entity';
 
 
 export enum UserRole {
@@ -44,11 +42,6 @@ export class User {
 
     @Column({ type: 'varchar', nullable: false  })
     password: string;
-
-//     @BeforeInsert()
-//     async hashPassword(){
-//       this.password = await bcrypt.hash(this.password, 10);        
-//    }
 
     @Column({type: 'varchar', nullable : true})
     country?: string;
@@ -84,39 +77,22 @@ export class User {
     @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
     prompt_responses?: PromptEntity[];
 
-     // Many-to-Many relation for followers and following
-    //  @ManyToMany(() => User, (user) => user.following)
-    //  @JoinTable({
-    //      name: 'user_followers', // Custom table name for the relation
-    //      joinColumn: {
-    //          name: 'userId',
-    //          referencedColumnName: 'id',
-    //      },
-    //      inverseJoinColumn: {
-    //          name: 'followerId',
-    //          referencedColumnName: 'id',
-    //      },
-    //  })
-    //  followers: User[];
- 
-    //  @ManyToMany(() => User, (user) => user.followers)
-    //  following: User[];
     @ManyToMany(() => User, (user) => user.followers)
-@JoinTable({
-    name: 'user_followers',
-    joinColumn: {
-        name: 'userId',
-        referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-        name: 'followerId',
-        referencedColumnName: 'id',
-    },
-})
-following: User[];
+    @JoinTable({
+        name: 'user_followers',
+        joinColumn: {
+            name: 'userId',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'followerId',
+            referencedColumnName: 'id',
+        },
+    })
+    following: User[];
 
-@ManyToMany(() => User, (user) => user.following)
-followers: User[];
+    @ManyToMany(() => User, (user) => user.following)
+    followers: User[];
 
 
      @OneToMany(() => Post, (post) => post.user, { cascade: true })
@@ -128,6 +104,8 @@ followers: User[];
      @OneToMany(() => Like, (like) => like.user, { cascade: true })
      likes: Like[];
 
+     @OneToMany(() => Task, (task) => task.user, { cascade: true })
+    tasks: Task[];
     constructor(user :Partial<User>){
         Object.assign(this, user)
     }

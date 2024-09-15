@@ -2,12 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto, SettingDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-// import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Controller('user')
 export class UserController {
@@ -228,12 +227,7 @@ async followUser(@Param('userId', ParseUUIDPipe) userId: string, @Param('targetU
   return { message: 'Successfully followed the user' };
 }
 
-// @Post(':userId/unfollow/:targetUserId')
-// async unfollowUser(@Param('userId', ParseUUIDPipe) userId: string, @Param('targetUserId', ParseUUIDPipe) targetUserId: string) {
-//   console.log(userId, targetUserId  )
-//   await this.userService.unfollowUser(userId, targetUserId);
-//   return { message: 'Successfully unfollowed the user' };
-// }
+
 @Post(':userId/unfollow/:targetUserId')
 async unfollowUser(
   @Param('userId', ParseUUIDPipe) userId: string, 
@@ -256,25 +250,44 @@ async getFollowing(@Param('userId',ParseUUIDPipe) userId: string) {
   const following = await this.userService.getFollowing(userId);
   return following;
 }
- // Create a new post
-@Post('post_create')
-  async createPost(
-    @Body('userId') userId: string,
-    @Body('title') title: string,
-    @Body('content') content: string
-  ) {
-    return await this.userService.createPost(userId, title, content);
+
+@Get(':userId/followers/count')
+async countFollowers(@Param('userId', ParseUUIDPipe) userId: string): Promise<number> {
+  return await this.userService.countFollowers(userId);
+}
+
+  // In your UserController
+  @Get(':userId/following/count')
+  async countFollowing(@Param('userId', ParseUUIDPipe) userId: string): Promise<number> {
+    return await this.userService.countFollowing(userId);
   }
 
-  //Add a comment to a post
-  @Post(':postId/comments')
-  async addComment(
-    @Param('postId',ParseUUIDPipe) postId: string,
-    @Body('userId') userId: string,
-    @Body('content') content: string
-  ) {
-    return await this.userService.addComment(postId, userId, content);
+    // Get all posts from users that the current user follows
+  @Get('/followed/:userId')
+  async getPostsFromFollowedUsers(@Param('userId') userId: string) {
+    return await this.userService.getPostsFromFollowedUsers(userId);
   }
+
+  @Post(':userId/post_create')
+@UseInterceptors(FileInterceptor('file')) // Handle file upload
+async createPostWithImage(
+  @Param('userId') userId: string,
+  @Body() createPostDto: CreatePostDto,
+  @UploadedFile() file?: Express.Multer.File, // Image is optional
+) {
+  return await this.userService.createPostWithImage(createPostDto, userId, file);
+}
+
+  // Add a comment to a post
+@Post(':postId/comments')
+async addComment(
+  @Param('postId', ParseUUIDPipe) postId: string,
+  @Body('userId') userId: string,
+  @Body('content') content: string
+) {
+  return await this.userService.addComment(postId, userId, content);
+}
+
 
     // Like a post
   @Post(':postId/like')
@@ -285,12 +298,26 @@ async getFollowing(@Param('userId',ParseUUIDPipe) userId: string) {
     return await this.userService.likePost(postId, userId);
   }
 
-    // Get all posts from users that the current user follows
-  @Get('/followed/:userId')
-  async getPostsFromFollowedUsers(@Param('userId') userId: string) {
-    return await this.userService.getPostsFromFollowedUsers(userId);
-  }
+@Get('all_posts')
+async getAllPostsWithCategory() {
+  return await this.userService.getAllPostsWithCategory();
+}
 
+@Get('posts/count-by-user')
+async getPostCountByUser(): Promise<any> {
+  return await this.userService.countPostsByUser();
+}
+
+@Get(':userId/post-count')
+async countPostsByUser(@Param('userId') userId: string): Promise<any> {
+  return await this.userService.countPostsByUserHimself(userId);
+}
+
+@Get(':userId/posts-with-likes')
+async getPostsWithLikesByUser(@Param('userId', ParseUUIDPipe) userId: string) {
+  const posts = await this.userService.countPostsWithLikesByUser(userId);
+  return posts;
+}
 
 
 }

@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, NotFoundException, UnauthorizedExcepti
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
@@ -14,6 +13,10 @@ import { Settings } from './entities/setting.entity';
 import { Post } from './entities/post.entity';
 import { Comment } from './entities/comment.entity';
 import { Like } from './entities/like.entity';
+import { CreatePostDto } from './dto/create-post.dto';
+import { Category } from './entities/category.entity';
+import { PostImage } from './entities/post-image.entity';
+
 
 @Injectable()
 export class UserService {
@@ -40,9 +43,16 @@ export class UserService {
     @InjectRepository(Comment)
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
 
-
+    
     @InjectRepository(Like)
     @InjectRepository(Like) private likeRepository: Repository<Like>,
+
+
+    @InjectRepository(Category)
+    @InjectRepository(Category) private categoryRepository: Repository<Category>,
+
+    @InjectRepository(PostImage)
+    @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
     
   ) {}
 
@@ -236,11 +246,6 @@ export class UserService {
 
       if(body.location !== "") user.settings.location = body?.location;
       else user.settings.location = user.settings.location;
-
-      // user.settings.lastname = body?.lastname;
-      // user.settings.email = body?.email;
-      // user.settings.username = body?.username;
-      // user.settings.location = body?.location;
       
       console.log("Updating existing profile info: ", user.settings);
       await this.SettingsRepository.save(user.settings);
@@ -258,20 +263,7 @@ export class UserService {
     return await this.userRepository.save(user);
   }
   async findOne(id){
-    // const user = await this.userRepository.findOne({
-    //   where: { id },
-    //   relations: ['onboard_info'],
-      
-    // });
-    // const user = await this.userRepository.findOne({  
-    //   where: { id },
-    //   relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true,
-    //     following : true,   
-    //     followers:true,            // Get the users the current user is following
-    //     posts:true,         // Get the posts of followed users
-        
-    //   }      // relations: {profile_bg: true, profile_image : true},
-    // });
+
     const user = await this.userRepository.findOne({
       where: { id },
       relations: [
@@ -284,10 +276,13 @@ export class UserService {
         'following.posts',
         'following.posts.comments',
         'following.posts.likes',
+        'following.posts.post_image', 
         'followers',
         'posts',
         'posts.comments',
-        'posts.likes'
+        'posts.likes',
+        'posts.post_image',
+        'tasks'
       ],
     });
     
@@ -300,12 +295,9 @@ export class UserService {
     return user;
   }
   
+ 
   async findAll() {
-    // const user = await this.userRepository.find({      
-    //   relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true, followers:true, following:true, posts:true, comments:true}  
-    // });
-    const user = await this.userRepository.find({
-  
+    const users = await this.userRepository.find({
       relations: [
         'onboard_info',
         'profile_image',
@@ -316,16 +308,18 @@ export class UserService {
         'following.posts',
         'following.posts.comments',
         'following.posts.likes',
+        'following.posts.post_image', 
         'followers',
         'posts',
         'posts.comments',
-        'posts.likes'
+        'posts.likes',
+        'posts.post_image',
+        'tasks'
       ],
     });
-    
-    return user
+  
+    return users;
   }
-
   
   async updateProfileBg(id, image: { originalname: string, buffer: Buffer }): Promise<User> {
     // Check if the user exists    
@@ -383,15 +377,7 @@ export class UserService {
       }
     }
 
-    // async unfollowUser(userId, targetUserId): Promise<void> {
-    //   const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
-    //   const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
 
-    //   if (user && targetUser && user.following.includes(targetUser)) {
-    //     user.following = user.following.filter(u => u.id !== targetUserId);
-    //     await this.userRepository.save(user);
-    //   }
-    // }
     async unfollowUser(userId: string, targetUserId: string): Promise<void> {
       // Find the user with the following relationship
       const user = await this.userRepository.findOne({
@@ -443,36 +429,138 @@ export class UserService {
       return user.following;
     }
 
+    async countFollowers(userId: string): Promise<number> {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['followers'],
+      });
+      
+      // Return the number of followers
+      return user.followers.length;
+    }
 
-    // Create a new post
-  async createPost(userId: string, title: string, content: string): Promise<Post> {
-    const post = this.postRepository.create({ title, content, user: { id: userId } });
-    return await this.postRepository.save(post);
-  }
+      async countFollowing(userId: string): Promise<number> {
+        const user = await this.userRepository.findOne({
+          where: { id: userId },
+          relations: ['following'],
+        });
+        
+        // Return the number of people the user is following
+        return user.following.length;
+      }
+
+
+    async createPostWithImage(
+      createPostDto: CreatePostDto,
+      userId: string,
+      file?: Express.Multer.File,
+    ): Promise<Post> {
+      const { title, content, categoryName } = createPostDto;
+  
+      // Find or create the category
+      let category = await this.categoryRepository.findOne({ where: { name: categoryName } });
+      if (!category) {
+        category = this.categoryRepository.create({ name: categoryName });
+        await this.categoryRepository.save(category);
+      }
+  
+      // Find the user  
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      let savedPostImage: PostImage | null = null;
+  
+      // Handle image if provided
+      if (file) {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const base64Image = file.buffer.toString('base64');
+  
+        const postImage = this.postImageRepository.create({
+          name: file.originalname,
+          base64: base64Image,
+          ext: ext.slice(1),
+          content: file.buffer,
+        });
+  
+        savedPostImage = await this.postImageRepository.save(postImage);
+      }
+  
+      // Create the post
+      const newPost = this.postRepository.create({
+        title,
+        content,
+        category,
+        user,
+        post_image: savedPostImage ?? null, // Add image only if available
+      });
+  
+      return await this.postRepository.save(newPost);
+    }
 
   // Add a comment to a post
   async addComment(postId, userId, content: string): Promise<Comment> {
-    const comment = this.commentRepository.create({ content, post: { id: postId }, user: { id: userId } });
+    // Ensure the post exists
+    const post = await this.postRepository.findOne({ where: { id: postId } });
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    // Ensure the user exists
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Create the comment
+    const comment = this.commentRepository.create({
+      content,
+      post: { id: postId }, // Associate the comment with the post
+      user: { id: userId }  // Associate the comment with the user
+    });
+
+    // Save the comment to the database
     return await this.commentRepository.save(comment);
   }
 
   // Like a post
-  async likePost(postId, userId): Promise<Like> {
-    const existingLike = await this.likeRepository.findOne({ where: { post: { id: postId }, user: { id: userId } } });
-    if (!existingLike) {
-      const like = this.likeRepository.create({ post: { id: postId }, user: { id: userId } });
-      return await this.likeRepository.save(like);
-    }
-    return existingLike; // User has already liked the post
+async likePost(postId, userId): Promise<Like> {
+  // Ensure the post exists
+  const post = await this.postRepository.findOne({ where: { id: postId } });
+  if (!post) {
+    throw new NotFoundException('Post not found');
   }
 
-  // Get all posts from users that the current user follows
-  // async getPostsFromFollowedUsers(userId: string): Promise<Post[]> {
-  //   const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following', 'following.posts'] });
-  //   const followedUsers = user.following;
-  //   const posts = followedUsers.flatMap(followedUser => followedUser.posts);
-  //   return posts;
-  // }
+  // Ensure the user exists
+  const user = await this.userRepository.findOne({ where: { id: userId } });
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  // Check if the user has already liked the post
+  const existingLike = await this.likeRepository.findOne({
+    where: { post: { id: postId }, user: { id: userId } }
+  });
+
+  if (!existingLike) {
+    // If no like exists, create a new one
+    const like = this.likeRepository.create({
+      post: { id: postId }, // Associate the like with the post
+      user: { id: userId }  // Associate the like with the user
+    });
+
+    // Save the like to the database
+    return await this.likeRepository.save(like);
+  }
+
+  // Return the existing like (user has already liked the post)
+  return existingLike;
+}
+
+
+
+
   async getPostsFromFollowedUsers(userId: string): Promise<Post[]> {
     // Get the user with followed users, followed users' posts, and for each post, include comments and likes
     const user = await this.userRepository.findOne({
@@ -491,5 +579,65 @@ export class UserService {
   
     return posts;
   }
+
+async getAllPostsWithCategory(): Promise<Post[]> {
+  return await this.postRepository.find({
+    relations: ['category', 'post_image'],
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      category: { name: true },  // Select the category name
+      post_image: { name: true, base64: true, ext: true},
+    },
+  });
+}
+
+async countPostsByUser(): Promise<any> {
+  const result = await this.postRepository
+    .createQueryBuilder('post')
+    .select('post.userId', 'userId') // Select the user ID
+    .addSelect('COUNT(post.id)', 'postCount') // Count the posts
+    .groupBy('post.userId') // Group by user ID
+    .getRawMany(); // Get raw results
+
+  return result;
+}
+async countPostsByUserHimself(userId: string): Promise<any> {
+  const postCountWithImages = await this.postRepository
+    .createQueryBuilder('post')
+    .leftJoinAndSelect('post.post_image', 'post_image') // Join the post_image relation
+    .where('post.userId = :userId', { userId })
+    .select(['post.id', 'post.title', 'post_image.name', 'post_image.base64', 'post_image.ext'])
+    .getCount(); // Get the count of posts by this user
+
+  return postCountWithImages;
+}
+
+
+async countPostsWithLikesByUser(userId: string): Promise<any> {
+  const postsWithLikesAndImages = await this.postRepository
+    .createQueryBuilder('post')
+    .leftJoinAndSelect('post.likes', 'like') // Join the likes relation
+    .leftJoinAndSelect('post.post_image', 'post_image') // Join the post_image relation
+    .where('post.userId = :userId', { userId }) // Filter by userId
+    .select([
+      'post.id', 
+      'post.title', 
+      'post.content', 
+      'COUNT(like.id) AS likeCount', 
+      'post_image.name', 
+      'post_image.base64', 
+      'post_image.ext'
+    ]) // Select post details, image details, and count of likes
+    .groupBy('post.id, post_image.id') // Group by post and post_image
+    .getRawMany(); // Get the raw results
+
+  return postsWithLikesAndImages;
+}
+
+
+
   
 }
