@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
@@ -639,7 +639,22 @@ async countPostsWithLikesByUser(userId: string): Promise<any> {
   return postsWithLikesAndImages;
 }
 
+async changeUserRole(userId, newRole: UserRole): Promise<User> {
+  const user = await this.userRepository.findOne({
+    where: { id: userId },
+  });
 
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  if (!Object.values(UserRole).includes(newRole)) {
+    throw new BadRequestException('Invalid role');
+  }
+
+  user.role = newRole;
+  return await this.userRepository.save(user);
+}
 
   
 }

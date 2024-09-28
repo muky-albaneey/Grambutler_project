@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UserRole } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -429,5 +430,18 @@ async getPostsWithLikesByUser(@Param('userId', ParseUUIDPipe) userId: string, @R
     
   });
 }
-
+@Patch(':id/role')
+async changeUserRole(
+  @Param('id') userId: string,
+  @Body('role') newRole: UserRole,
+  @Res({ passthrough: true }) response: Response
+) {
+  const result = await this.userService.changeUserRole(userId, newRole);
+  return response.status(HttpStatus.OK).json({
+    statusCode: HttpStatus.OK,
+    message: 'users role',
+    data: result,
+  
+});
+}
 }
