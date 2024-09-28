@@ -377,7 +377,6 @@ export class UserService {
       }
     }
 
-
     async unfollowUser(userId: string, targetUserId: string): Promise<void> {
       // Find the user with the following relationship
       const user = await this.userRepository.findOne({
@@ -568,6 +567,7 @@ async likePost(postId, userId): Promise<Like> {
       relations: [
         'following',               // Get the users the current user is following
         'following.posts',          // Get the posts of followed users
+        'following.posts.user',     // Get the user who created each post
         'following.posts.comments', // Get the comments for each post
         'following.posts.likes',    // Get the likes for each post
       ],
@@ -590,6 +590,7 @@ async getAllPostsWithCategory(): Promise<Post[]> {
       createdAt: true,
       category: { name: true },  // Select the category name
       post_image: { name: true, base64: true, ext: true},
+      user: { id: true, full_name: true, email: true, password:true, country:true, state:true, role: true},
     },
   });
 }
@@ -629,7 +630,8 @@ async countPostsWithLikesByUser(userId: string): Promise<any> {
       'COUNT(like.id) AS likeCount', 
       'post_image.name', 
       'post_image.base64', 
-      'post_image.ext'
+      'post_image.ext',
+      'post.user'
     ]) // Select post details, image details, and count of likes
     .groupBy('post.id, post_image.id') // Group by post and post_image
     .getRawMany(); // Get the raw results

@@ -384,7 +384,7 @@ async addComment(
       data: result,
     
     });
-  }
+}
 
 @Get('all_posts')
 async getAllPostsWithCategory(@Res({ passthrough: true }) response: Response) {
@@ -427,9 +427,7 @@ async getPostsWithLikesByUser(@Param('userId', ParseUUIDPipe) userId: string, @R
       message: 'Like a post',
       data: posts,
     
-    });
-  // return posts;
+  });
 }
-
 
 }
