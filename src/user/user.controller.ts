@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto, SettingDto } from './dto/update-user.dto';
@@ -444,4 +444,10 @@ async changeUserRole(
   
 });
 }
+@Delete(':id')
+@HttpCode(HttpStatus.NO_CONTENT) // Sets the response status to 204 No Content
+async deleteProduct(@Param('id') id: string) {
+  await this.userService.deleteUser(id);
+}
+
 }

@@ -655,6 +655,12 @@ async changeUserRole(userId, newRole: UserRole): Promise<User> {
   user.role = newRole;
   return await this.userRepository.save(user);
 }
+async deleteUser(id): Promise<void> {
+  const result = await this.userRepository.delete(id);
 
+  if (result.affected === 0) {
+    throw new NotFoundException(`user with ID ${id} not found`);
+  }
+}
   
 }
