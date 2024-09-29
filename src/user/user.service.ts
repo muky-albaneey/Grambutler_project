@@ -582,7 +582,7 @@ async likePost(postId, userId): Promise<Like> {
 
 async getAllPostsWithCategory(): Promise<Post[]> {
   return await this.postRepository.find({
-    relations: ['category', 'post_image'],
+    relations: ['category', 'post_image','user'],
     select: {
       id: true,
       title: true,
