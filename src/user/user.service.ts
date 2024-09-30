@@ -54,7 +54,7 @@ export class UserService {
     @InjectRepository(PostImage)
     @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
 
-    private dataSource: DataSource, // Inject the DataSource
+
     
   ) {}
 
@@ -582,20 +582,41 @@ async likePost(postId, userId): Promise<Like> {
     return posts;
   }
 
+// async getAllPostsWithCategory(): Promise<Post[]> {
+//   return await this.postRepository.find({
+//     relations: ['category', 'post_image','user', 'comments','post_image','category'],
+//     select: {
+//       id: true,
+//       title: true,
+//       content: true,
+//       createdAt: true,
+//       category: { name: true },  // Select the category name
+//       post_image: { name: true, base64: true, ext: true},
+//       user: { id: true, full_name: true, email: true, password:true, country:true, state:true, role: true},
+//     },
+//   });
+// }
 async getAllPostsWithCategory(): Promise<Post[]> {
   return await this.postRepository.find({
-    relations: ['category', 'post_image','user'],
+    relations: ['category', 'post_image', 'user', 'comments', 'comments.user'], // Include user for comments
     select: {
       id: true,
       title: true,
       content: true,
       createdAt: true,
-      category: { name: true },  // Select the category name
-      post_image: { name: true, base64: true, ext: true},
-      user: { id: true, full_name: true, email: true, password:true, country:true, state:true, role: true},
+      category: { id: true, name: true }, // Select category id and name
+      post_image: { id: true, name: true, base64: true, ext: true }, // Select post image details
+      user: { id: true, full_name: true, email: true }, // Avoid selecting sensitive fields like password
+      comments: {
+        id: true,
+        content: true,
+        createdAt: true,
+        user: { id: true, full_name: true }, // Include user details for comments
+      },
     },
   });
 }
+
 
 async countPostsByUser(): Promise<any> {
   const result = await this.postRepository
@@ -657,22 +678,5 @@ async changeUserRole(userId, newRole: UserRole): Promise<User> {
   user.role = newRole;
   return await this.userRepository.save(user);
 }
-// async deleteUser(id): Promise<void> {
-//   const result = await this.userRepository.delete(id);
-
-//   if (result.affected === 0) {
-//     throw new NotFoundException(`user with ID ${id} not found`);
-//   }
-// }
-async deleteUser(id: string): Promise<void> {
-  await this.entityManager.transaction(async (manager) => {
-    const result = await manager.delete(User, id);
-    
-    if (result.affected === 0) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-  });
-}
-
   
 }

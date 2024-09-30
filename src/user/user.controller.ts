@@ -445,10 +445,6 @@ async changeUserRole(
   
 });
 }
-@Delete(':id')
-@HttpCode(HttpStatus.NO_CONTENT) // Sets the response status to 204 No Content
-async deleteProduct(@Param('id') id: string) {
-  await this.userService.deleteUser(id);
-}
+
 
 }
