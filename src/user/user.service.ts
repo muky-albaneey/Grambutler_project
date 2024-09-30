@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -53,6 +53,8 @@ export class UserService {
 
     @InjectRepository(PostImage)
     @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
+
+    private dataSource: DataSource, // Inject the DataSource
     
   ) {}
 
@@ -655,12 +657,22 @@ async changeUserRole(userId, newRole: UserRole): Promise<User> {
   user.role = newRole;
   return await this.userRepository.save(user);
 }
-async deleteUser(id): Promise<void> {
-  const result = await this.userRepository.delete(id);
+// async deleteUser(id): Promise<void> {
+//   const result = await this.userRepository.delete(id);
 
-  if (result.affected === 0) {
-    throw new NotFoundException(`user with ID ${id} not found`);
-  }
+//   if (result.affected === 0) {
+//     throw new NotFoundException(`user with ID ${id} not found`);
+//   }
+// }
+async deleteUser(id: string): Promise<void> {
+  await this.entityManager.transaction(async (manager) => {
+    const result = await manager.delete(User, id);
+    
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+  });
 }
+
   
 }
