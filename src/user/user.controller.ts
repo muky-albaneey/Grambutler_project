@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto, SettingDto } from './dto/update-user.dto';
@@ -8,6 +8,7 @@ import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UserRole } from './entities/user.entity';
+import { Post } from './entities/post.entity';
 
 @Controller('user')
 export class UserController {
@@ -408,7 +409,21 @@ async getPostCountByUser(@Res({ passthrough: true }) response: Response): Promis
     
     });
 }
+@Get(':id/single_post')
+  async getPostById(@Param('id') id: string, @Res({ passthrough: true }) response: Response){
+    const post = await this.userService.getPostById(id);
 
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    }
+
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'single post',
+      data: post,
+    
+    });
+  }
 @Get(':userId/post-count')
 async countPostsByUser(@Param('userId') userId: string, @Res({ passthrough: true }) response: Response): Promise<any> {
   const result = await this.userService.countPostsByUserHimself(userId);

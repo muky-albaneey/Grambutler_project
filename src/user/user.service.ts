@@ -617,6 +617,27 @@ async getAllPostsWithCategory(): Promise<Post[]> {
   });
 }
 
+async getPostById(id: string): Promise<Post> {
+  return await this.postRepository.findOne({
+    where: { id }, // Find the post by its ID
+    relations: ['category', 'post_image', 'user', 'comments', 'comments.user'], // Include relations
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      category: { id: true, name: true }, // Select category fields
+      post_image: { id: true, name: true, base64: true, ext: true }, // Select post image details
+      user: { id: true, full_name: true, email: true }, // Select non-sensitive user info
+      comments: {
+        id: true,
+        content: true,
+        createdAt: true,
+        user: { id: true, full_name: true }, // Include user details for each comment
+      },
+    },
+  });
+}
 
 async countPostsByUser(): Promise<any> {
   const result = await this.postRepository
