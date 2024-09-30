@@ -8,7 +8,6 @@ import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UserRole } from './entities/user.entity';
-import { Post } from './entities/post.entity';
 
 @Controller('user')
 export class UserController {
