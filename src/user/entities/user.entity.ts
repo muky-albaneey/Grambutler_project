@@ -58,23 +58,23 @@ export class User {
     })
     role: UserRole
 
-    @OneToOne(() => Onboarding, { cascade: true, nullable: true })
+    @OneToOne(() => Onboarding, { cascade: true, nullable: true, onUpdate: 'CASCADE' })
     @JoinColumn()
     onboard_info?: Onboarding;
 
-    @OneToOne(() => ProfileImage, { cascade: true , nullable: true})
+    @OneToOne(() => ProfileImage, { cascade: true , nullable: true, onUpdate: 'CASCADE'})
     @JoinColumn()
     profile_image?: ProfileImage;
 
-    @OneToOne(() => Settings, { cascade: true, nullable: true })
+    @OneToOne(() => Settings, { cascade: true, nullable: true, onUpdate: 'CASCADE' })
     @JoinColumn()
     settings?: Settings;
 
    
-    @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true })
+    @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true , onUpdate: 'CASCADE'})
     caption_responses?: ResponseEntity[];
 
-    @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true })
+    @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true , onUpdate: 'CASCADE'})
     prompt_responses?: PromptEntity[];
 
     @ManyToMany(() => User, (user) => user.followers)
@@ -95,16 +95,16 @@ export class User {
     followers: User[];
 
 
-     @OneToMany(() => Post, (post) => post.user, { cascade: true })
+     @OneToMany(() => Post, (post) => post.user, { cascade: true, onUpdate: 'CASCADE' })
      posts: Post[];
    
-     @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
+     @OneToMany(() => Comment, (comment) => comment.user, { cascade: true , onUpdate: 'CASCADE'})
      comments: Comment[];
    
-     @OneToMany(() => Like, (like) => like.user, { cascade: true })
+     @OneToMany(() => Like, (like) => like.user, { cascade: true, onUpdate: 'CASCADE' })
      likes: Like[];
 
-     @OneToMany(() => Task, (task) => task.user, { cascade: true })
+     @OneToMany(() => Task, (task) => task.user, { cascade: true, onUpdate: 'CASCADE' })
     tasks: Task[];
     constructor(user :Partial<User>){
         Object.assign(this, user)
