@@ -365,6 +365,30 @@ export class UserService {
   // }
   
  
+  // async findAll() {
+  //   const users = await this.userRepository.find({
+  //     relations: [
+  //       'onboard_info',
+  //       'profile_image',
+  //       'settings',
+  //       'caption_responses',
+  //       'prompt_responses',
+  //       'following',
+  //       'following.posts',
+  //       'following.posts.comments',
+  //       'following.posts.likes',
+  //       'following.posts.post_image', 
+  //       'followers',
+  //       'posts',
+  //       'posts.comments',
+  //       'posts.likes',
+  //       'posts.post_image',
+  //       'tasks'
+  //     ],
+  //   });
+  
+  //   return users;
+  // }
   async findAll() {
     const users = await this.userRepository.find({
       relations: [
@@ -377,7 +401,7 @@ export class UserService {
         'following.posts',
         'following.posts.comments',
         'following.posts.likes',
-        'following.posts.post_image', 
+        'following.posts.post_image',
         'followers',
         'posts',
         'posts.comments',
@@ -385,10 +409,46 @@ export class UserService {
         'posts.post_image',
         'tasks'
       ],
+      select: {
+        // Select user fields
+        id: true,
+        full_name: true,
+        email: true,
+        // Optionally include other user-related fields...
+  
+        // Include posts with specific fields
+        posts: {
+          id: true,
+          title: true,
+          content: true,
+          // Include category information
+          category: {
+            id: true,
+            name: true,
+          },
+          post_image: {
+            id: true,
+            name: true,
+            base64: true,
+            ext: true,
+          },
+          comments: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: {
+              id: true,
+              full_name: true,
+            },
+          },
+        },
+        // Add other relations as needed...
+      },
     });
   
     return users;
   }
+  
   
   async updateProfileBg(id, image: { originalname: string, buffer: Buffer }): Promise<User> {
     // Check if the user exists    
