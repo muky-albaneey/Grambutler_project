@@ -769,7 +769,7 @@ async changeUserRole(userId, newRole: UserRole): Promise<User> {
   return await this.userRepository.save(user);
 }
 
-async deleteUser(id: string): Promise<void> {
+async deleteUser(id): Promise<void> {
   // Find the user by ID
   const user = await this.userRepository.findOne({
     where: { id },
