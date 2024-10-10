@@ -330,65 +330,7 @@ export class UserService {
   
     return user;
   }
-  
-  // async findOne(id){
 
-  //   const user = await this.userRepository.findOne({
-  //     where: { id },
-  //     relations: [
-  //       'onboard_info',
-  //       'profile_image',
-  //       'settings',
-  //       'caption_responses',
-  //       'prompt_responses',
-  //       'following',
-  //       'following.posts',
-  //       'following.posts.comments',
-  //       'following.posts.likes',
-  //       'following.posts.post_image', 
-  //       'followers',
-  //       'posts',
-  //       'posts.comments',
-  //       'posts.likes',
-  //       'posts.post_image',
-  //       'tasks'
-  //     ],
-  //   });
-    
-  //   console.log("User found: ", user);
-  
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-
-  //   return user;
-  // }
-  
- 
-  // async findAll() {
-  //   const users = await this.userRepository.find({
-  //     relations: [
-  //       'onboard_info',
-  //       'profile_image',
-  //       'settings',
-  //       'caption_responses',
-  //       'prompt_responses',
-  //       'following',
-  //       'following.posts',
-  //       'following.posts.comments',
-  //       'following.posts.likes',
-  //       'following.posts.post_image', 
-  //       'followers',
-  //       'posts',
-  //       'posts.comments',
-  //       'posts.likes',
-  //       'posts.post_image',
-  //       'tasks'
-  //     ],
-  //   });
-  
-  //   return users;
-  // }
   async findAll() {
     const users = await this.userRepository.find({
       relations: [
@@ -826,5 +768,28 @@ async changeUserRole(userId, newRole: UserRole): Promise<User> {
   user.role = newRole;
   return await this.userRepository.save(user);
 }
+
+async deleteUser(id: string): Promise<void> {
+  // Find the user by ID
+  const user = await this.userRepository.findOne({
+    where: { id },
+  });
+
+  // If the user is not found, throw an exception
+  if (!user) {
+    throw new NotFoundException('User not found');
+  }
+
+  // Delete the user by ID
+  await this.userRepository.delete(id);
+
+  console.log(`User with ID ${id} deleted successfully.`);
+}
+
+async deleteAllUsers(): Promise<void> {
+  await this.userRepository.clear();
+  console.log('All users have been deleted.');
+}
+
   
 }

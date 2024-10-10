@@ -459,6 +459,16 @@ async changeUserRole(
   
 });
 }
+@Delete(':id')
+@HttpCode(HttpStatus.NO_CONTENT) // Returns 204 No Content if successful
+async deleteUser(@Param('id') id: string): Promise<void> {
+  await this.userService.deleteUser(id);
+}
 
+@Delete()
+@HttpCode(HttpStatus.NO_CONTENT) // Returns 204 No Content if successful
+async deleteAllUsers(): Promise<void> {
+  await this.userService.deleteAllUsers();
+}
 
 }
