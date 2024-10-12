@@ -786,10 +786,15 @@ async deleteUser(id): Promise<void> {
   console.log(`User with ID ${id} deleted successfully.`);
 }
 
-async deleteAllUsers(): Promise<void> {
-  await this.userRepository.clear();
-  console.log('All users have been deleted.');
-}
+// async deleteAllUsers(): Promise<void> {
+//   await this.userRepository.clear();
+//   console.log('All users have been deleted.');
+// }
 
-  
+  async deleteAllUsers(): Promise<void> {
+    const users = await this.userRepository.find();
+    await this.userRepository.remove(users);
+    console.log('All users have been deleted.');
+  }
+
 }
