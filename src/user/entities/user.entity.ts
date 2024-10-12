@@ -58,23 +58,23 @@ export class User {
     })
     role: UserRole
 
-    @OneToOne(() => Onboarding, { cascade: true, nullable: true, onUpdate: 'CASCADE' })
+    @OneToOne(() => Onboarding, { cascade: true, nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @JoinColumn()
     onboard_info?: Onboarding;
 
-    @OneToOne(() => ProfileImage, { cascade: true , nullable: true, onUpdate: 'CASCADE'})
+    @OneToOne(() => ProfileImage, { cascade: true , nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE'})
     @JoinColumn()
     profile_image?: ProfileImage;
 
-    @OneToOne(() => Settings, { cascade: true, nullable: true, onUpdate: 'CASCADE' })
+    @OneToOne(() => Settings, { cascade: true, nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @JoinColumn()
     settings?: Settings;
 
    
-    @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true , onUpdate: 'CASCADE'})
+    @OneToMany(() => ResponseEntity, (caption_responses) => caption_responses.user, { cascade: true , onUpdate: 'CASCADE', onDelete: 'CASCADE'})
     caption_responses?: ResponseEntity[];
 
-    @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true , onUpdate: 'CASCADE'})
+    @OneToMany(() => PromptEntity, (prompt_responses) => prompt_responses.user, { cascade: true , onUpdate: 'CASCADE', onDelete: 'CASCADE'})
     prompt_responses?: PromptEntity[];
 
     @ManyToMany(() => User, (user) => user.followers)
@@ -91,20 +91,20 @@ export class User {
     })
     following: User[];
 
-    @ManyToMany(() => User, (user) => user.following)
+    @ManyToMany(() => User, (user) => user.following, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE'  })
     followers: User[];
 
 
-     @OneToMany(() => Post, (post) => post.user, { cascade: true, onUpdate: 'CASCADE' })
+     @OneToMany(() => Post, (post) => post.user, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE'  })
      posts: Post[];
    
-     @OneToMany(() => Comment, (comment) => comment.user, { cascade: true , onUpdate: 'CASCADE'})
+     @OneToMany(() => Comment, (comment) => comment.user, { cascade: true , onUpdate: 'CASCADE', onDelete: 'CASCADE' })
      comments: Comment[];
    
-     @OneToMany(() => Like, (like) => like.user, { cascade: true, onUpdate: 'CASCADE' })
+     @OneToMany(() => Like, (like) => like.user, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE'  })
      likes: Like[];
 
-     @OneToMany(() => Task, (task) => task.user, { cascade: true, onUpdate: 'CASCADE' })
+     @OneToMany(() => Task, (task) => task.user, { cascade: true, onUpdate: 'CASCADE' , onDelete: 'CASCADE' })
     tasks: Task[];
     constructor(user :Partial<User>){
         Object.assign(this, user)
