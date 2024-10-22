@@ -34,10 +34,6 @@ export class OnboardingDto {
 
     @IsOptional()
     @IsString()    
-    dashoard_roles?: string;
-
-    @IsOptional()
-    @IsString()    
     members_dashoard?: string;
 
     @IsOptional()
@@ -96,5 +92,4 @@ export class SettingDto {
     @IsString()    
     location?: string;
 
-   
 }

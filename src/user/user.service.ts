@@ -192,7 +192,6 @@ export class UserService {
       user.onboard_info.info_caption = body.info_caption;
       user.onboard_info.marketing_challenges = body.marketing_challenges;
       user.onboard_info.marketing_or_sales = body.marketing_or_sales;
-      user.onboard_info.dashoard_roles = body.dashoard_roles;
       user.onboard_info.members_dashoard = body.members_dashoard;
       user.onboard_info.current_workflow = body.current_workflow;
       user.onboard_info.type_of_support = body.type_of_support;
@@ -489,9 +488,6 @@ export class UserService {
       console.log('Successfully unfollowed the user.');
     }
     
-    
-    
-
     async getFollowers(userId: string): Promise<User[]> {
       const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['followers'] });
       return user.followers;
@@ -512,15 +508,15 @@ export class UserService {
       return user.followers.length;
     }
 
-      async countFollowing(userId: string): Promise<number> {
-        const user = await this.userRepository.findOne({
-          where: { id: userId },
-          relations: ['following'],
-        });
-        
-        // Return the number of people the user is following
-        return user.following.length;
-      }
+    async countFollowing(userId: string): Promise<number> {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['following'],
+      });
+      
+      // Return the number of people the user is following
+      return user.following.length;
+    }
 
 
     async createPostWithImage(
@@ -573,231 +569,224 @@ export class UserService {
     }
 
   // Add a comment to a post
-  async addComment(postId, userId, content: string): Promise<Comment> {
-    // Ensure the post exists
-    const post = await this.postRepository.findOne({ where: { id: postId } });
-    if (!post) {
-      throw new NotFoundException('Post not found');
+    async addComment(postId, userId, content: string): Promise<Comment> {
+      // Ensure the post exists
+      const post = await this.postRepository.findOne({ where: { id: postId } });
+      if (!post) {
+        throw new NotFoundException('Post not found');
+      }
+
+      // Ensure the user exists
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Create the comment
+      const comment = this.commentRepository.create({
+        content,
+        post: { id: postId }, // Associate the comment with the post
+        user: { id: userId }  // Associate the comment with the user
+      });
+
+      // Save the comment to the database
+      return await this.commentRepository.save(comment);
     }
-
-    // Ensure the user exists
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Create the comment
-    const comment = this.commentRepository.create({
-      content,
-      post: { id: postId }, // Associate the comment with the post
-      user: { id: userId }  // Associate the comment with the user
-    });
-
-    // Save the comment to the database
-    return await this.commentRepository.save(comment);
-  }
 
   // Like a post
-async likePost(postId, userId): Promise<Like> {
-  // Ensure the post exists
-  const post = await this.postRepository.findOne({ where: { id: postId } });
-  if (!post) {
-    throw new NotFoundException('Post not found');
-  }
+    async likePost(postId, userId): Promise<Like> {
+      // Ensure the post exists
+      const post = await this.postRepository.findOne({ where: { id: postId } });
+      if (!post) {
+        throw new NotFoundException('Post not found');
+      }
 
-  // Ensure the user exists
-  const user = await this.userRepository.findOne({ where: { id: userId } });
-  if (!user) {
-    throw new NotFoundException('User not found');
-  }
+      // Ensure the user exists
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
 
-  // Check if the user has already liked the post
-  const existingLike = await this.likeRepository.findOne({
-    where: { post: { id: postId }, user: { id: userId } }
-  });
+      // Check if the user has already liked the post
+      const existingLike = await this.likeRepository.findOne({
+        where: { post: { id: postId }, user: { id: userId } }
+      });
 
-  if (!existingLike) {
-    // If no like exists, create a new one
-    const like = this.likeRepository.create({
-      post: { id: postId }, // Associate the like with the post
-      user: { id: userId }  // Associate the like with the user
-    });
+      if (!existingLike) {
+        // If no like exists, create a new one
+        const like = this.likeRepository.create({
+          post: { id: postId }, // Associate the like with the post
+          user: { id: userId }  // Associate the like with the user
+        });
 
-    // Save the like to the database
-    return await this.likeRepository.save(like);
-  }
+        // Save the like to the database
+        return await this.likeRepository.save(like);
+      }
 
-  // Return the existing like (user has already liked the post)
-  return existingLike;
-}
+      // Return the existing like (user has already liked the post)
+      return existingLike;
+    }
 
+    async getPostsFromFollowedUsers(userId: string): Promise<Post[]> {
+      // Get the user with followed users, followed users' posts, and for each post, include comments and likes
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: [
+          'following',               // Get the users the current user is following
+          'following.posts',          // Get the posts of followed users
+          'following.posts.user',     // Get the user who created each post
+          'following.posts.comments', // Get the comments for each post
+          'following.posts.likes',    // Get the likes for each post
+        ],
+      });
+    
+      // Get all posts from the followed users
+      const followedUsers = user.following;
+      const posts = followedUsers.flatMap(followedUser => followedUser.posts);
+    
+      return posts;
+    }
 
+  // async getAllPostsWithCategory(): Promise<Post[]> {
+  //   return await this.postRepository.find({
+  //     relations: ['category', 'post_image','user', 'comments','post_image','category'],
+  //     select: {
+  //       id: true,
+  //       title: true,
+  //       content: true,
+  //       createdAt: true,
+  //       category: { name: true },  // Select the category name
+  //       post_image: { name: true, base64: true, ext: true},
+  //       user: { id: true, full_name: true, email: true, password:true, country:true, state:true, role: true},
+  //     },
+  //   });
+  // }
 
+    async getAllPostsWithCategory(): Promise<Post[]> {
+      return await this.postRepository.find({
+        relations: ['category', 'post_image', 'user', 'comments', 'comments.user'], // Include user for comments
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          category: { id: true, name: true }, // Select category id and name
+          post_image: { id: true, name: true, base64: true, ext: true }, // Select post image details
+          user: { id: true, full_name: true, email: true }, // Avoid selecting sensitive fields like password
+          comments: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: { id: true, full_name: true }, // Include user details for comments
+          },
+        },
+      });
+    }
 
-  async getPostsFromFollowedUsers(userId: string): Promise<Post[]> {
-    // Get the user with followed users, followed users' posts, and for each post, include comments and likes
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: [
-        'following',               // Get the users the current user is following
-        'following.posts',          // Get the posts of followed users
-        'following.posts.user',     // Get the user who created each post
-        'following.posts.comments', // Get the comments for each post
-        'following.posts.likes',    // Get the likes for each post
-      ],
-    });
-  
-    // Get all posts from the followed users
-    const followedUsers = user.following;
-    const posts = followedUsers.flatMap(followedUser => followedUser.posts);
-  
-    return posts;
-  }
+    async getPostById(id: string): Promise<Post> {
+      return await this.postRepository.findOne({
+        where: { id }, // Find the post by its ID
+        relations: ['category', 'post_image', 'user', 'comments', 'comments.user'], // Include relations
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          category: { id: true, name: true }, // Select category fields
+          post_image: { id: true, name: true, base64: true, ext: true }, // Select post image details
+          user: { id: true, full_name: true, email: true }, // Select non-sensitive user info
+          comments: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: { id: true, full_name: true }, // Include user details for each comment
+          },
+        },
+      });
+    }
 
-// async getAllPostsWithCategory(): Promise<Post[]> {
-//   return await this.postRepository.find({
-//     relations: ['category', 'post_image','user', 'comments','post_image','category'],
-//     select: {
-//       id: true,
-//       title: true,
-//       content: true,
-//       createdAt: true,
-//       category: { name: true },  // Select the category name
-//       post_image: { name: true, base64: true, ext: true},
-//       user: { id: true, full_name: true, email: true, password:true, country:true, state:true, role: true},
-//     },
-//   });
-// }
-async getAllPostsWithCategory(): Promise<Post[]> {
-  return await this.postRepository.find({
-    relations: ['category', 'post_image', 'user', 'comments', 'comments.user'], // Include user for comments
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      createdAt: true,
-      category: { id: true, name: true }, // Select category id and name
-      post_image: { id: true, name: true, base64: true, ext: true }, // Select post image details
-      user: { id: true, full_name: true, email: true }, // Avoid selecting sensitive fields like password
-      comments: {
-        id: true,
-        content: true,
-        createdAt: true,
-        user: { id: true, full_name: true }, // Include user details for comments
-      },
-    },
-  });
-}
+    async countPostsByUser(): Promise<any> {
+      const result = await this.postRepository
+        .createQueryBuilder('post')
+        .select('post.userId', 'userId') // Select the user ID
+        .addSelect('COUNT(post.id)', 'postCount') // Count the posts
+        .groupBy('post.userId') // Group by user ID
+        .getRawMany(); // Get raw results
 
-async getPostById(id: string): Promise<Post> {
-  return await this.postRepository.findOne({
-    where: { id }, // Find the post by its ID
-    relations: ['category', 'post_image', 'user', 'comments', 'comments.user'], // Include relations
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      createdAt: true,
-      category: { id: true, name: true }, // Select category fields
-      post_image: { id: true, name: true, base64: true, ext: true }, // Select post image details
-      user: { id: true, full_name: true, email: true }, // Select non-sensitive user info
-      comments: {
-        id: true,
-        content: true,
-        createdAt: true,
-        user: { id: true, full_name: true }, // Include user details for each comment
-      },
-    },
-  });
-}
+      return result;
+    }
+    async countPostsByUserHimself(userId: string): Promise<any> {
+      const postCountWithImages = await this.postRepository
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.post_image', 'post_image') // Join the post_image relation
+        .where('post.userId = :userId', { userId })
+        .select(['post.id', 'post.title', 'post_image.name', 'post_image.base64', 'post_image.ext'])
+        .getCount(); // Get the count of posts by this user
 
-async countPostsByUser(): Promise<any> {
-  const result = await this.postRepository
-    .createQueryBuilder('post')
-    .select('post.userId', 'userId') // Select the user ID
-    .addSelect('COUNT(post.id)', 'postCount') // Count the posts
-    .groupBy('post.userId') // Group by user ID
-    .getRawMany(); // Get raw results
-
-  return result;
-}
-async countPostsByUserHimself(userId: string): Promise<any> {
-  const postCountWithImages = await this.postRepository
-    .createQueryBuilder('post')
-    .leftJoinAndSelect('post.post_image', 'post_image') // Join the post_image relation
-    .where('post.userId = :userId', { userId })
-    .select(['post.id', 'post.title', 'post_image.name', 'post_image.base64', 'post_image.ext'])
-    .getCount(); // Get the count of posts by this user
-
-  return postCountWithImages;
-}
+      return postCountWithImages;
+    }
 
 
-async countPostsWithLikesByUser(userId: string): Promise<any> {
-  const postsWithLikesAndImages = await this.postRepository
-    .createQueryBuilder('post')
-    .leftJoinAndSelect('post.likes', 'like') // Join the likes relation
-    .leftJoinAndSelect('post.post_image', 'post_image') // Join the post_image relation
-    .where('post.userId = :userId', { userId }) // Filter by userId
-    .select([
-      'post.id', 
-      'post.title', 
-      'post.content', 
-      'COUNT(like.id) AS likeCount', 
-      'post_image.name', 
-      'post_image.base64', 
-      'post_image.ext',
-      'post.user'
-    ]) // Select post details, image details, and count of likes
-    .groupBy('post.id, post_image.id') // Group by post and post_image
-    .getRawMany(); // Get the raw results
+    async countPostsWithLikesByUser(userId: string): Promise<any> {
+      const postsWithLikesAndImages = await this.postRepository
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.likes', 'like') // Join the likes relation
+        .leftJoinAndSelect('post.post_image', 'post_image') // Join the post_image relation
+        .where('post.userId = :userId', { userId }) // Filter by userId
+        .select([
+          'post.id', 
+          'post.title', 
+          'post.content', 
+          'COUNT(like.id) AS likeCount', 
+          'post_image.name', 
+          'post_image.base64', 
+          'post_image.ext',
+          'post.user'
+        ]) // Select post details, image details, and count of likes
+        .groupBy('post.id, post_image.id') // Group by post and post_image
+        .getRawMany(); // Get the raw results
 
-  return postsWithLikesAndImages;
-}
+      return postsWithLikesAndImages;
+    }
 
-async changeUserRole(userId, newRole: UserRole): Promise<User> {
-  const user = await this.userRepository.findOne({
-    where: { id: userId },
-  });
+    async changeUserRole(userId, newRole: UserRole): Promise<User> {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+      });
 
-  if (!user) {
-    throw new NotFoundException('User not found');
-  }
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
 
-  if (!Object.values(UserRole).includes(newRole)) {
-    throw new BadRequestException('Invalid role');
-  }
+      if (!Object.values(UserRole).includes(newRole)) {
+        throw new BadRequestException('Invalid role');
+      }
 
-  user.role = newRole;
-  return await this.userRepository.save(user);
-}
+      user.role = newRole;
+      return await this.userRepository.save(user);
+    }
 
-async deleteUser(id): Promise<void> {
-  // Find the user by ID
-  const user = await this.userRepository.findOne({
-    where: { id },
-  });
+    async deleteUser(id): Promise<void> {
+      // Find the user by ID
+      const user = await this.userRepository.findOne({
+        where: { id },
+      });
 
-  // If the user is not found, throw an exception
-  if (!user) {
-    throw new NotFoundException('User not found');
-  }
+      // If the user is not found, throw an exception
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
 
-  // Delete the user by ID
-  await this.userRepository.delete(id);
+      // Delete the user by ID
+      await this.userRepository.delete(id);
 
-  console.log(`User with ID ${id} deleted successfully.`);
-}
+      console.log(`User with ID ${id} deleted successfully.`);
+    }
 
-// async deleteAllUsers(): Promise<void> {
-//   await this.userRepository.clear();
-//   console.log('All users have been deleted.');
-// }
-
-  async deleteAllUsers(): Promise<void> {
-    const users = await this.userRepository.find();
-    await this.userRepository.remove(users);
-    console.log('All users have been deleted.');
-  }
+    async deleteAllUsers(): Promise<void> {
+      const users = await this.userRepository.find();
+      await this.userRepository.remove(users);
+      console.log('All users have been deleted.');
+    }
 
 }

@@ -37,11 +37,8 @@ export class StripeService {
         },
       ],
       mode: 'payment',
-      // success_url: "https://grambutler-project.onrender.com/stripe/session?session_id={CHECKOUT_SESSION_ID}",
-      // success_url: 'localhost:3000/stripe/session?session_id={CHECKOUT_SESSION_ID}',
-      // success_url: 'https://grambutler-project.onrender.com/stripe/session?session_id={CHECKOUT_SESSION_ID}',
-      success_url: "https://grambutler-client-platform.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "https://grambutler-client-platform.onrender.com/payment-failure", // Add your failure URL here
+      success_url: "https://grambutler.vercel.app/payment-success/payment-success?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: "https://grambutler.vercel.app/payment-success/pricing", // Add your failure URL here
     });
 
     return session.url;
