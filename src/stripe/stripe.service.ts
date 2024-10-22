@@ -39,7 +39,7 @@ export class StripeService {
       ],
       mode: 'payment',
       success_url: "https://grambutler.vercel.app/payment-success/payment-success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "https://grambutler.vercel.app/payment-success/pricing", // Add your failure URL here
+      cancel_url: "https://grambutler.vercel.app/pricing", // Add your failure URL here
     });
 
     return session.url;
