@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -118,9 +119,10 @@ export class OpenaiService {
         {
           model: 'gpt-4',
           // messages: [{ role: 'user', content: prompt }],
-           messages : [
+           messages: [
             {
-              role: 'system',content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
+              role: 'system',
+              content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
             },
             {
               role: 'user',
