@@ -27,7 +27,7 @@ export class RecommendationController {
   @Post()
   async create(
     @Body() createRecommendationDto: CreateRecommendationDto, @Res({ passthrough: true }) response: Response
-  ): Promise<Recommendation> {
+  ) {
     const result = await this.recommendationService.create(createRecommendationDto);
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
@@ -37,7 +37,7 @@ export class RecommendationController {
   }
 
   @Get()
-  async findAll(@Query() filter: FilterDto, @Res({ passthrough: true }) response: Response  ): Promise<Recommendation[]> {
+  async findAll(@Query() filter: FilterDto, @Res({ passthrough: true }) response: Response) {
     const result = await this.recommendationService.findAll(filter);
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
