@@ -8,6 +8,8 @@ import {
   Patch,
   Post,
   Query,
+  Res, 
+  HttpStatus,
 } from '@nestjs/common';
 import { Recommendation } from '../entities/recommendation.entity';
 import {
@@ -16,32 +18,32 @@ import {
 } from '../dto/recommendation.dto';
 import { RecommendationService } from '../services/recommendation.service';
 import { FilterDto } from 'src/utils/filter.dto';
-// import type { Response } from 'express';
+import type { Response } from 'express';
 
 @Controller('recommendation')
 export class RecommendationController {
   constructor(private readonly recommendationService: RecommendationService) {}
 
   @Post()
-  create(
-    @Body() createRecommendationDto: CreateRecommendationDto,
-  ): Promise<Recommendation> {
-    return this.recommendationService.create(createRecommendationDto);
-    // return res.status(HttpStatus.OK).json({
-    //   statusCode: HttpStatus.OK,
-    //   message: 'Recommendation created successfully',
-    //   data: result,
-    // });
+  async create(
+    @Body() createRecommendationDto: CreateRecommendationDto, @Res({ passthrough: true }) response: Response
+  ) {
+    const result = await this.recommendationService.create(createRecommendationDto);
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'Recommendation created successfully',
+      data: result,
+    });
   }
 
   @Get()
-  findAll(@Query() filter: FilterDto, ): Promise<Recommendation[]> {
-    return this.recommendationService.findAll(filter);
-    // return res.status(HttpStatus.OK).json({
-    //   statusCode: HttpStatus.OK,
-    //   message: 'Recommendation fetched successfully',
-    //   data: result,
-    // });
+  async findAll(@Query() filter: FilterDto, @Res({ passthrough: true }) response: Response  ) {
+    const result = await this.recommendationService.findAll(filter);
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'Recommendations fetched successfully',
+      data: result,
+    });
   }
 
   @Get(':id')
