@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { User } from 'src/user/entities/user.entity';
 import {
     Entity,
@@ -5,8 +6,10 @@ import {
     Column,
     ManyToOne,
     CreateDateColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    OneToMany
   } from 'typeorm';
+import { Comment } from './comment.entity';
   
   @Entity()
   export class Task {
@@ -52,7 +55,10 @@ import {
     @Column({ type: 'text', nullable: true })
     message?: string; // Field for messages
     
-    @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'SET NULL', nullable: true })
+    @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE', nullable: true })
     user: User; // Reference to User entity
+
+    @OneToMany(() => Comment, (comment) => comment.task)
+    comments?: Comment[];
   }
   
