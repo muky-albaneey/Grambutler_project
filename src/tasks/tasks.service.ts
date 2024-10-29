@@ -95,6 +95,15 @@ import { CreateCommentDto, CreateTaskDto, UpdateTaskDto} from './dto/task.dto';
 
 /* eslint-disable prettier/prettier */
 
+// task.service.ts
+
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Task } from './entities/task.entity';
+import { User } from './entities/user.entity';
+import { Comment } from './entities/comment.entity';
+import { CreateTaskDto, UpdateTaskDto, CreateCommentDto } from './dto/task.dto';
 
 @Injectable()
 export class TaskService {
@@ -179,9 +188,13 @@ export class TaskService {
     return this.taskRepository.find({ where: { user: { id: userId } } });
   }
 
-  async updateTask(id: string, updateTaskDto: Partial<CreateTaskDto>): Promise<Task> {
+  async updateTask(id: string, updateTaskDto: Partial<UpdateTaskDto>): Promise<Task> {
     await this.taskRepository.update(id, updateTaskDto);
-    return this.taskRepository.findOne({ where: { id } });
+    const updatedTask = await this.taskRepository.findOne({ where: { id } });
+    if (!updatedTask) {
+      throw new NotFoundException('Task not found');
+    }
+    return updatedTask;
   }
 
   async deleteTask(id: string): Promise<void> {
