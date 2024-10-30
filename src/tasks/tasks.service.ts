@@ -98,4 +98,9 @@ export class TaskService {
   async deleteTask(id: string): Promise<void> {
     await this.taskRepository.delete(id);
   }
+
+
+  async countTasks(): Promise<number> {
+    return this.taskRepository.count();
+  }
 }
