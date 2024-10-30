@@ -97,14 +97,6 @@ import { CreateCommentDto, CreateTaskDto, UpdateTaskDto} from './dto/task.dto';
 
 // task.service.ts
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Task } from './entities/task.entity';
-import { User } from './entities/user.entity';
-import { Comment } from './entities/comment.entity';
-import { CreateTaskDto, UpdateTaskDto, CreateCommentDto } from './dto/task.dto';
-
 @Injectable()
 export class TaskService {
   constructor(
