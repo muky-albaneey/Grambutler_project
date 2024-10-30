@@ -1,15 +1,11 @@
 /* eslint-disable prettier/prettier */
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment_task } from './entities/comment.entity';
-// import { Task } from '../task/entities/task.entity';
-import { User } from '../user/entities/user.entity';
 import { Task } from './entities/task.entity';
-import { CreateCommentDto, CreateTaskDto, UpdateTaskDto} from './dto/task.dto';
-// import { CreateCommentDto } from './dto/create-comment.dto';
-
+import { User } from '../user/entities/user.entity';
+import { CreateCommentDto, CreateTaskDto, UpdateTaskDto } from './dto/task.dto';
 
 @Injectable()
 export class TaskService {
@@ -31,27 +27,22 @@ export class TaskService {
       throw new NotFoundException('User not found');
     }
 
-    // Create the new task
     const task = this.taskRepository.create({
       ...createTaskDto,
-      user, // Associate the user with the task
+      user,
     });
 
-    // Save the task to the database
     const savedTask = await this.taskRepository.save(task);
 
-    // If comments are provided, save them as well
     if (createTaskDto.comments) {
       const comments = createTaskDto.comments.map((commentDto: CreateCommentDto) => {
         const comment = this.commentRepository.create({
           content: commentDto.content,
-          user, // Associate the user with the comment
-          task: savedTask, // Associate the comment with the created task
+          user,
+          task: savedTask,
         });
         return comment;
       });
-
-      // Save all comments
       await this.commentRepository.save(comments);
     }
 
@@ -61,19 +52,16 @@ export class TaskService {
   async createComment(createCommentDto: CreateCommentDto): Promise<Comment_task> {
     const { taskId, userId, content } = createCommentDto;
 
-    // Find the task by ID
     const task = await this.taskRepository.findOne({ where: { id: taskId } });
     if (!task) {
       throw new NotFoundException('Task not found');
     }
 
-    // Check if the user exists
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    // Create and save the comment
     const comment = this.commentRepository.create({
       content,
       task,
@@ -92,6 +80,10 @@ export class TaskService {
 
   async getTasksByUser(userId: string): Promise<Task[]> {
     return this.taskRepository.find({ where: { user: { id: userId } } });
+  }
+
+  async getAllTasks(): Promise<Task[]> {
+    return this.taskRepository.find({ relations: ['user'] });
   }
 
   async updateTask(id: string, updateTaskDto: Partial<UpdateTaskDto>): Promise<Task> {

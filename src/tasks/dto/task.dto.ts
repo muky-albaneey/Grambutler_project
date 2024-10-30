@@ -41,7 +41,7 @@ export class CreateTaskDto {
 
   @IsString()
   @IsNotEmpty()
-  taskStar: string;  // userId
+  taskStar: string; 
 
   @IsEnum(TaskColor)
   TaskColor: TaskColor;
