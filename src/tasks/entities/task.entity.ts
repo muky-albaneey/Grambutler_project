@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
     OneToMany
   } from 'typeorm';
-import { Comment } from './comment.entity';
+import { Comment_task } from './comment.entity';
   
   @Entity()
   export class Task {
@@ -58,7 +58,7 @@ import { Comment } from './comment.entity';
     @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE', nullable: true })
     user: User; // Reference to User entity
 
-    @OneToMany(() => Comment, (comment) => comment.task)
-    comments?: Comment[];
+    @OneToMany(() => Comment_task, (comment) => comment.task)
+    comments?: Comment_task[];
   }
   
