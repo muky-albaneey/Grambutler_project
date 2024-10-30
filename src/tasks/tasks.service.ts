@@ -3,7 +3,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Comment } from './entities/comment.entity';
+import { Comment_task } from './entities/comment.entity';
 // import { Task } from '../task/entities/task.entity';
 import { User } from '../user/entities/user.entity';
 import { Task } from './entities/task.entity';
@@ -106,8 +106,8 @@ export class TaskService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(Comment_task)
+    private readonly commentRepository: Repository<Comment_task>,
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
@@ -144,7 +144,7 @@ export class TaskService {
     return savedTask;
   }
 
-  async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
+  async createComment(createCommentDto: CreateCommentDto): Promise<Comment_task> {
     const { taskId, userId, content } = createCommentDto;
 
     // Find the task by ID
@@ -169,7 +169,7 @@ export class TaskService {
     return this.commentRepository.save(comment);
   }
 
-  async getCommentsByTask(taskId: string): Promise<Comment[]> {
+  async getCommentsByTask(taskId: string): Promise<Comment_task[]> {
     return this.commentRepository.find({
       where: { task: { id: taskId } },
       relations: ['user'],

@@ -4,7 +4,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Task } from './task.entity';
 
 @Entity()
-export class Comment {
+export class Comment_task {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

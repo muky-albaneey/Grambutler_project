@@ -39,7 +39,7 @@ import { TaskService } from './tasks.service';
 import { CreateCommentDto, CreateTaskDto, UpdateTaskDto } from './dto/task.dto';
 import { Task } from './entities/task.entity';
 // import { UpdateTaskDto } from './dto/updat-task.dto';
-import { Comment } from './entities/comment.entity';
+import { Comment_task } from './entities/comment.entity';
 
 @Controller('tasks')
 export class TaskController {
@@ -73,7 +73,7 @@ export class TaskController {
   async createComment(
     @Param('taskId', ParseUUIDPipe) taskId: string,
     @Body() createCommentDto: CreateCommentDto
-  ): Promise<Comment> {
+  ): Promise<Comment_task> {
     // Pass taskId along with the DTO data to the service
     return this.taskService.createComment({ ...createCommentDto, taskId });
   }
@@ -82,7 +82,7 @@ export class TaskController {
   @Get(':taskId/comments')
   async getCommentsByTask(
     @Param('taskId', ParseUUIDPipe) taskId: string
-  ): Promise<Comment[]> {
+  ): Promise<Comment_task[]> {
     return this.taskService.getCommentsByTask(taskId);
   }
 }

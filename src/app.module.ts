@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -35,6 +36,8 @@ import { Feedback, Reply } from './admin/feedback/entities/feedback.entity';
 import { Contact } from './admin/feedback/entities/contact.entity';
 import { Category as AdminCategory } from './admin/community/entities/category.entity';
 import { Discussion } from './admin/community/entities/discussion.entity';
+import { Comment_task } from './tasks/entities/comment.entity';
+// import { Comment_task } from 'src/tasks/entities/comment.entity.ts';
 
 @Module({
   imports: [
@@ -66,6 +69,7 @@ import { Discussion } from './admin/community/entities/discussion.entity';
           Category,
           PostImage,
           Task,
+          Comment_task,
           Ebook,
           MentorshipEvent,
           RegisteredUser,
@@ -79,9 +83,10 @@ import { Discussion } from './admin/community/entities/discussion.entity';
           Reply,
           Contact,
           AdminCategory,
-          Discussion,
+          Discussion
+    
         ],
-        synchronize: true,
+        synchronize: true
         // migrations: ['src/migrations/*.ts'],
       }),
     }),
