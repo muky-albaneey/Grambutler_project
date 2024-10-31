@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
     OneToMany
   } from 'typeorm';
-  
+
 import { Comment_task } from './comment.entity';
   
   @Entity()
@@ -26,11 +26,11 @@ import { Comment_task } from './comment.entity';
     @Column({ type: 'varchar', length: 255, nullable: true })
     guest: string;
   
-    @Column({ type: 'timestamp' })
-    startDate: Date;
+    @Column({ type: 'varchar' })
+    startDate: string;
   
-    @Column({ type: 'timestamp' })
-    dueDate: Date;
+    @Column({ type: 'varchar' })
+    dueDate: string;
   
     @Column({ type: 'varchar', length: 100 })
     timeZone: string;
