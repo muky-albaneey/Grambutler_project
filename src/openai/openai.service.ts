@@ -112,18 +112,16 @@ export class OpenaiService {
         this.openaiApiUrl,
         {
           model: 'gpt-4',
-          // messages: [{ role: 'user', content: prompt }],
-           messages: [
+          messages: [
             {
               role: 'system',
-              content: `You are a helpful assistant that generates unique content ideas with detailed description thereby making user achieving their goals efficiently.`
+              content: `You are a helpful assistant that generates unique content ideas with detailed description.`
             },
             {
               role: 'user',
               content: prompt
             }
           ]
-          
         },
         {
           headers: {
@@ -133,7 +131,6 @@ export class OpenaiService {
         },
       );
       
-
       // Extract the completion text from the response
       const completion = response.data.choices[0].message.content;
 
