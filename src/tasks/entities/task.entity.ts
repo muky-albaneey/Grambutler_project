@@ -61,5 +61,8 @@ import { Comment_task } from './comment.entity';
 
     @OneToMany(() => Comment_task, (comment) => comment.task)
     comments?: Comment_task[];
+
+    @Column({ type: 'varchar', length: 50, nullable: true })
+    star: string;
   }
   
