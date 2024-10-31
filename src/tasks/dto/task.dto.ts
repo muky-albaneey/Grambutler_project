@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { IsString, IsNotEmpty, IsOptional, IsDateString, IsEnum, IsInt, IsPositive, IsArray, ValidateNested } from 'class-validator';
 import { Priority, TaskColor, TaskStatus } from '../enum/task.enums';
 import { Type } from 'class-transformer';
@@ -13,13 +14,13 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
-  guest?: string;  // Array of string
+  guest?: string[];  // Array of string
 
   @IsDateString()
-  startDate: Date;
+  startDate: string;
 
   @IsDateString()
-  dueDate: Date;
+  dueDate: string;
 
   @IsString()
   timeZone: string;
@@ -54,6 +55,11 @@ export class CreateTaskDto {
   @ValidateNested({ each: true })
   @Type(() => CreateCommentDto)
   comments?: CreateCommentDto[];
+
+
+  @IsString()
+  @IsOptional()
+  star?: string;
 }
 
 export class CreateCommentDto {
@@ -68,6 +74,11 @@ export class CreateCommentDto {
   @IsString()
   @IsNotEmpty()
   userId: string; // ID of the user creating the comment
+
+
+  @IsString()
+  @IsOptional()
+  star?: string;
 }
 
 // Define UpdateTaskDto with optional fields
@@ -82,15 +93,15 @@ export class UpdateTaskDto {
 
   @IsString()
   @IsOptional()
-  guest?: string;  // Array of string
+  guest?: string[];  // Array of string
 
   @IsDateString()
   @IsOptional()
-  startDate?: Date;
+  startDate?: string;
 
   @IsDateString()
   @IsOptional()
-  dueDate?: Date;
+  dueDate?: string;
 
   @IsString()
   @IsOptional()
@@ -124,4 +135,8 @@ export class UpdateTaskDto {
   @IsString()
   @IsOptional()
   userId?: string;
+
+  @IsString()
+  @IsOptional()
+  star?: string;
 }

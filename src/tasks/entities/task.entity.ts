@@ -24,7 +24,7 @@ import { Comment_task } from './comment.entity';
     description: string;
   
     @Column({ type: 'varchar', length: 255, nullable: true })
-    guest: string;
+    guest: string[];
   
     @Column({ type: 'varchar' })
     startDate: string;
