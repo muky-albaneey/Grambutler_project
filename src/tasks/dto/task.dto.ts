@@ -20,7 +20,13 @@ export class CreateTaskDto {
   startDate: string;
 
   @IsDateString()
+  startTime: string;
+
+  @IsDateString()
   dueDate: string;
+
+  @IsString()
+  dueTime: string;
 
   @IsString()
   timeZone: string;
@@ -99,9 +105,17 @@ export class UpdateTaskDto {
   @IsOptional()
   startDate?: string;
 
+  @IsString()
+  @IsOptional()
+  startTime: string;
+
   @IsDateString()
   @IsOptional()
   dueDate?: string;
+
+  @IsString()
+  @IsOptional()
+  dueTime: string;
 
   @IsString()
   @IsOptional()
