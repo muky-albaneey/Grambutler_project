@@ -12,8 +12,10 @@ export class CreateTaskDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true})
+  @IsNotEmpty({ each: true})
   guest?: string[];  // Array of string
 
   @IsDateString()
