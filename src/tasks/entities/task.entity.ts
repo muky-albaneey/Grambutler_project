@@ -28,9 +28,15 @@ import { Comment_task } from './comment.entity';
   
     @Column({ type: 'varchar' })
     startDate: string;
+
+    @Column({ type: 'varchar' })
+    startTime: string;
   
     @Column({ type: 'varchar' })
     dueDate: string;
+
+    @Column({ type: 'varchar' })
+    dueTime: string;
   
     @Column({ type: 'varchar', length: 100 })
     timeZone: string;
