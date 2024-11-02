@@ -18,13 +18,13 @@ export class CreateTaskDto {
   @IsNotEmpty({ each: true})
   guest?: string[];  // Array of string
 
-  @IsDateString()
+  @IsString()
   startDate: string;
 
-  @IsDateString()
+  @IsString()
   startTime: string;
 
-  @IsDateString()
+  @IsString()
   dueDate: string;
 
   @IsString()
