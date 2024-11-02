@@ -22,12 +22,14 @@ export class CreateTaskDto {
   startDate: string;
 
   @IsString()
+  @IsOptional()
   startTime: string;
 
   @IsString()
   dueDate: string;
 
   @IsString()
+  @IsOptional()
   dueTime: string;
 
   @IsString()
