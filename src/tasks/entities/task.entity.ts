@@ -49,6 +49,9 @@ import { Comment_task } from './comment.entity';
   
     @Column({ type: 'varchar', length: 50 })
     taskStatus: string;
+    
+    @Column({ type: 'varchar', length: 50 })
+    taskStar: string;
   
     @Column({ type: 'int', nullable: true })
     startReminder: number;
@@ -68,7 +71,5 @@ import { Comment_task } from './comment.entity';
     @OneToMany(() => Comment_task, (comment) => comment.task)
     comments?: Comment_task[];
 
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    star: string;
   }
   

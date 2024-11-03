@@ -66,10 +66,6 @@ export class CreateTaskDto {
   @Type(() => CreateCommentDto)
   comments?: CreateCommentDto[];
 
-
-  @IsString()
-  @IsOptional()
-  star?: string;
 }
 
 export class CreateCommentDto {
@@ -85,10 +81,6 @@ export class CreateCommentDto {
   @IsNotEmpty()
   userId: string; // ID of the user creating the comment
 
-
-  @IsString()
-  @IsOptional()
-  star?: string;
 }
 
 // Define UpdateTaskDto with optional fields
@@ -101,8 +93,10 @@ export class UpdateTaskDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true})
+  @IsNotEmpty({ each: true})
   guest?: string[];  // Array of string
 
   @IsDateString()
@@ -154,7 +148,4 @@ export class UpdateTaskDto {
   @IsOptional()
   userId?: string;
 
-  @IsString()
-  @IsOptional()
-  star?: string;
 }
