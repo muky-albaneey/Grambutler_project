@@ -6,12 +6,11 @@ import {
     Column,
     OneToOne,
     JoinColumn,
-    BeforeInsert,
     OneToMany,
     ManyToMany,
     JoinTable
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+
 import { Onboarding } from './onoard.entity';
 import { ProfileImage } from './profile.entity';
 import { Settings } from './setting.entity';

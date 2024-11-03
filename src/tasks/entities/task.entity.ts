@@ -23,7 +23,7 @@ import { Comment_task } from './comment.entity';
     @Column({ type: 'text', nullable: true })
     description: string;
   
-    @Column({ type: 'varchar', length: 255, nullable: true })
+    @Column({ type: 'varchar', array: true, length: 255, nullable: true })
     guest: string[];
   
     @Column({ type: 'varchar' })
