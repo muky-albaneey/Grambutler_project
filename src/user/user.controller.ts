@@ -212,7 +212,7 @@ async reset(@Body() body: { token: string }) {
     }
 
   @Patch(':id/onboard')
-  async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto, @Res({ passthrough: true }) response: Response){
+  async onboardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto, @Res({ passthrough: true }) response: Response){
     const result= await this.userService.updateOnboarding(id, body)
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
