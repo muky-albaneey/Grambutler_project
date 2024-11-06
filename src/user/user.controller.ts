@@ -195,7 +195,7 @@ async reset(@Body() body: { token: string }) {
       return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
         message: 'All Users',
-        data: result,
+        data: result
       
       });
     }
@@ -206,7 +206,7 @@ async reset(@Body() body: { token: string }) {
       return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
         message: 'Single User',
-        data: result,
+        data: result
       
       });
     }
@@ -217,7 +217,7 @@ async reset(@Body() body: { token: string }) {
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'Onboarding info',
-      data: result,
+      data: result
     
     });
   }
@@ -233,7 +233,7 @@ async reset(@Body() body: { token: string }) {
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'All Users',
-      data: result,
+      data: result
     
     });
   }
