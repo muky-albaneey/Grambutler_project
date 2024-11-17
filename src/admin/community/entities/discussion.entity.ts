@@ -1,11 +1,12 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Category } from './category.entity';
 import { DefaultEntity } from 'src/utils/default.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('discussions')
 export class Discussion extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @ManyToOne(() => Category, (category) => category.discussions)
   category: Category;
@@ -18,11 +19,15 @@ export class Discussion extends DefaultEntity {
 
   @Column(() => Comment)
   comments: Comment[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }
 
 export class Comment {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column()
   id: number;
@@ -32,4 +37,8 @@ export class Comment {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }

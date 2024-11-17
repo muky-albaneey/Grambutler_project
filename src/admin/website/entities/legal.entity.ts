@@ -1,10 +1,11 @@
+import { User } from 'src/user/entities/user.entity';
 import { DefaultEntity } from 'src/utils/default.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('legal')
 export class Legal extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column()
   termsURL: string;
@@ -14,4 +15,8 @@ export class Legal extends DefaultEntity {
 
   @Column()
   securityURL: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }

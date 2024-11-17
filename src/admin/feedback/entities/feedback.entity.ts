@@ -2,17 +2,19 @@ import { DefaultEntity } from 'src/utils/default.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Recommendation } from './recommendation.entity';
 import { FeedbackStatus } from '../interfaces/feedback.interface';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('feedbacks')
 export class Feedback extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @ManyToOne(() => Recommendation, (recommendation) => recommendation.feedbacks)
   recommendation: Recommendation;
@@ -32,12 +34,16 @@ export class Feedback extends DefaultEntity {
     onDelete: 'CASCADE',
   })
   replies: Reply[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }
 
 @Entity('replies')
 export class Reply {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -50,4 +56,8 @@ export class Reply {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }

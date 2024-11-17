@@ -8,9 +8,6 @@ import {
 
 @Entity('contacts')
 export class Contact extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
-
   @Column()
   email: string;
 

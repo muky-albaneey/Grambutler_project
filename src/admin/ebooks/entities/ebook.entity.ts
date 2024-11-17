@@ -1,11 +1,12 @@
 import { DefaultEntity } from 'src/utils/default.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BookCategory } from '../interfaces/ebook.interface';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('ebook')
 export class Ebook extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column()
   title: string;
@@ -24,4 +25,8 @@ export class Ebook extends DefaultEntity {
 
   @Column()
   pdfURL: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }

@@ -1,11 +1,12 @@
 import { DefaultEntity } from 'src/utils/default.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { EventType } from '../interfaces/events.interface';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('mentorship_events')
 export class MentorshipEvent extends DefaultEntity {
-  //   @OneToOne((type) => User, (user) => user.posts)
-  //   createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column()
   title: string;
@@ -27,4 +28,8 @@ export class MentorshipEvent extends DefaultEntity {
 
   @Column()
   link: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }

@@ -2,6 +2,7 @@ import { DefaultEntity } from 'src/utils/default.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,11 +16,12 @@ import {
   IsString,
   ValidateIf,
 } from 'class-validator';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('onboarding')
 export class Onboarding extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column({ nullable: true })
   category: string;
@@ -33,8 +35,8 @@ export class Onboarding extends DefaultEntity {
 
 @Entity('questions')
 export class Question {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -64,4 +66,8 @@ export class Question {
   @IsArray()
   @IsString({ each: true })
   options: string[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }

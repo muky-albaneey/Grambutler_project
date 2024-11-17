@@ -1,11 +1,12 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Discussion } from './discussion.entity';
+import { User } from 'src/user/entities/user.entity';
 import { DefaultEntity } from 'src/utils/default.entity';
 
 @Entity('categories')
 export class Category extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column()
   color: string;
@@ -18,4 +19,8 @@ export class Category extends DefaultEntity {
     onDelete: 'CASCADE',
   })
   discussions: Discussion[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }
