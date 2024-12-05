@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post } from '@nestjs/common';
-=======
-import { Body, Controller, Get, Res, NotFoundException, Param, ParseUUIDPipe, Post, HttpStatus } from '@nestjs/common';
->>>>>>> bfbc8fbb76b35891bd54164956996c6e78c4d4af
+import { Body, Controller, Get, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Res } from '@nestjs/common';
+
 import { OpenaiService } from './openai.service';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';

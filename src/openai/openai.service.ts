@@ -112,18 +112,11 @@ export class OpenaiService {
         this.openaiApiUrl,
         {
           model: 'gpt-4',
-<<<<<<< HEAD
           // messages: [{ role: 'user', content: prompt }],
            messages: [
             {
               role: 'system',
               content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
-=======
-          messages: [
-            {
-              role: 'system',
-              content: `You are a helpful assistant that generates unique content ideas with detailed description.`
->>>>>>> bfbc8fbb76b35891bd54164956996c6e78c4d4af
             },
             {
               role: 'user',
