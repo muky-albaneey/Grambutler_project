@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { User } from 'src/user/entities/user.entity';
 import {
     Entity,
@@ -5,8 +6,11 @@ import {
     Column,
     ManyToOne,
     CreateDateColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    OneToMany
   } from 'typeorm';
+
+import { Comment_task } from './comment.entity';
   
   @Entity()
   export class Task {
@@ -19,14 +23,20 @@ import {
     @Column({ type: 'text', nullable: true })
     description: string;
   
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    guest: string;
+    @Column({ type: 'varchar', array: true, length: 255, nullable: true })
+    guest: string[];
   
-    @Column({ type: 'timestamp' })
-    startDate: Date;
+    @Column({ type: 'varchar' })
+    startDate: string;
+
+    @Column({ type: 'varchar' })
+    startTime: string;
   
-    @Column({ type: 'timestamp' })
-    dueDate: Date;
+    @Column({ type: 'varchar' })
+    dueDate: string;
+
+    @Column({ type: 'varchar' })
+    dueTime: string;
   
     @Column({ type: 'varchar', length: 100 })
     timeZone: string;
@@ -39,6 +49,9 @@ import {
   
     @Column({ type: 'varchar', length: 50 })
     taskStatus: string;
+    
+    @Column({ type: 'varchar', length: 50 })
+    taskStar: string;
   
     @Column({ type: 'int', nullable: true })
     startReminder: number;
@@ -52,7 +65,11 @@ import {
     @Column({ type: 'text', nullable: true })
     message?: string; // Field for messages
     
-    @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'SET NULL', nullable: true })
+    @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE', nullable: true })
     user: User; // Reference to User entity
+
+    @OneToMany(() => Comment_task, (comment) => comment.task)
+    comments?: Comment_task[];
+
   }
   

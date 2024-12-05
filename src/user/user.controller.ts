@@ -195,7 +195,7 @@ async reset(@Body() body: { token: string }) {
       return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
         message: 'All Users',
-        data: result,
+        data: result
       
       });
     }
@@ -206,18 +206,18 @@ async reset(@Body() body: { token: string }) {
       return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
         message: 'Single User',
-        data: result,
+        data: result
       
       });
     }
 
   @Patch(':id/onboard')
-  async onoardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto, @Res({ passthrough: true }) response: Response){
+  async onboardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto, @Res({ passthrough: true }) response: Response){
     const result= await this.userService.updateOnboarding(id, body)
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'Onboarding info',
-      data: result,
+      data: result
     
     });
   }
@@ -233,7 +233,7 @@ async reset(@Body() body: { token: string }) {
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'All Users',
-      data: result,
+      data: result
     
     });
   }

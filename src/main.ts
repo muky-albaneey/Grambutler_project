@@ -23,7 +23,7 @@
 //   }));
 
 //   const configService = app.get(ConfigService);
-  
+
 //   const PORT = configService.get<number>('PORT') || 3000;
 //   await app.listen(PORT, '0.0.0.0', () => {
 //     console.log(`Running in ${configService.get<string>('NODE_ENV')} on port ${PORT}`);
@@ -38,6 +38,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import * as express from 'express';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { TransformInterceptor } from './interceptors/response.interceptor';
 
 async function bootstrap() {
   dotenv.config();
@@ -57,16 +59,23 @@ async function bootstrap() {
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   });
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  app.useGlobalInterceptors(new ErrorInterceptor());
+  app.useGlobalInterceptors(new TransformInterceptor());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT') || 3000;
   await app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Running in ${configService.get<string>('NODE_ENV')} on port ${PORT}`);
+    console.log(
+      `Running in ${configService.get<string>('NODE_ENV')} on port ${PORT}`,
+    );
   });
 }
 bootstrap();

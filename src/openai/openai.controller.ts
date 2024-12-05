@@ -1,15 +1,20 @@
+<<<<<<< HEAD
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+=======
+import { Body, Controller, Get, Res, NotFoundException, Param, ParseUUIDPipe, Post, HttpStatus } from '@nestjs/common';
+>>>>>>> bfbc8fbb76b35891bd54164956996c6e78c4d4af
 import { OpenaiService } from './openai.service';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
+import type { Response } from 'express';
 
 @Controller('openai')
 export class OpenaiController {
   constructor(private readonly openaiService: OpenaiService) {}
 
   @Post('captions')
-  async getChatCompletion(
+  async getChatCompletion(@Res({ passthrough: true }) response: Response, 
     @Body('prompt') prompt: string,
     @Body('userId') userId: string, // Accept userId in the request body
     @Body('no_of_captions') no_of_captions: number,
@@ -17,8 +22,9 @@ export class OpenaiController {
     @Body('tone') tone: string,
     @Body('customEmojis') customEmojis?: boolean,
     @Body('customHashtags') customHashtags?: boolean,
-    @Body('isContact') isContact?: boolean,
-  ): Promise<string> {
+    @Body('isContact') isContact?: boolean, 
+    
+  ): Promise<any> {
     const result = await this.openaiService.captionsAi(
       prompt,
       userId, // Pass userId to the service
@@ -30,13 +36,20 @@ export class OpenaiController {
       isContact
     );
 
-    return result;
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      data: result,
+    });
   }
   // @Param('id', ParseUUIDPipe)
 
   @Post('prompt')
-  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: string,): Promise<string> {
-    return this.openaiService.promptAi(prompt, userId);
+  async getPrompt(@Body('prompt') prompt: string, @Body('userId') userId: string, @Res({ passthrough: true }) response: Response): Promise<any> {
+    const result = this.openaiService.promptAi(prompt, userId);
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      data: result,
+    });
   }
 
   @Get(':id/caption-responses')

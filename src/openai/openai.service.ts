@@ -41,35 +41,31 @@ export class OpenaiService {
        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
      }
 
-          const contactInfo = isContact == true ?`
-          Contact Information:
-          Name: ${user.full_name || 'N/A'}
-          Email: ${user.email || 'N/A'}
-          Phone: ${user.country || 'N/A'}
-        ` : ``;
     const data = {
       model: 'gpt-4',
       messages: [
         {
           role: 'system',
-          content: `
-          You are a helpful assistant. Please generate responses based on the following constraints:
-          - Number of captions: ${no_of_captions}
-          - Number of words per caption: ${words_per_caption} words
-          - Tone: ${tone}
-          - Include the following emojis: ${customEmojis}
-          - Include the following hashtags: ${customHashtags}
+          content: `You are an advanced AI assistant specializing in generating creative and engaging social media captions. Your task is to create ${no_of_captions} unique caption${no_of_captions > 1 ? 's' : ''} based on the following guidelines:
 
-          - Ensure contacts are added if mentioned:
-            - If a person is mentioned by name, include their contact details (e.g., email or phone number) if provided in the prompt.
-            - If a company or organization is mentioned, include relevant contact information such as a website or support email.
-            - If no specific contact details are provided, suggest generic contact methods (e.g., "Reach out via our website or email us at support@example.com").
+            1. Length: Aim for approximately ${words_per_caption} words per caption.
+            2. Tone: Adopt a ${tone} tone.
+            3. Hashtags: ${customHashtags ? 'Include relevant and trending hashtags.' : 'Do not include hashtags.'}
+            4. Emojis: ${customEmojis ? 'Incorporate appropriate and trendy emojis to enhance engagement.' : 'Do not use emojis.'}
+            5. Contact Information: ${isContact ? 'Include a call-to-action with contact details.' : 'Do not include contact information.'}
 
-          ${contactInfo}
-          `,
-        },
+            Ensure each caption is:
+            - Engaging and attention-grabbing
+            - Relevant to the provided prompt
+            - Optimized for the specific social media platform (if mentioned in the prompt)
+            - Unique and creative, avoiding clichés
+            
+            If multiple captions are requested, make each one distinct in style and approach.`,
+          },
         { role: 'user', content: prompt },
       ],
+      n: 1,
+      temperature: 0.7,
     };
 
     try {
@@ -85,8 +81,6 @@ export class OpenaiService {
       );
 
       const completion = response.data.choices[0].message.content;
-
-     
 
       // Save the prompt and response to the database, associated with the user
       const responseEntity = this.responseRepository.create({
@@ -118,18 +112,24 @@ export class OpenaiService {
         this.openaiApiUrl,
         {
           model: 'gpt-4',
+<<<<<<< HEAD
           // messages: [{ role: 'user', content: prompt }],
            messages: [
             {
               role: 'system',
               content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
+=======
+          messages: [
+            {
+              role: 'system',
+              content: `You are a helpful assistant that generates unique content ideas with detailed description.`
+>>>>>>> bfbc8fbb76b35891bd54164956996c6e78c4d4af
             },
             {
               role: 'user',
               content: prompt
             }
           ]
-          
         },
         {
           headers: {
@@ -139,7 +139,6 @@ export class OpenaiService {
         },
       );
       
-
       // Extract the completion text from the response
       const completion = response.data.choices[0].message.content;
 
