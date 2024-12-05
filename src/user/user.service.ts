@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
 import { DataSource, Repository } from 'typeorm';
@@ -290,6 +291,7 @@ export class UserService {
         id: true,
         full_name: true,
         email: true,
+        role:true,
         // Optionally include other user-related fields...
   
         // Include posts with specific fields
@@ -356,6 +358,7 @@ export class UserService {
         id: true,
         full_name: true,
         email: true,
+        role:true,
         // Optionally include other user-related fields...
   
         // Include posts with specific fields

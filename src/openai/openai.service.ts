@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -118,9 +119,10 @@ export class OpenaiService {
         {
           model: 'gpt-4',
           // messages: [{ role: 'user', content: prompt }],
-           messages : [
+           messages: [
             {
-              role: 'system',content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
+              role: 'system',
+              content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
             },
             {
               role: 'user',
@@ -193,27 +195,7 @@ export class OpenaiService {
     return promptResponses;
   }
 
-  // async countEntitiesToday(): Promise<number[]> {
-  //   const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)); // Start of the day
-  //   const endOfDay = new Date(new Date().setHours(23, 59, 59, 999)); // End of the day
-  
-  //   const responseCountToday = await this.responseRepository.count({
-  //     where: {
-  //       createdAt: Between(startOfDay, endOfDay)
-  //     }
-  //   });
-  
-  //   const promptCountToday = await this.promptRepository.count({
-  //     where: {
-  //       createdAt: Between(startOfDay, endOfDay)
-  //     }
-  //   });
-  
-  //   console.log(`Responses added today: ${responseCountToday}`);
-  //   console.log(`Prompts added today: ${promptCountToday}`);
-  
-  //   return [responseCountToday, promptCountToday];
-  // }
+
   
   async countEntitiesTodayAndWeek(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
     // Helper function to get the name of the day

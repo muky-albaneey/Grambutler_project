@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
 import { ResponseEntity } from 'src/user/entities/response.entity';
@@ -59,10 +60,7 @@ export class OpenaiController {
     }
   }
 
-  // @Get('count-today')
-  // async getCountEntitiesToday(): Promise<number[]> {
-  //   return this.openaiService.countEntitiesTodayAndWeek();
-  // }
+ 
   @Get('count-today')
   async getCountEntitiesToday(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
     return this.openaiService.countEntitiesTodayAndWeek();
