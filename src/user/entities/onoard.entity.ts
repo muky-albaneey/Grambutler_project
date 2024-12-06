@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { OneToOne, JoinColumn, OneToMany, ManyToOne, Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 
