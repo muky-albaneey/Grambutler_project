@@ -6,6 +6,7 @@ import { Between, Repository } from 'typeorm';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { User } from 'src/user/entities/user.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
+import { PeriodEnum } from 'src/utils/filter.dto';
 
 
 @Injectable()
@@ -247,4 +248,56 @@ export class OpenaiService {
     };
   }
   
+  async getAiActivities(period: PeriodEnum) {
+    const now = new Date();
+
+    if (period === PeriodEnum.WEEKLY) {
+      // Start of the current week (Sunday)
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      return this.queryTotalsByDay(startOfWeek);
+    } else if (period === PeriodEnum.DAILY) {
+      // Start of the current day
+      const startOfDay = new Date(now);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      return this.queryTotalsByHour(startOfDay);
+    }
+  }
+
+  private async queryTotalsByDay(startDate: Date) {
+    const results = await this.promptRepository
+      .createQueryBuilder('prompt')
+      .select("DATE_TRUNC('day', prompt.createdAt)", 'day')
+      .addSelect('COUNT(prompt.id)', 'promptCount')
+      .addSelect('COUNT(response.id)', 'responseCount')
+      .leftJoin(ResponseEntity, 'response', "DATE_TRUNC('day', response.createdAt) = DATE_TRUNC('day', prompt.createdAt)")
+      .where('prompt.createdAt >= :startDate', { startDate })
+      .groupBy("DATE_TRUNC('day', prompt.createdAt)")
+      .orderBy("DATE_TRUNC('day', prompt.createdAt)", 'ASC')
+      .getRawMany();
+
+    return results;
+  }
+
+  private async queryTotalsByHour(startDate: Date) {
+    const results = await this.promptRepository
+      .createQueryBuilder('prompt')
+      .select("DATE_TRUNC('hour', prompt.createdAt)", 'hour')
+      .addSelect('COUNT(prompt.id)', 'promptCount')
+      .addSelect('COUNT(response.id)', 'responseCount')
+      .leftJoin(ResponseEntity, 'response', "DATE_TRUNC('hour', response.createdAt) = DATE_TRUNC('hour', prompt.createdAt)")
+      .where('prompt.createdAt >= :startDate', { startDate })
+      .andWhere('prompt.createdAt < NOW()')
+      .groupBy("DATE_TRUNC('hour', prompt.createdAt)")
+      .orderBy("DATE_TRUNC('hour', prompt.createdAt)", 'ASC')
+      .getRawMany();
+
+    return results.map((result) => ({
+      ...result,
+      hour: new Date(result.hour).getHours(),
+    }));
+  }
 }

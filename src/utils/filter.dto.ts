@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class FilterDto {
   @IsOptional()
@@ -18,4 +18,16 @@ export class FilterDto {
   @IsOptional()
   @IsInt()
   limit: number;
+}
+
+
+export enum PeriodEnum {
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+}
+
+export class PeriodDto {
+  @IsOptional()
+  @IsEnum(PeriodEnum)
+  period: PeriodEnum;
 }

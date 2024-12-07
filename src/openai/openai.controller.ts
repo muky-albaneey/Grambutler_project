@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, NotFoundException, Param, ParseUUIDPipe, Post, Query, Res } from '@nestjs/common';
 
 import { OpenaiService } from './openai.service';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
 import type { Response } from 'express';
+import { PeriodDto } from 'src/utils/filter.dto';
 
 @Controller('openai')
 export class OpenaiController {
@@ -74,6 +75,11 @@ export class OpenaiController {
   @Get('count-today')
   async getCountEntitiesToday(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
     return this.openaiService.countEntitiesTodayAndWeek();
+  }
+
+  @Get('dashboard')
+  async getAiActivities(@Query() filter: PeriodDto) {
+    return this.openaiService.getAiActivities(filter.period);
   }
   
 }
