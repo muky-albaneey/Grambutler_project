@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
-import { DataSource, Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,6 +17,9 @@ import { Like } from './entities/like.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Category } from './entities/category.entity';
 import { PostImage } from './entities/post-image.entity';
+import { PeriodEnum } from 'src/utils/filter.dto';
+import { getStartDate } from 'src/utils/date.helper';
+import { OpenaiService } from 'src/openai/openai.service';
 
 
 @Injectable()
@@ -55,7 +58,7 @@ export class UserService {
     @InjectRepository(PostImage)
     @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
 
-
+    private readonly openaiService : OpenaiService,
     
   ) {}
 
@@ -703,6 +706,25 @@ export class UserService {
           },
         },
       });
+  }
+  
+    async getOverviewCount(period: PeriodEnum) {
+      const now = new Date();
+      const startDate = getStartDate(now, period);
+      
+      const users = await this.userRepository.find({
+        where: { createdAt: MoreThanOrEqual(startDate) }
+      });
+      
+      const userCount = users.length;
+      const aiUsage = await this.openaiService.getAiUsageTotal(period);
+
+
+      return {
+        totalRevenue: 0,
+        totalSubscribers: userCount || 0,
+        totalAiUsage: aiUsage || 0,
+      }
     }
 
     async countPostsByUser(): Promise<any> {

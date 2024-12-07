@@ -2,11 +2,12 @@
 import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, MoreThanOrEqual, Repository } from 'typeorm';
 import { ResponseEntity } from 'src/user/entities/response.entity';
 import { User } from 'src/user/entities/user.entity';
 import { PromptEntity } from 'src/user/entities/reponse_prompt.entity';
 import { PeriodEnum } from 'src/utils/filter.dto';
+import { getStartDate } from 'src/utils/date.helper';
 
 
 @Injectable()
@@ -248,41 +249,40 @@ export class OpenaiService {
     };
   }
 
+  async getAiUsageTotal(period: PeriodEnum) {
+    const now = new Date();
+    const startDate = getStartDate(now, period);
+
+    const promptResult = await this.promptRepository.find({
+      where: { createdAt: MoreThanOrEqual(startDate) }
+    });
+
+    const responseResult = await this.responseRepository.find({
+      where: { createdAt: MoreThanOrEqual(startDate) }
+    });
+
+    return  promptResult?.length + responseResult?.length || 0;
+  }
+
   async getAiToolsCompared(period: PeriodEnum) {
     const now = new Date();
+    const startDate = getStartDate(now, period);
 
     if (period === PeriodEnum.WEEKLY) {
-      // Start of the current week (Sunday)
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
-
-      return this.queryPercentageByDay(startOfWeek);
+       return this.queryPercentageByDay(startDate);
     } else if (period === PeriodEnum.DAILY) {
-      // Start of the current day
-      const startOfDay = new Date(now);
-      startOfDay.setHours(0, 0, 0, 0);
-
-      return this.queryPercentageByHour(startOfDay);
+      return this.queryPercentageByHour(startDate);
     }
   }
   
   async getAiActivities(period: PeriodEnum) {
     const now = new Date();
+    const startDate = getStartDate(now, period);
 
     if (period === PeriodEnum.WEEKLY) {
-      // Start of the current week (Sunday)
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
-
-      return this.queryTotalsByDay(startOfWeek);
+      return this.queryTotalsByDay(startDate);
     } else if (period === PeriodEnum.DAILY) {
-      // Start of the current day
-      const startOfDay = new Date(now);
-      startOfDay.setHours(0, 0, 0, 0);
-
-      return this.queryTotalsByHour(startOfDay);
+      return this.queryTotalsByHour(startDate);
     }
   }
 

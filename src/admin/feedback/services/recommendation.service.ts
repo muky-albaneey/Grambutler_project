@@ -8,6 +8,7 @@ import { Recommendation } from '../entities/recommendation.entity';
 import { FilterDto, PeriodEnum } from 'src/utils/filter.dto';
 import { MoreThanOrEqual } from 'typeorm';
 import { FeedbackRepository } from '../repositories/feedback.repository';
+import { getStartDate } from 'src/utils/date.helper';
 
 @Injectable()
 export class RecommendationService {
@@ -48,18 +49,7 @@ export class RecommendationService {
 
   async calculateFeedbackPercentage(period: PeriodEnum) {
     const now = new Date();
-
-    let startDate: Date;
-    if (period === PeriodEnum.WEEKLY) {
-      // Start of the current week (Sunday)
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() - now.getDay());
-      startDate.setHours(0, 0, 0, 0);
-    } else if (period === PeriodEnum.DAILY) {
-      // Start of the current day
-      startDate = new Date(now);
-      startDate.setHours(0, 0, 0, 0);
-    }
+    const startDate: Date = getStartDate(now, period);
 
     // Total Recommendations
     const totalRecommendations = await this.recommendationRepository.find({});
@@ -87,7 +77,7 @@ export class RecommendationService {
       period,
       totalRecommendations,
       recommendationsWithFeedback: uniqueRecommendationsWithFeedback,
-      percentage: `${percentage}%`,
+      percentage: percentage,
     };
   }
 }

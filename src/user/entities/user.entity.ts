@@ -2,7 +2,6 @@
 
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
     OneToOne,
     JoinColumn,
@@ -20,6 +19,7 @@ import { Post } from './post.entity';
 import { Comment } from './comment.entity';
 import { Like } from './like.entity';
 import { Task } from 'src/tasks/entities/task.entity';
+import { DefaultEntity } from 'src/utils/default.entity';
 
 
 export enum UserRole {
@@ -29,10 +29,7 @@ export enum UserRole {
 
 
 @Entity()
-export class User {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
+export class User extends DefaultEntity {
     @Column({nullable : true, type : 'varchar'})
     full_name?: string;
 
@@ -106,6 +103,7 @@ export class User {
      @OneToMany(() => Task, (task) => task.user, { cascade: true, onUpdate: 'CASCADE' , onDelete: 'CASCADE' })
     tasks: Task[];
     constructor(user :Partial<User>){
+        super();
         Object.assign(this, user)
     }
    
