@@ -81,5 +81,9 @@ export class OpenaiController {
   async getAiActivities(@Query() filter: PeriodDto) {
     return this.openaiService.getAiActivities(filter.period);
   }
+
+  async getAiToolsCompared(@Query() filter: PeriodDto) {
+    return this.openaiService.getAiToolsCompared(filter.period);
+  }
   
 }

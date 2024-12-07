@@ -247,6 +247,25 @@ export class OpenaiService {
       weekCount: [responseCountWeek, promptCountWeek] // Count for this week
     };
   }
+
+  async getAiToolsCompared(period: PeriodEnum) {
+    const now = new Date();
+
+    if (period === PeriodEnum.WEEKLY) {
+      // Start of the current week (Sunday)
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      return this.queryPercentageByDay(startOfWeek);
+    } else if (period === PeriodEnum.DAILY) {
+      // Start of the current day
+      const startOfDay = new Date(now);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      return this.queryPercentageByHour(startOfDay);
+    }
+  }
   
   async getAiActivities(period: PeriodEnum) {
     const now = new Date();
@@ -295,6 +314,53 @@ export class OpenaiService {
       .orderBy("DATE_TRUNC('hour', prompt.createdAt)", 'ASC')
       .getRawMany();
 
+    return results.map((result) => ({
+      ...result,
+      hour: new Date(result.hour).getHours(),
+    }));
+  }
+
+  private async queryPercentageByDay(startDate: Date) {
+    const results = await this.promptRepository
+      .createQueryBuilder('prompt')
+      .select("DATE_TRUNC('day', prompt.createdAt)", 'day')
+      .addSelect('COUNT(prompt.id)', 'promptCount')
+      .addSelect('COALESCE(SUM(CASE WHEN response.id IS NOT NULL THEN 1 ELSE 0 END), 0)', 'responseCount')
+      .addSelect(
+        `CASE 
+           WHEN COUNT(prompt.id) = 0 THEN 0 
+           ELSE ROUND((COALESCE(SUM(CASE WHEN response.id IS NOT NULL THEN 1 ELSE 0 END), 0)::decimal / COUNT(prompt.id)) * 100, 2) 
+         END`,
+        'percentage',
+      )
+      .leftJoin(ResponseEntity, 'response', "DATE_TRUNC('day', response.createdAt) = DATE_TRUNC('day', prompt.createdAt)")
+      .where('prompt.createdAt >= :startDate', { startDate })
+      .groupBy("DATE_TRUNC('day', prompt.createdAt)")
+      .orderBy("DATE_TRUNC('day', prompt.createdAt)", 'ASC')
+      .getRawMany();
+  
+    return results;
+  }
+  
+  private async queryPercentageByHour(startDate: Date) {
+    const results = await this.promptRepository
+      .createQueryBuilder('prompt')
+      .select("DATE_TRUNC('hour', prompt.createdAt)", 'hour')
+      .addSelect('COUNT(prompt.id)', 'promptCount')
+      .addSelect('COALESCE(SUM(CASE WHEN response.id IS NOT NULL THEN 1 ELSE 0 END), 0)', 'responseCount')
+      .addSelect(
+        `CASE 
+           WHEN COUNT(prompt.id) = 0 THEN 0 
+           ELSE ROUND((COALESCE(SUM(CASE WHEN response.id IS NOT NULL THEN 1 ELSE 0 END), 0)::decimal / COUNT(prompt.id)) * 100, 2) 
+         END`,
+        'percentage',
+      )
+      .leftJoin(ResponseEntity, 'response', "DATE_TRUNC('hour', response.createdAt) = DATE_TRUNC('hour', prompt.createdAt)")
+      .where('prompt.createdAt >= :startDate', { startDate })
+      .groupBy("DATE_TRUNC('hour', prompt.createdAt)")
+      .orderBy("DATE_TRUNC('hour', prompt.createdAt)", 'ASC')
+      .getRawMany();
+  
     return results.map((result) => ({
       ...result,
       hour: new Date(result.hour).getHours(),
