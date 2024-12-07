@@ -82,6 +82,7 @@ export class OpenaiController {
     return this.openaiService.getAiActivities(filter.period);
   }
 
+  @Get('percentage')
   async getAiToolsCompared(@Query() filter: PeriodDto) {
     return this.openaiService.getAiToolsCompared(filter.period);
   }

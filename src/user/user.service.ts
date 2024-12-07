@@ -723,7 +723,7 @@ export class UserService {
       return {
         totalRevenue: 0,
         totalSubscribers: userCount || 0,
-        totalAiUsage: aiUsage || 0,
+        totalAiUsage: aiUsage.promptResult + aiUsage.responseResult || 0,
       }
     }
 

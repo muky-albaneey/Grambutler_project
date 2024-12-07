@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode, NotFoundException, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto, SettingDto } from './dto/update-user.dto';
@@ -9,6 +9,7 @@ import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UserRole } from './entities/user.entity';
+import { PeriodDto } from 'src/utils/filter.dto';
 
 @Controller('user')
 export class UserController {
@@ -444,6 +445,11 @@ async getPostsWithLikesByUser(@Param('userId', ParseUUIDPipe) userId: string, @R
       data: posts,
     
   });
+}
+
+@Get('overview')
+async getOverviewCount(@Query() filter: PeriodDto) {
+ return await this.userService.getOverviewCount(filter.period);
 }
 
 @Patch(':id/role')

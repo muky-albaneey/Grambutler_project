@@ -15,3 +15,23 @@ export const getStartDate = (date: Date, period: PeriodEnum): Date => {
 
   return startDate;
 };
+
+export const generateDateRange = (
+  startDate: Date,
+  endDate: Date,
+  unit: 'day' | 'hour',
+): Date[] => {
+  const dates = [];
+  const current = new Date(startDate);
+
+  while (current <= endDate) {
+    dates.push(new Date(current));
+    if (unit === 'day') {
+      current.setDate(current.getDate() + 1);
+    } else {
+      current.setHours(current.getHours() + 1);
+    }
+  }
+
+  return dates;
+};
