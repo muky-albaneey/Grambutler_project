@@ -8,7 +8,7 @@ import {
   Patch,
   Post,
   Query,
-  Res, 
+  Res,
   HttpStatus,
 } from '@nestjs/common';
 import { Recommendation } from '../entities/recommendation.entity';
@@ -17,7 +17,7 @@ import {
   UpdateRecommendationDto,
 } from '../dto/recommendation.dto';
 import { RecommendationService } from '../services/recommendation.service';
-import { FilterDto } from 'src/utils/filter.dto';
+import { FilterDto, PeriodDto } from 'src/utils/filter.dto';
 import type { Response } from 'express';
 
 @Controller('recommendation')
@@ -26,9 +26,12 @@ export class RecommendationController {
 
   @Post()
   async create(
-    @Body() createRecommendationDto: CreateRecommendationDto, @Res({ passthrough: true }) response: Response
+    @Body() createRecommendationDto: CreateRecommendationDto,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await this.recommendationService.create(createRecommendationDto);
+    const result = await this.recommendationService.create(
+      createRecommendationDto,
+    );
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'Recommendation created successfully',
@@ -37,13 +40,23 @@ export class RecommendationController {
   }
 
   @Get()
-  async findAll(@Query() filter: FilterDto, @Res({ passthrough: true }) response: Response  ) {
+  async findAll(
+    @Query() filter: FilterDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const result = await this.recommendationService.findAll(filter);
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       message: 'Recommendations fetched successfully',
       data: result,
     });
+  }
+
+  @Get('dashboard')
+  async calculateFeedbackPercentage(@Query() filter: PeriodDto) {
+    return this.recommendationService.calculateFeedbackPercentage(
+      filter.period,
+    );
   }
 
   @Get(':id')
