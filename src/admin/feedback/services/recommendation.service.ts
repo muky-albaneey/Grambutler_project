@@ -66,7 +66,7 @@ export class RecommendationService {
     ).size;
 
     const percentage =
-      totalRecommendations.length === 0
+      totalRecommendations?.length === 0
         ? 0
         : (
             (uniqueRecommendationsWithFeedback / totalRecommendations.length) *
@@ -75,7 +75,7 @@ export class RecommendationService {
 
     return {
       period,
-      totalRecommendations,
+      totalRecommendations: totalRecommendations.length,
       recommendationsWithFeedback: uniqueRecommendationsWithFeedback,
       percentage: percentage,
     };
