@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class FilterDto {

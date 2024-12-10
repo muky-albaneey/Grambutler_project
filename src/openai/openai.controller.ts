@@ -85,6 +85,20 @@ export class OpenaiController {
     return this.openaiService.countEntitiesTodayAndWeek();
   }
 
+  @Get('userCount/:userId')
+  async countEntitiesForUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    try {
+      // Call the service method to get counts for the specified user
+      const result = await this.openaiService.countEntitiesTodayAndWeekForUser(userId);
+      return result;
+    } catch (error) {
+      // Handle errors, e.g., user not found, etc.
+      throw new Error(`Failed to fetch counts for user ${userId}: ${error.message}`);
+    }
+  }
+
   @Get('dashboard')
   async getAiActivities(@Query() filter: PeriodDto) {
     return this.openaiService.getAiActivities(filter.period);
