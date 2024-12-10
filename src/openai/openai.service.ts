@@ -191,63 +191,150 @@ export class OpenaiService {
 
 
   
-  async countEntitiesTodayAndWeek(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
-    // Helper function to get the name of the day
-    const getDayName = (date: Date) => {
+  // async countEntitiesTodayAndWeek(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
+  //   // Helper function to get the name of the day
+  //   const getDayName = (date: Date) => {
+  //     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  //     return days[date.getDay()];
+  //   };
+  
+  //   // Start and end of the day
+  //   const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)); // Start of the day
+  //   const endOfDay = new Date(new Date().setHours(23, 59, 59, 999)); // End of the day
+  
+  //   // Start and end of the week (assuming the week starts on Sunday)
+  //   const currentDate = new Date();
+  //   const firstDayOfWeek = currentDate.getDate() - currentDate.getDay(); // Get the first day of the current week
+  //   const startOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek)).setHours(0, 0, 0, 0)); // Start of the week
+  //   const endOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek + 6)).setHours(23, 59, 59, 999)); // End of the week
+  
+  //   // Count for today
+  //   const responseCountToday = await this.responseRepository.count({
+  //     where: {
+  //       createdAt: Between(startOfDay, endOfDay)
+  //     }
+  //   });
+  
+  //   const promptCountToday = await this.promptRepository.count({
+  //     where: {
+  //       createdAt: Between(startOfDay, endOfDay)
+  //     }
+  //   });
+  
+  //   // Count for this week
+  //   const responseCountWeek = await this.responseRepository.count({
+  //     where: {
+  //       createdAt: Between(startOfWeek, endOfWeek)
+  //     }
+  //   });
+  
+  //   const promptCountWeek = await this.promptRepository.count({
+  //     where: {
+  //       createdAt: Between(startOfWeek, endOfWeek)
+  //     }
+  //   });
+  
+  //   const dayName = getDayName(new Date());
+  
+  //   console.log(`Today is: ${dayName}`);
+  //   console.log(`Responses added today: ${responseCountToday}`);
+  //   console.log(`Prompts added today: ${promptCountToday}`);
+  //   console.log(`Responses added this week: ${responseCountWeek}`);
+  //   console.log(`Prompts added this week: ${promptCountWeek}`);
+  
+  //   return {
+  //     day: dayName, // Name of the day (e.g., Monday)
+  //     dayCount: [responseCountToday, promptCountToday], // Count for today
+  //     weekCount: [responseCountWeek, promptCountWeek] // Count for this week
+  //   };
+  // }
+  async countEntitiesTodayAndWeek(): Promise<{
+    day: string;
+    dayCount: { response: number; prompts: number }[];
+    weekCount: { response: number; prompts: number }[];
+    totalDayCount: number;  // Total counts for today
+    totalWeekCount: number; // Total counts for the week
+    totalCount: number;     // Total count for everything (all time)
+    weekDetails: { caption: string; content: { response: number; prompts: number } }[];
+  }> {
+    const getDayName = (date: Date): string => {
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       return days[date.getDay()];
     };
   
-    // Start and end of the day
-    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0)); // Start of the day
-    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999)); // End of the day
+    // Start and end of today
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
   
-    // Start and end of the week (assuming the week starts on Sunday)
+    // Current date for the week range
     const currentDate = new Date();
-    const firstDayOfWeek = currentDate.getDate() - currentDate.getDay(); // Get the first day of the current week
-    const startOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek)).setHours(0, 0, 0, 0)); // Start of the week
-    const endOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek + 6)).setHours(23, 59, 59, 999)); // End of the week
+    const firstDayOfWeek = currentDate.getDate() - currentDate.getDay();
+    const startOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek)).setHours(0, 0, 0, 0));
+    const endOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek + 6)).setHours(23, 59, 59, 999));
   
-    // Count for today
+    // Counts for today
     const responseCountToday = await this.responseRepository.count({
-      where: {
-        createdAt: Between(startOfDay, endOfDay)
-      }
+      where: { createdAt: Between(startOfDay, endOfDay) },
     });
-  
     const promptCountToday = await this.promptRepository.count({
-      where: {
-        createdAt: Between(startOfDay, endOfDay)
-      }
+      where: { createdAt: Between(startOfDay, endOfDay) },
     });
   
-    // Count for this week
+    // Counts for this week
     const responseCountWeek = await this.responseRepository.count({
-      where: {
-        createdAt: Between(startOfWeek, endOfWeek)
-      }
+      where: { createdAt: Between(startOfWeek, endOfWeek) },
     });
-  
     const promptCountWeek = await this.promptRepository.count({
-      where: {
-        createdAt: Between(startOfWeek, endOfWeek)
-      }
+      where: { createdAt: Between(startOfWeek, endOfWeek) },
     });
   
-    const dayName = getDayName(new Date());
+    // Generate counts for all days of the week
+    const weekDetails: { caption: string; content: { response: number; prompts: number } }[] = [];
+    let totalWeekCount = 0;
+    let totalResponseWeek = 0;
+    let totalPromptWeek = 0;
   
-    console.log(`Today is: ${dayName}`);
-    console.log(`Responses added today: ${responseCountToday}`);
-    console.log(`Prompts added today: ${promptCountToday}`);
-    console.log(`Responses added this week: ${responseCountWeek}`);
-    console.log(`Prompts added this week: ${promptCountWeek}`);
+    for (let i = 0; i < 7; i++) {
+      const dayDate = new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + i));
+      const dayStart = new Date(dayDate.setHours(0, 0, 0, 0));
+      const dayEnd = new Date(dayDate.setHours(23, 59, 59, 999));
+  
+      const responses = await this.responseRepository.count({
+        where: { createdAt: Between(dayStart, dayEnd) },
+      });
+      const prompts = await this.promptRepository.count({
+        where: { createdAt: Between(dayStart, dayEnd) },
+      });
+  
+      weekDetails.push({
+        caption: getDayName(dayDate), // Day name
+        content: { response: responses, prompts: prompts },
+      });
+  
+      totalResponseWeek += responses;
+      totalPromptWeek += prompts;
+    }
+  
+    // Total counts for today and this week
+    const totalDayCount = responseCountToday + promptCountToday; // Total count for today
+    totalWeekCount = totalResponseWeek + totalPromptWeek; // Total count for this week
+  
+    // Calculate the global total (all-time count)
+    const totalResponsesAllTime = await this.responseRepository.count();
+    const totalPromptsAllTime = await this.promptRepository.count();
+    const totalCount = totalResponsesAllTime + totalPromptsAllTime; // Total count across all time
   
     return {
-      day: dayName, // Name of the day (e.g., Monday)
-      dayCount: [responseCountToday, promptCountToday], // Count for today
-      weekCount: [responseCountWeek, promptCountWeek] // Count for this week
+      day: getDayName(new Date()), // Today's name
+      dayCount: [{ response: responseCountToday }, { prompts: promptCountToday }], // Today's counts as objects
+      weekCount: [{ response: responseCountWeek }, { prompts: promptCountWeek }], // Weekly totals as objects
+      totalDayCount,  // Total for today
+      totalWeekCount, // Total for this week
+      totalCount,     // Total count for all time (global)
+      weekDetails,    // Details for each day of the week
     };
   }
+  
 
   async getAiUsageTotal(period: PeriodEnum) {
     const now = new Date();
