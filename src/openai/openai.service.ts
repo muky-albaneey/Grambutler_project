@@ -21,7 +21,7 @@ export class OpenaiService {
     @InjectRepository(ResponseEntity)
     private readonly promptRepository: Repository<PromptEntity>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>
   ) {}
 
   async captionsAi(
@@ -188,8 +188,7 @@ export class OpenaiService {
 
     return promptResponses;
   }
-
-  async countEntitiesTodayAndWeekForUser(userId: string): Promise<{
+  async countEntitiesTodayAndWeekForUser(userId): Promise<{
     day: string;
     dayCount: { response: number; prompts: number }[];
     weekCount: { response: number; prompts: number }[];
@@ -202,81 +201,85 @@ export class OpenaiService {
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       return days[date.getDay()];
     };
-  
-    // Start and end of today
+
     const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
     const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
-  
-    // Current date for the week range
+
     const currentDate = new Date();
     const firstDayOfWeek = currentDate.getDate() - currentDate.getDay();
     const startOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek)).setHours(0, 0, 0, 0));
     const endOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek + 6)).setHours(23, 59, 59, 999));
-  
-    // Counts for today
-    const responseCountToday = await this.responseRepository.count({
-      where: { userId, createdAt: Between(startOfDay, endOfDay) },
+
+    // Fetch the user with their related responses and prompts
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['caption_responses', 'prompt_responses'],
     });
-    const promptCountToday = await this.promptRepository.count({
-      where: { userId, createdAt: Between(startOfDay, endOfDay) },
-    });
-  
-    // Counts for this week
-    const responseCountWeek = await this.responseRepository.count({
-      where: { userId, createdAt: Between(startOfWeek, endOfWeek) },
-    });
-    const promptCountWeek = await this.promptRepository.count({
-      where: { userId, createdAt: Between(startOfWeek, endOfWeek) },
-    });
-  
-    // Generate counts for all days of the week
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Filter counts for today
+    const responsesToday = user.caption_responses?.filter(
+      (res) => res.createdAt >= startOfDay && res.createdAt <= endOfDay,
+    ).length || 0;
+
+    const promptsToday = user.prompt_responses?.filter(
+      (prompt) => prompt.createdAt >= startOfDay && prompt.createdAt <= endOfDay,
+    ).length || 0;
+
+    // Filter counts for the week
+    const responsesWeek = user.caption_responses?.filter(
+      (res) => res.createdAt >= startOfWeek && res.createdAt <= endOfWeek,
+    ).length || 0;
+
+    const promptsWeek = user.prompt_responses?.filter(
+      (prompt) => prompt.createdAt >= startOfWeek && prompt.createdAt <= endOfWeek,
+    ).length || 0;
+
+    // Total counts
+    const totalResponses = user.caption_responses?.length || 0;
+    const totalPrompts = user.prompt_responses?.length || 0;
+
+    // Weekday breakdown details
     const weekDetails: { caption: string; content: { response: number; prompts: number } }[] = [];
-    let totalWeekCount = 0;
     let totalResponseWeek = 0;
     let totalPromptWeek = 0;
-  
+
     for (let i = 0; i < 7; i++) {
       const dayDate = new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + i));
       const dayStart = new Date(dayDate.setHours(0, 0, 0, 0));
       const dayEnd = new Date(dayDate.setHours(23, 59, 59, 999));
-  
-      const responses = await this.responseRepository.count({
-        where: { userId, createdAt: Between(dayStart, dayEnd) },
-      });
-      const prompts = await this.promptRepository.count({
-        where: { userId, createdAt: Between(dayStart, dayEnd) },
-      });
-  
+
+      const responses = user.caption_responses?.filter(
+        (res) => res.createdAt >= dayStart && res.createdAt <= dayEnd,
+      ).length || 0;
+
+      const prompts = user.prompt_responses?.filter(
+        (prompt) => prompt.createdAt >= dayStart && prompt.createdAt <= dayEnd,
+      ).length || 0;
+
       weekDetails.push({
-        caption: getDayName(dayDate), // Day name
-        content: { response: responses, prompts: prompts }, // Object with response and prompts for each day
+        caption: getDayName(dayDate),
+        content: { response: responses, prompts: prompts },
       });
-  
+
       totalResponseWeek += responses;
       totalPromptWeek += prompts;
     }
-  
-    // Total counts for today and this week
-    const totalDayCount = responseCountToday + promptCountToday; // Total count for today
-    totalWeekCount = totalResponseWeek + totalPromptWeek; // Total count for this week
-  
-    // Calculate the global total (all-time count)
-    const totalResponsesAllTime = await this.responseRepository.count({
-      where: { userId },
-    });
-    const totalPromptsAllTime = await this.promptRepository.count({
-      where: { userId },
-    });
-    const totalCount = totalResponsesAllTime + totalPromptsAllTime; // Total count across all time
-  
+
+    const totalDayCount = responsesToday + promptsToday;
+    const totalWeekCount = responsesWeek + promptsWeek;
+
     return {
-      day: getDayName(new Date()), // Today's name
-      dayCount: [{ response: responseCountToday, prompts: promptCountToday }], // Today's counts as an object
-      weekCount: [{ response: responseCountWeek, prompts: promptCountWeek }], // Weekly totals as an object
-      totalDayCount,  // Total for today
-      totalWeekCount, // Total for this week
-      totalCount,     // Total count for all time (global)
-      weekDetails,    // Details for each day of the week, with response and prompts
+      day: getDayName(new Date()),
+      dayCount: [{ response: responsesToday, prompts: promptsToday }],
+      weekCount: [{ response: responsesWeek, prompts: promptsWeek }],
+      totalDayCount,
+      totalWeekCount,
+      totalCount: totalResponses + totalPrompts,
+      weekDetails,
     };
   }
   
