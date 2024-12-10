@@ -73,7 +73,15 @@ export class OpenaiController {
 
  
   @Get('count-today')
-  async getCountEntitiesToday(): Promise<{ day: string, dayCount: number[], weekCount: number[] }> {
+  async getCountEntitiesToday(): Promise<{
+    day: string;
+    dayCount: { response: number; prompts: number }[];  // Array of objects with response and prompts
+    weekCount: { response: number; prompts: number }[]; // Array of objects with response and prompts
+    totalDayCount: number;  // Total counts for today
+    totalWeekCount: number; // Total counts for the week
+    totalCount: number;     // Total count for everything (all time)
+    weekDetails: { caption: string; content: { response: number; prompts: number } }[]; // Array of objects with response and prompts
+  }>  {
     return this.openaiService.countEntitiesTodayAndWeek();
   }
 
