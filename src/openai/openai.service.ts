@@ -250,12 +250,12 @@ export class OpenaiService {
   // }
   async countEntitiesTodayAndWeek(): Promise<{
     day: string;
-    dayCount: { response: number; prompts: number }[];
-    weekCount: { response: number; prompts: number }[];
+    dayCount: { response: number; prompts: number }[];  // Array of objects with response and prompts
+    weekCount: { response: number; prompts: number }[]; // Array of objects with response and prompts
     totalDayCount: number;  // Total counts for today
     totalWeekCount: number; // Total counts for the week
     totalCount: number;     // Total count for everything (all time)
-    weekDetails: { caption: string; content: { response: number; prompts: number } }[];
+    weekDetails: { caption: string; content: { response: number; prompts: number } }[]; // Array of objects with response and prompts
   }> {
     const getDayName = (date: Date): string => {
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -308,7 +308,7 @@ export class OpenaiService {
   
       weekDetails.push({
         caption: getDayName(dayDate), // Day name
-        content: { response: responses, prompts: prompts },
+        content: { response: responses, prompts: prompts }, // Object with response and prompts for each day
       });
   
       totalResponseWeek += responses;
@@ -326,12 +326,12 @@ export class OpenaiService {
   
     return {
       day: getDayName(new Date()), // Today's name
-      dayCount: [{ response: responseCountToday }, { prompts: promptCountToday }], // Today's counts as objects
-      weekCount: [{ response: responseCountWeek }, { prompts: promptCountWeek }], // Weekly totals as objects
+      dayCount: [{ response: responseCountToday, prompts: promptCountToday }], // Today's counts as an object
+      weekCount: [{ response: responseCountWeek, prompts: promptCountWeek }], // Weekly totals as an object
       totalDayCount,  // Total for today
       totalWeekCount, // Total for this week
       totalCount,     // Total count for all time (global)
-      weekDetails,    // Details for each day of the week
+      weekDetails,    // Details for each day of the week, with response and prompts
     };
   }
   
