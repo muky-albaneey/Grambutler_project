@@ -39,6 +39,7 @@ import { Discussion } from './admin/community/entities/discussion.entity';
 import { Comment_task } from './tasks/entities/comment.entity';
 // import { Comment_task } from 'src/tasks/entities/comment.entity.ts';
 import { PaymentService } from './payment/payment.service';
+import { Payment } from './user/entities/payment.entity';
 
 @Module({
   imports: [
@@ -84,7 +85,8 @@ import { PaymentService } from './payment/payment.service';
           Reply,
           Contact,
           AdminCategory,
-          Discussion
+          Discussion,
+          Payment
     
         ],
         synchronize: true
