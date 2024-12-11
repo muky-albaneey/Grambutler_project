@@ -18,8 +18,10 @@ export class OpenaiService {
   constructor(
     @InjectRepository(ResponseEntity)
     private readonly responseRepository: Repository<ResponseEntity>,
-    @InjectRepository(ResponseEntity)
+
+    @InjectRepository(PromptEntity)
     private readonly promptRepository: Repository<PromptEntity>,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
   ) {}
@@ -104,18 +106,19 @@ export class OpenaiService {
     }
   }
 
-  async promptAi(prompt: string, userId: string, ): Promise<string> {
+  async promptAi(prompt: string, userId: string): Promise<string> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
+    console.log('Found user:', user);  // Log the user to verify
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+  
     try {
       const response = await axios.post(
         this.openaiApiUrl,
         {
           model: 'gpt-4',
-          // messages: [{ role: 'user', content: prompt }],
-           messages: [
+          messages: [
             {
               role: 'system',
               content: `You are a helpful assistant tasked with providing accurate and insightful information to assist the user in achieving their goals efficiently. Always respond in a polite, clear, and concise manner.`
@@ -133,18 +136,22 @@ export class OpenaiService {
           },
         },
       );
-      
+  
       // Extract the completion text from the response
       const completion = response.data.choices[0].message.content;
-
+      console.log('Completion:', completion);  // Log the completion
+  
       const responseEntity = this.promptRepository.create({
         prompt,
         response: completion,
         createdAt: new Date(),
         user, // Associate the response with the user
       });
-
-      await this.promptRepository.save(responseEntity);
+      console.log('Response Entity:', responseEntity);  // Log the entity before saving
+  
+      const savedEntity = await this.promptRepository.save(responseEntity);
+      console.log('Saved Entity:', savedEntity);  // Log the saved entity
+  
       return completion;
     } catch (error) {
       console.error('Error communicating with OpenAI:', error);
@@ -154,6 +161,7 @@ export class OpenaiService {
       );
     }
   }
+  
 
   async findLastTenCaptionResponses(userId): Promise<ResponseEntity[]> {
     // Ensure the user exists
@@ -188,6 +196,7 @@ export class OpenaiService {
 
     return promptResponses;
   }
+
   async countEntitiesTodayAndWeekForUser(userId): Promise<{
     day: string;
     dayCount: { response: number; prompts: number }[];
@@ -195,83 +204,83 @@ export class OpenaiService {
     totalDayCount: number;
     totalWeekCount: number;
     totalCount: number;
-    weekDetails: { caption: string; content: { response: number; prompts: number } }[];
+    weekDetails: { day: string; content: { caption: number; prompts: number } }[];
   }> {
     const getDayName = (date: Date): string => {
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       return days[date.getDay()];
     };
-
+  
     const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
     const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
-
+  
     const currentDate = new Date();
     const firstDayOfWeek = currentDate.getDate() - currentDate.getDay();
     const startOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek)).setHours(0, 0, 0, 0));
     const endOfWeek = new Date(new Date(currentDate.setDate(firstDayOfWeek + 6)).setHours(23, 59, 59, 999));
-
+  
     // Fetch the user with their related responses and prompts
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['caption_responses', 'prompt_responses'],
     });
-
+  
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
+  
     // Filter counts for today
     const responsesToday = user.caption_responses?.filter(
       (res) => res.createdAt >= startOfDay && res.createdAt <= endOfDay,
     ).length || 0;
-
+  
     const promptsToday = user.prompt_responses?.filter(
       (prompt) => prompt.createdAt >= startOfDay && prompt.createdAt <= endOfDay,
     ).length || 0;
-
+  
     // Filter counts for the week
     const responsesWeek = user.caption_responses?.filter(
       (res) => res.createdAt >= startOfWeek && res.createdAt <= endOfWeek,
     ).length || 0;
-
+  
     const promptsWeek = user.prompt_responses?.filter(
       (prompt) => prompt.createdAt >= startOfWeek && prompt.createdAt <= endOfWeek,
     ).length || 0;
-
-    // Total counts
-    const totalResponses = user.caption_responses?.length || 0;
-    const totalPrompts = user.prompt_responses?.length || 0;
-
+  
+    // Total counts by querying the entities
+    const totalResponses = await this.responseRepository.count({ where: { user: { id: userId } } });
+    const totalPrompts = await this.promptRepository.count({ where: { user: { id: userId } } });
+  
     // Weekday breakdown details
-    const weekDetails: { caption: string; content: { response: number; prompts: number } }[] = [];
+    const weekDetails: { day: string; content: { caption: number; prompts: number } }[] = [];
     let totalResponseWeek = 0;
     let totalPromptWeek = 0;
-
+  
     for (let i = 0; i < 7; i++) {
       const dayDate = new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + i));
       const dayStart = new Date(dayDate.setHours(0, 0, 0, 0));
       const dayEnd = new Date(dayDate.setHours(23, 59, 59, 999));
-
-      const responses = user.caption_responses?.filter(
-        (res) => res.createdAt >= dayStart && res.createdAt <= dayEnd,
-      ).length || 0;
-
-      const prompts = user.prompt_responses?.filter(
-        (prompt) => prompt.createdAt >= dayStart && prompt.createdAt <= dayEnd,
-      ).length || 0;
-
-      weekDetails.push({
-        caption: getDayName(dayDate),
-        content: { response: responses, prompts: prompts },
+  
+      const responses = await this.responseRepository.count({
+        where: { user: { id: userId }, createdAt: Between(dayStart, dayEnd) },
       });
-
+  
+      const prompts = await this.promptRepository.count({
+        where: { user: { id: userId }, createdAt: Between(dayStart, dayEnd) },
+      });
+  
+      weekDetails.push({
+        day: getDayName(dayDate),
+        content: { caption: responses, prompts: prompts },
+      });
+  
       totalResponseWeek += responses;
       totalPromptWeek += prompts;
     }
-
+  
     const totalDayCount = responsesToday + promptsToday;
     const totalWeekCount = responsesWeek + promptsWeek;
-
+  
     return {
       day: getDayName(new Date()),
       dayCount: [{ response: responsesToday, prompts: promptsToday }],
@@ -282,6 +291,7 @@ export class OpenaiService {
       weekDetails,
     };
   }
+  
   
   
   async countEntitiesTodayAndWeek(): Promise<{

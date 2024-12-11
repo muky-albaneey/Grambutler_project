@@ -95,13 +95,14 @@ import { PaymentModule } from './payment/payment.module';
       }),
     }),
     UserModule,
+    PaymentModule,
     StripeModule,
     OpenaiModule,
     TasksModule,
     AdminModule,
-    PaymentModule,
+    
   ],
   controllers: [AppController],
-  providers: [AppService, MailService, PaymentService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}
