@@ -20,6 +20,7 @@ import { Comment } from './comment.entity';
 import { Like } from './like.entity';
 import { Task } from 'src/tasks/entities/task.entity';
 import { DefaultEntity } from 'src/utils/default.entity';
+import { Payment } from './payment.entity';
 
 
 export enum UserRole {
@@ -102,6 +103,10 @@ export class User extends DefaultEntity {
 
      @OneToMany(() => Task, (task) => task.user, { cascade: true, onUpdate: 'CASCADE' , onDelete: 'CASCADE' })
     tasks: Task[];
+
+    @OneToMany(() => Payment, (payment) => payment.user, { cascade: true, onDelete: 'CASCADE' })
+    payments: Payment[];
+
     constructor(user :Partial<User>){
         super();
         Object.assign(this, user)

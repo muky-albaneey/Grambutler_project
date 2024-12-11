@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class Payment {
@@ -20,4 +21,8 @@ export class Payment {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  // Many-to-One relationship with User
+  @ManyToOne(() => User, (user) => user.payments, { nullable: false, onDelete: 'CASCADE' })
+  user: User;
 }
