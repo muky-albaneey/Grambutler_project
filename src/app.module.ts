@@ -40,6 +40,7 @@ import { Comment_task } from './tasks/entities/comment.entity';
 // import { Comment_task } from 'src/tasks/entities/comment.entity.ts';
 import { PaymentService } from './payment/payment.service';
 import { Payment } from './user/entities/payment.entity';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -98,6 +99,7 @@ import { Payment } from './user/entities/payment.entity';
     OpenaiModule,
     TasksModule,
     AdminModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService, MailService, PaymentService],
