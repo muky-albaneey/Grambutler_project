@@ -90,48 +90,54 @@ export class StripeService {
 //     return  'successfull'
 //   }
 // }
-async handleWebhook(payload: Buffer, sig: string): Promise<string> {
+async handleWebhook(payload: Buffer, sig: string, userId: string): Promise<string> {
   let event: Stripe.Event;
 
   try {
     event = this.stripe.webhooks.constructEvent(payload, sig, this.endpointSecret);
   } catch (err) {
-    console.error(`Webhook Error is here: ${err.message}`);
+    console.error(`Webhook Error: ${err.message}`);
     throw new Error(`Webhook Error: ${err.message}`);
   }
 
   switch (event.type) {
-    case 'payment_intent.created':
+    case 'payment_intent.created': {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.log('PaymentIntent Created:', paymentIntent);
 
-      // Save payment info to the database
-      await this.paymentService.savePayment({
-        paymentIntentId: paymentIntent.id,
-        amount: paymentIntent.amount,
-        currency: paymentIntent.currency,
-        status: paymentIntent.status,
-      });
+      await this.paymentService.savePayment(
+        {
+          paymentIntentId: paymentIntent.id,
+          amount: paymentIntent.amount,
+          currency: paymentIntent.currency,
+          status: paymentIntent.status,
+        },
+        userId, // Use the userId from the guard
+      );
       break;
+    }
 
-    case 'checkout.session.completed':
+    case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
       console.log('Checkout Session Completed:', session);
 
-      // Save checkout session details (optional)
-      await this.paymentService.savePayment({
-        paymentIntentId: session.payment_intent as string,
-        amount: session.amount_total,
-        currency: session.currency,
-        status: 'completed',
-      });
+      await this.paymentService.savePayment(
+        {
+          paymentIntentId: session.payment_intent as string,
+          amount: session.amount_total,
+          currency: session.currency,
+          status: 'completed',
+        },
+        userId, // Use the userId
+      );
       break;
+    }
 
-    // Handle other events like 'invoice.created' if needed
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
 
   return 'success';
 }
+
 }
