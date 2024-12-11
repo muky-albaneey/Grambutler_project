@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Req, Res, Headers, Get, Query, HttpStatus } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Post, Body, Req, Res, Headers, Get, Query, HttpStatus, UseGuards } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { Request, Response } from 'express';
+import { JwtGuard } from 'src/guards/jwt.guards';
 
 @Controller('stripe')
 export class StripeController {
@@ -22,6 +24,7 @@ export class StripeController {
     res.status(200).json({ url });
   }
 
+  @UseGuards(JwtGuard)
   @Post('webhook')
   async handleWebhook(@Req() req: Request, @Headers('stripe-signature') sig: string, @Res() res: Response) {
     try {
@@ -30,7 +33,14 @@ export class StripeController {
       if (!rawBody) {
         throw new Error('rawBody is undefined');
       }
-      const result = await this.stripeService.handleWebhook(rawBody, sig);
+      // const result = await this.stripeService.handleWebhook(rawBody, sig);
+      const userId = req['userId'];// Extract user ID from JWT guard
+      if (!userId) {
+        throw new Error('User ID not found in the token.');
+      }
+
+      console.log('User ID:', userId); // Debug: Log the user ID
+      const result = await this.stripeService.handleWebhook(rawBody, sig, userId);
       res.status(200).send(result);
     } catch (err) {
       console.error(`Webhook Error: ${err.message}`); // Log error for debugging
