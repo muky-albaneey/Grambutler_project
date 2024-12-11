@@ -199,8 +199,8 @@ export class OpenaiService {
 
   async countEntitiesTodayAndWeekForUser(userId): Promise<{
     day: string;
-    dayCount: { response: number; prompts: number }[];
-    weekCount: { response: number; prompts: number }[];
+    dayCount: { caption: number; prompts: number }[];
+    weekCount: { caption: number; prompts: number }[];
     totalDayCount: number;
     totalWeekCount: number;
     totalCount: number;
@@ -283,8 +283,8 @@ export class OpenaiService {
   
     return {
       day: getDayName(new Date()),
-      dayCount: [{ response: responsesToday, prompts: promptsToday }],
-      weekCount: [{ response: responsesWeek, prompts: promptsWeek }],
+      dayCount: [{ caption: responsesToday, prompts: promptsToday }],
+      weekCount: [{ caption: responsesWeek, prompts: promptsWeek }],
       totalDayCount,
       totalWeekCount,
       totalCount: totalResponses + totalPrompts,
