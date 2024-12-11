@@ -90,7 +90,7 @@ export class StripeService {
 //     return  'successfull'
 //   }
 // }
-async handleWebhook(payload: Buffer, sig: string, userId: string): Promise<string> {
+async handleWebhook(payload: Buffer, sig: string, userId): Promise<string> {
   let event: Stripe.Event;
 
   try {
