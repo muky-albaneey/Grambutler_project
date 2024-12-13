@@ -49,7 +49,7 @@ export class RecommendationService {
 
   async calculateFeedbackPercentage(period: PeriodEnum) {
     const now = new Date();
-    const startDate: Date = getStartDate(now, period);
+    const { startDate } = getStartDate(now, period);
 
     // Total Recommendations
     const totalRecommendations = await this.recommendationRepository.find({});

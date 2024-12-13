@@ -384,7 +384,7 @@ export class OpenaiService {
 
   async getAiUsageTotal(period: PeriodEnum) {
     const now = new Date();
-    const startDate = getStartDate(now, period);
+    const { startDate } = getStartDate(now, period);
 
     const promptResult = await this.promptRepository.find({
       where: { createdAt: MoreThanOrEqual(startDate) }
@@ -414,17 +414,16 @@ export class OpenaiService {
   
   async getAiActivities(period: PeriodEnum) {
     const now = new Date();
-    const startDate = getStartDate(now, period);
+    const {startDate, endDate} = getStartDate(now, period);
 
     if (period === PeriodEnum.WEEKLY) {
-      return this.queryTotalsByDay(startDate);
+      return this.queryTotalsByDay(startDate, endDate);
     } else if (period === PeriodEnum.DAILY) {
-      return this.queryTotalsByHour(startDate);
+      return this.queryTotalsByHour(startDate, endDate);
     }
   }
 
-  private async queryTotalsByDay(startDate: Date) {
-    const endDate = new Date();
+  private async queryTotalsByDay(startDate: Date, endDate: Date) {
     const dateRange = generateDateRange(startDate, endDate, 'day');
     
     const results = await this.promptRepository
@@ -450,8 +449,7 @@ export class OpenaiService {
   });
 }
 
-  private async queryTotalsByHour(startDate: Date) {
-    const endDate = new Date();
+  private async queryTotalsByHour(startDate: Date, endDate: Date) {
   const dateRange = generateDateRange(startDate, endDate, 'hour');
 
   const results = await this.promptRepository

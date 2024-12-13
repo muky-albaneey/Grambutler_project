@@ -710,7 +710,7 @@ export class UserService {
   
     async getOverviewCount(period: PeriodEnum) {
       const now = new Date();
-      const startDate = getStartDate(now, period);
+      const { startDate } = getStartDate(now, period);
       
       const users = await this.userRepository.find({
         where: { createdAt: MoreThanOrEqual(startDate) }
