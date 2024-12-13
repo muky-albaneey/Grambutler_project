@@ -41,6 +41,7 @@ import { Comment_task } from './tasks/entities/comment.entity';
 import { PaymentService } from './payment/payment.service';
 import { Payment } from './user/entities/payment.entity';
 import { PaymentModule } from './payment/payment.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { PaymentModule } from './payment/payment.module';
     OpenaiModule,
     TasksModule,
     AdminModule,
+    JwtModule
     
   ],
   controllers: [AppController],
