@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto, ForgotPass } from './dto/create-user.dto';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
@@ -236,7 +236,7 @@ export class UserService {
     }
   
     if (user.settings) {
-      console.log(user.settings.firstname );
+      // console.log(user.settings.firstname );
       
       // Update existing onboarding entity
       if(body.firstname !== "") user.settings.firstname = body?.firstname 
@@ -260,7 +260,7 @@ export class UserService {
       // Create new onboarding entity
       const newsettings = this.SettingsRepository.create(body);
   
-      console.log("Creating new onboarding info: ", newsettings);
+      // console.log("Creating new onboarding info: ", newsettings);
       user.settings = await this.SettingsRepository.save(newsettings);
     }
   
@@ -328,7 +328,7 @@ export class UserService {
       },
     });
   
-    console.log("User found: ", user);
+    // console.log("User found: ", user);
   
     if (!user) {
       throw new NotFoundException('User not found');
@@ -559,6 +559,54 @@ export class UserService {
     }
 
 
+    // async createPostWithImage(
+    //   createPostDto: CreatePostDto,
+    //   userId: string,
+    //   file?: Express.Multer.File,
+    // ): Promise<Post> {
+    //   const { title, content, categoryName } = createPostDto;
+  
+    //   // Find or create the category
+    //   let category = await this.categoryRepository.findOne({ where: { name: categoryName } });
+    //   if (!category) {
+    //     category = this.categoryRepository.create({ name: categoryName });
+    //     await this.categoryRepository.save(category);
+    //   }
+  
+    //   // Find the user  
+    //   const user = await this.userRepository.findOne({ where: { id: userId } });
+    //   if (!user) {
+    //     throw new Error('User not found');
+    //   }
+  
+    //   let savedPostImage: PostImage | null = null;
+  
+    //   // Handle image if provided
+    //   if (file) {
+    //     const ext = path.extname(file.originalname).toLowerCase();
+    //     const base64Image = file.buffer.toString('base64');
+  
+    //     const postImage = this.postImageRepository.create({
+    //       name: file.originalname,
+    //       base64: base64Image,
+    //       ext: ext.slice(1),
+    //       content: file.buffer,
+    //     });
+  
+    //     savedPostImage = await this.postImageRepository.save(postImage);
+    //   }
+  
+    //   // Create the post
+    //   const newPost = this.postRepository.create({
+    //     title,
+    //     content,
+    //     category,
+    //     user,
+    //     post_image: savedPostImage ?? null, // Add image only if available
+    //   });
+  
+    //   return await this.postRepository.save(newPost);
+    // }
     async createPostWithImage(
       createPostDto: CreatePostDto,
       userId: string,
@@ -573,7 +621,7 @@ export class UserService {
         await this.categoryRepository.save(category);
       }
   
-      // Find the user  
+      // Find the user
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
         throw new Error('User not found');
@@ -583,17 +631,23 @@ export class UserService {
   
       // Handle image if provided
       if (file) {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const base64Image = file.buffer.toString('base64');
+        try {
+          const imageUrl = await this.s3Service.uploadFile(file); // Upload file to S3
   
-        const postImage = this.postImageRepository.create({
-          name: file.originalname,
-          base64: base64Image,
-          ext: ext.slice(1),
-          content: file.buffer,
-        });
+          // Create post image entity with the URL
+          const postImage = this.postImageRepository.create({
+            name: file.originalname,
+            base64: '', // Optional: Store base64 if needed
+            ext: path.extname(file.originalname).toLowerCase().slice(1),
+            content: file.buffer,
+            url: imageUrl, // Store the S3 URL
+          });
   
-        savedPostImage = await this.postImageRepository.save(postImage);
+          savedPostImage = await this.postImageRepository.save(postImage);
+        } catch (error) {
+          console.error('Error uploading image to S3:', error);
+          throw new InternalServerErrorException('Error uploading image');
+        }
       }
   
       // Create the post
