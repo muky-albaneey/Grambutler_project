@@ -20,6 +20,7 @@ import { Category } from './entities/category.entity';
 import { PostImage } from './entities/post-image.entity';
 import { Task } from 'src/tasks/entities/task.entity';
 import { OpenaiService } from 'src/openai/openai.service';
+import { S3Service } from './s3/s3.service';
 
 @Module({
   imports: [
@@ -36,6 +37,6 @@ import { OpenaiService } from 'src/openai/openai.service';
   ],
   exports: [TypeOrmModule],
   controllers: [UserController],
-  providers: [OpenaiService, JwtService, UserService, MailService],
+  providers: [OpenaiService, JwtService, UserService, MailService, S3Service],
 })
 export class UserModule {}

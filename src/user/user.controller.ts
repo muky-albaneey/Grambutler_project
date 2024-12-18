@@ -223,19 +223,33 @@ async reset(@Body() body: { token: string }) {
     });
   }
 
-  @Patch(':id/profileImg')
-  @UseInterceptors(FileInterceptor ('profile'))
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async uploadProfile(@Param('id', ParseUUIDPipe) id: string, @UploadedFile() file: Express.Multer.File, @Res({ passthrough: true }) response: Response) {
-  // async createProfileImg(@Param('id', ParseUUIDPipe) id: string, @Body() createFileDto) {  
+  // @Patch(':id/profileImg')
+  // @UseInterceptors(FileInterceptor ('profile'))
+  // @UsePipes(new ValidationPipe({ transform: true }))
+  // async uploadProfile(@Param('id', ParseUUIDPipe) id: string, @UploadedFile() file: Express.Multer.File, @Res({ passthrough: true }) response: Response) {
+  // // async createProfileImg(@Param('id', ParseUUIDPipe) id: string, @Body() createFileDto) {  
     
-    const result = await this.userService.updateProfileBg(id, file); 
-    console.log(result)
+  //   const result = await this.userService.updateProfileBg(id, file); 
+  //   console.log(result)
+  //   return response.status(HttpStatus.OK).json({
+  //     statusCode: HttpStatus.OK,
+  //     message: 'All Users',
+  //     data: result
+    
+  //   });
+  // }
+  @Patch(':id/profileImg')
+  @UseInterceptors(FileInterceptor('profile')) // File upload
+  async uploadProfile(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.userService.updateProfileBg(id, file);
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
-      message: 'All Users',
-      data: result
-    
+      message: 'Profile image updated successfully',
+      data: result,
     });
   }
 

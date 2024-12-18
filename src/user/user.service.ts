@@ -20,8 +20,8 @@ import { PostImage } from './entities/post-image.entity';
 import { PeriodEnum } from 'src/utils/filter.dto';
 import { getStartDate } from 'src/utils/date.helper';
 import { OpenaiService } from 'src/openai/openai.service';
-
-
+import { S3Service } from './s3/s3.service';
+// import {} from './'
 @Injectable()
 export class UserService {
   constructor(
@@ -59,6 +59,8 @@ export class UserService {
     @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
 
     private readonly openaiService : OpenaiService,
+
+    private s3Service: S3Service,
     
   ) {}
 
@@ -397,47 +399,82 @@ export class UserService {
   }
   
   
-  async updateProfileBg(id, image: { originalname: string, buffer: Buffer }): Promise<User> {
-    // Check if the user exists    
+  // async updateProfileBg(id, image: { originalname: string, buffer: Buffer }): Promise<User> {
+  //   // Check if the user exists    
+  //   const user = await this.userRepository.findOne({
+  //     where: { id },
+  //     relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
+  //     // relations: {profile_bg: true, profile_image : true},
+  //   });
+    
+    
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+  
+  //   // Validate image file format
+  //   if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].includes(path.extname(image.originalname).toLowerCase())) {
+  //     throw new BadRequestException('Invalid image file format');
+  //   }
+  
+  //   if (user.profile_image) {
+  //     // Update existing profile background entity
+  //     user.profile_image.name = image.originalname;
+  //     user.profile_image.content = image.buffer;
+  //     user.profile_image.ext = path.extname(image.originalname).toLowerCase().slice(1).trim();
+  //     user.profile_image.base64 = image.buffer.toString('base64');
+  
+  //     // Save the updated profile background entity to the database
+  //     await this.ProfileBgRepository.save(user.profile_image);
+  //   } else {
+  //     // Create new profile background entity
+  //     const newProfileBg = new ProfileImage({
+  //       name: image.originalname,
+  //       content: image.buffer,
+  //       ext: path.extname(image.originalname).toLowerCase().slice(1).trim(),
+  //       base64: image.buffer.toString('base64'),
+  //     });
+  
+  //     // Save the new profile background entity to the database
+  //     user.profile_image = await this.ProfileBgRepository.save(newProfileBg);
+  //   }
+  
+  //   // Save the updated user entity to the database
+  //   return await this.userRepository.save(user);
+  // }
+  async updateProfileBg(id: string, file: Express.Multer.File): Promise<User> {
+    // Validate file format
+    if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].includes(file.originalname.toLowerCase().slice(-5))) {
+      throw new BadRequestException('Invalid image file format');
+    }
+
+    // Check if user exists
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
-      // relations: {profile_bg: true, profile_image : true},
+      relations: ['profile_image'],
     });
-    
-    
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
-    // Validate image file format
-    if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].includes(path.extname(image.originalname).toLowerCase())) {
-      throw new BadRequestException('Invalid image file format');
-    }
-  
+
+    // Upload file to S3 and get the URL
+    const fileUrl = await this.s3Service.uploadFile(file);
+
+    // Update existing profile image or create a new one
     if (user.profile_image) {
-      // Update existing profile background entity
-      user.profile_image.name = image.originalname;
-      user.profile_image.content = image.buffer;
-      user.profile_image.ext = path.extname(image.originalname).toLowerCase().slice(1).trim();
-      user.profile_image.base64 = image.buffer.toString('base64');
-  
-      // Save the updated profile background entity to the database
+      user.profile_image.name = file.originalname;
+      user.profile_image.url = fileUrl;
+      user.profile_image.ext = file.originalname.split('.').pop();
       await this.ProfileBgRepository.save(user.profile_image);
     } else {
-      // Create new profile background entity
-      const newProfileBg = new ProfileImage({
-        name: image.originalname,
-        content: image.buffer,
-        ext: path.extname(image.originalname).toLowerCase().slice(1).trim(),
-        base64: image.buffer.toString('base64'),
+      const newProfileImage = this.ProfileBgRepository.create({
+        name: file.originalname,
+        url: fileUrl,
+        ext: file.originalname.split('.').pop(),
       });
-  
-      // Save the new profile background entity to the database
-      user.profile_image = await this.ProfileBgRepository.save(newProfileBg);
+      user.profile_image = await this.ProfileBgRepository.save(newProfileImage);
     }
-  
-    // Save the updated user entity to the database
+
     return await this.userRepository.save(user);
   }
 
