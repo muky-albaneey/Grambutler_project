@@ -19,6 +19,7 @@ import {
 import { RecommendationService } from '../services/recommendation.service';
 import { FilterDto, PeriodDto } from 'src/utils/filter.dto';
 import type { Response } from 'express';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('recommendation')
 export class RecommendationController {
@@ -27,10 +28,12 @@ export class RecommendationController {
   @Post()
   async create(
     @Body() createRecommendationDto: CreateRecommendationDto,
+    @User('sub') userId: string,
     @Res({ passthrough: true }) response: Response,
   ) {
     const result = await this.recommendationService.create(
       createRecommendationDto,
+      userId,
     );
     return response.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,

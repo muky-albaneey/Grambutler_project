@@ -1,12 +1,13 @@
 import { DefaultEntity } from 'src/utils/default.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { RecommendationStatus } from '../interfaces/feedback.interface';
 import { Feedback } from './feedback.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('recommendations')
 export class Recommendation extends DefaultEntity {
-  // @ManyToOne(() => User, (user) => user.photos)
-  // createdBy: User;
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
 
   @Column({
     type: 'enum',
@@ -26,4 +27,8 @@ export class Recommendation extends DefaultEntity {
     onDelete: 'CASCADE',
   })
   feedbacks: Feedback[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }
