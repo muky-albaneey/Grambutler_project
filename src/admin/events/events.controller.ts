@@ -22,6 +22,7 @@ import { RegisteredUser } from './entities/registeredUsers.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileInterceptor } from 'src/utils/file.validator';
 import { FilterDto } from 'src/utils/filter.dto';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('events')
 export class EventsController {
@@ -31,10 +32,11 @@ export class EventsController {
   @UseInterceptors(FileInterceptor('thumbnail', fileInterceptor))
   create(
     @Body() createEventDto: CreateEventDto,
+    @User('sub') userId: string,
     @UploadedFile() thumbnail: Express.Multer.File,
   ): Promise<MentorshipEvent> {
     createEventDto.thumbnailURL = thumbnail?.filename;
-    return this.eventsService.create(createEventDto);
+    return this.eventsService.create(createEventDto, userId);
   }
 
   @Post('/register')

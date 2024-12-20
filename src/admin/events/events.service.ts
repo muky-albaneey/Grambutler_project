@@ -21,8 +21,14 @@ export class EventsService {
     private readonly registeredUserRepository: RegisteredUserRepository,
   ) {}
 
-  create(createEventDto: CreateEventDto): Promise<MentorshipEvent> {
-    return this.eventsRepository.create(createEventDto);
+  create(
+    createEventDto: CreateEventDto,
+    userId: string,
+  ): Promise<MentorshipEvent> {
+    return this.eventsRepository.create({
+      ...createEventDto,
+      createdBy: userId,
+    });
   }
 
   register(
