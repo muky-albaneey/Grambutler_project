@@ -10,8 +10,14 @@ import { FilterDto } from 'src/utils/filter.dto';
 export class EbooksService {
   constructor(private readonly ebooksRepository: EbookRepository) {}
 
-  async createEbook(createEbookDto: CreateEbookDto): Promise<Ebook> {
-    return await this.ebooksRepository.create(createEbookDto);
+  async createEbook(
+    createEbookDto: CreateEbookDto,
+    userId: string,
+  ): Promise<Ebook> {
+    return await this.ebooksRepository.create({
+      ...createEbookDto,
+      createdBy: userId,
+    });
   }
 
   async findAll(filter: FilterDto): Promise<Ebook[]> {

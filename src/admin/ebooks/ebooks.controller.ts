@@ -17,6 +17,7 @@ import { CreateEbookDto, UpdateEbookDto } from './dto/ebook.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { fileInterceptor } from 'src/utils/file.validator';
 import { FilterDto } from 'src/utils/filter.dto';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('ebooks')
 export class EbooksController {
@@ -34,12 +35,13 @@ export class EbooksController {
   )
   createEbook(
     @Body() createEbookDto: CreateEbookDto,
+    @User('sub') userId: string,
     @UploadedFiles()
     files: { pdf: Express.Multer.File; thumbnail: Express.Multer.File },
   ): Promise<Ebook> {
     createEbookDto.pdfURL = files?.pdf[0].filename;
     createEbookDto.thumbnailURL = files?.thumbnail[0].filename;
-    return this.ebooksService.createEbook(createEbookDto);
+    return this.ebooksService.createEbook(createEbookDto, userId);
   }
 
   @Get('/')
