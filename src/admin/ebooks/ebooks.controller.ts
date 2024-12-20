@@ -18,10 +18,14 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { fileInterceptor } from 'src/utils/file.validator';
 import { FilterDto } from 'src/utils/filter.dto';
 import { User } from 'src/decorators/user.decorator';
+import { S3Service } from 'src/user/s3/s3.service';
 
 @Controller('ebooks')
 export class EbooksController {
-  constructor(private readonly ebooksService: EbooksService) {}
+  constructor(
+    private readonly ebooksService: EbooksService,
+    private s3Service: S3Service,
+  ) {}
 
   @Post('/')
   @UseInterceptors(
@@ -33,14 +37,16 @@ export class EbooksController {
       fileInterceptor,
     ),
   )
-  createEbook(
+  async createEbook(
     @Body() createEbookDto: CreateEbookDto,
     @User('sub') userId: string,
     @UploadedFiles()
     files: { pdf: Express.Multer.File; thumbnail: Express.Multer.File },
   ): Promise<Ebook> {
-    createEbookDto.pdfURL = files?.pdf[0].filename;
-    createEbookDto.thumbnailURL = files?.thumbnail[0].filename;
+    createEbookDto.pdfURL = await this.s3Service.uploadFile(files?.pdf[0]);
+    createEbookDto.thumbnailURL = await this.s3Service.uploadFile(
+      files?.thumbnail[0],
+    );
     return this.ebooksService.createEbook(createEbookDto, userId);
   }
 

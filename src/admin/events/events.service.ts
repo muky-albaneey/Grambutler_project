@@ -10,15 +10,15 @@ import {
   UpdateEventDto,
 } from './dto/event.controller';
 import { RegisteredUser } from './entities/registeredUsers.entity';
-import { join } from 'path';
-import * as fs from 'fs';
 import { FilterDto } from 'src/utils/filter.dto';
+import { S3Service } from 'src/user/s3/s3.service';
 
 @Injectable()
 export class EventsService {
   constructor(
     private readonly eventsRepository: EventRepository,
     private readonly registeredUserRepository: RegisteredUserRepository,
+    private s3Service: S3Service,
   ) {}
 
   create(
@@ -64,22 +64,11 @@ export class EventsService {
     if (thumbnail) {
       // Delete the old thumbnail file
       if (event.thumbnailURL) {
-        try {
-          const oldThumbnailPath = join(
-            __dirname,
-            '../../uploads',
-            event.thumbnailURL,
-          );
-          fs.unlinkSync(oldThumbnailPath);
-        } catch (error) {
-          throw new NotFoundException(
-            'The current file on the event could not be found',
-          );
-        }
+        //TODO: Delete old file
       }
 
       // Update with new file name
-      updateEventDto.thumbnailURL = thumbnail.filename;
+      updateEventDto.thumbnailURL = await this.s3Service.uploadFile(thumbnail);
     }
 
     return this.eventsRepository.findOneAndUpdate({ id }, updateEventDto);

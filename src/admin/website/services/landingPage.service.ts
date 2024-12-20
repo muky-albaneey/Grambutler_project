@@ -7,15 +7,15 @@ import {
 } from '../dto/landingPage.dto';
 import { PageImage, Plans } from '../entities/landingPage.entity';
 import { PageImageRepository, PlanRepository } from '../repositories';
-import { join } from 'path';
-import * as fs from 'fs';
 import { FilterDto } from 'src/utils/filter.dto';
+import { S3Service } from 'src/user/s3/s3.service';
 
 @Injectable()
 export class LandingPageService {
   constructor(
     private readonly pageImageRepository: PageImageRepository,
     private readonly planRepository: PlanRepository,
+    private s3Service: S3Service,
   ) {}
 
   //#region Page Image
@@ -44,24 +44,12 @@ export class LandingPageService {
 
     // Update files only if they are provided in the request
     if (image) {
-      // Delete the old image file
       if (imageFile.imageURL) {
-        try {
-          const oldimagePath = join(
-            __dirname,
-            '../../uploads',
-            imageFile.imageURL,
-          );
-          fs.unlinkSync(oldimagePath);
-        } catch (error) {
-          throw new NotFoundException(
-            'The current file on the imageFile could not be found',
-          );
-        }
+        //TODO: Delete old file
       }
 
       // Update with new file name
-      updatePageImageDto.imageURL = image.filename;
+      updatePageImageDto.imageURL = await this.s3Service.uploadFile(image);
     }
 
     return this.pageImageRepository.findOneAndUpdate(

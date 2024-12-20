@@ -22,19 +22,23 @@ import { PageImage, Plans } from '../entities/landingPage.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileInterceptor } from 'src/utils/file.validator';
 import { FilterDto } from 'src/utils/filter.dto';
+import { S3Service } from 'src/user/s3/s3.service';
 
 @Controller('landingPage')
 export class LandingPageController {
-  constructor(private readonly landingPageService: LandingPageService) {}
+  constructor(
+    private readonly landingPageService: LandingPageService,
+    private s3Service: S3Service,
+  ) {}
 
   //#region Page Image
   @Post('/images')
   @UseInterceptors(FileInterceptor('image', fileInterceptor))
-  createPageImage(
+  async createPageImage(
     @Body() createPageImageDto: CreatePageImageDto,
     @UploadedFile() image: Express.Multer.File,
   ): Promise<PageImage> {
-    createPageImageDto.imageURL = image?.filename;
+    createPageImageDto.imageURL = await this.s3Service.uploadFile(image);
     return this.landingPageService.createPageImage(createPageImageDto);
   }
 
