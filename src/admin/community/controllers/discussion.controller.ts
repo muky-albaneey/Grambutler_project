@@ -16,6 +16,7 @@ import {
 } from '../dto/discussion.dto';
 import { DiscussionService } from '../services/discussion.service';
 import { FilterDto } from 'src/utils/filter.dto';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('discussion')
 export class DiscussionController {
@@ -24,8 +25,9 @@ export class DiscussionController {
   @Post()
   createDiscussion(
     @Body() createDiscussionDto: CreateDiscussionDto,
+    @User('sub') userId: string,
   ): Promise<Discussion> {
-    return this.discussionService.createDiscussion(createDiscussionDto);
+    return this.discussionService.createDiscussion(createDiscussionDto, userId);
   }
 
   @Post(':id')

@@ -14,8 +14,12 @@ export class DiscussionService {
 
   async createDiscussion(
     createDiscussionDto: CreateDiscussionDto,
+    userId: string,
   ): Promise<Discussion> {
-    return await this.discussionRepository.create(createDiscussionDto);
+    return await this.discussionRepository.create({
+      ...createDiscussionDto,
+      createdBy: userId,
+    });
   }
 
   async createComment(

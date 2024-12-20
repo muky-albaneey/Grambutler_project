@@ -8,8 +8,14 @@ import { FilterDto } from 'src/utils/filter.dto';
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    return this.categoryRepository.create(createCategoryDto);
+  create(
+    createCategoryDto: CreateCategoryDto,
+    userId: string,
+  ): Promise<Category> {
+    return this.categoryRepository.create({
+      ...createCategoryDto,
+      createdBy: userId,
+    });
   }
 
   findAll(filter: FilterDto): Promise<Category[]> {
