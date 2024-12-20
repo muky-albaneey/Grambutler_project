@@ -16,6 +16,7 @@ import {
   UpdateOnboardingDto,
 } from '../dto/onboarding.dto';
 import { FilterDto } from 'src/utils/filter.dto';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('onboarding')
 export class OnboardingController {
@@ -24,8 +25,9 @@ export class OnboardingController {
   @Post()
   create(
     @Body() createOnboardingDto: CreateOnboardingDto,
+    @User('sub') userId: string,
   ): Promise<Onboarding> {
-    return this.onboardingService.create(createOnboardingDto);
+    return this.onboardingService.create(createOnboardingDto, userId);
   }
 
   @Get()
