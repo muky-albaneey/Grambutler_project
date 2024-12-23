@@ -16,7 +16,11 @@ export class Feedback extends DefaultEntity {
   @Column({ nullable: false, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
+  @Column({ nullable: false, type: 'uuid', name: 'recommendation_id' })
+  recommendationId: string;
+
   @ManyToOne(() => Recommendation, (recommendation) => recommendation.feedbacks)
+  @JoinColumn({ name: 'recommendation_id', referencedColumnName: 'id' })
   recommendation: Recommendation;
 
   @Column()
@@ -42,13 +46,19 @@ export class Feedback extends DefaultEntity {
 
 @Entity('replies')
 export class Reply {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
-  createdBy: string;
-
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Feedback, (feedback) => feedback.replies)
+  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  createdBy: string;
+
+  @Column({ nullable: false, type: 'uuid', name: 'feedback_id' })
+  feedbackId: string;
+
+  @ManyToOne(() => Feedback, (feedback) => feedback.replies, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'feedback_id', referencedColumnName: 'id' })
   feedback: Feedback;
 
   @Column()

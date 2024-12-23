@@ -19,30 +19,30 @@ export class OnboardingService {
     private readonly questionRepository: QuestionRepository,
   ) {}
 
-  async create(createOnboardingDto: CreateOnboardingDto): Promise<Onboarding> {
+  async create(
+    createOnboardingDto: CreateOnboardingDto,
+    userId: string,
+  ): Promise<Onboarding> {
     const onboarding = await this.onboardingRepository.create({
       category: createOnboardingDto.category,
+      createdBy: userId,
     });
 
     const questions: Question[] = createOnboardingDto.questions.map(
       (question) => {
-        question.category = onboarding;
+        question.categoryId = onboarding.id;
         return question;
       },
     );
 
-    let newQuestions: Question[];
     try {
-      console.log(questions);
-      newQuestions = await this.questionRepository.createMany(questions);
-      console.log(...newQuestions);
+      await this.questionRepository.createMany(questions);
     } catch (error) {
       throw new BadRequestException(
-        'Questions were not added to the onboarding category, update i ro add them',
+        'Questions were not added to the onboarding category, update it or add them',
       );
     }
 
-    onboarding.questions = newQuestions;
     return await this.onboardingRepository.saveOnboarding(onboarding);
   }
 
@@ -77,7 +77,7 @@ export class OnboardingService {
     }
 
     if (questions && questions.length) {
-      const updatedQuestions = await Promise.all(
+      await Promise.all(
         questions.map((questionDto) => {
           if (questionDto.id) {
             // Find existing question and update
@@ -92,12 +92,10 @@ export class OnboardingService {
           // If the question is new or not found, create a new question
           return this.questionRepository.create({
             ...questionDto,
-            category: onboarding, // Set the relationship
+            categoryId: onboarding.id, // Set the relationship
           });
         }),
       );
-
-      onboarding.questions = updatedQuestions;
     }
 
     return this.onboardingRepository.saveOnboarding(onboarding);

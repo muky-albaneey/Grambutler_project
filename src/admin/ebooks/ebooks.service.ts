@@ -2,16 +2,24 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Ebook } from './entities/ebook.entity';
 import { EbookRepository } from './repositories/ebook.repository';
 import { CreateEbookDto, UpdateEbookDto } from './dto/ebook.dto';
-import { join } from 'path';
-import * as fs from 'fs';
 import { FilterDto } from 'src/utils/filter.dto';
+import { S3Service } from 'src/user/s3/s3.service';
 
 @Injectable()
 export class EbooksService {
-  constructor(private readonly ebooksRepository: EbookRepository) {}
+  constructor(
+    private readonly ebooksRepository: EbookRepository,
+    private s3Service: S3Service,
+  ) {}
 
-  async createEbook(createEbookDto: CreateEbookDto): Promise<Ebook> {
-    return await this.ebooksRepository.create(createEbookDto);
+  async createEbook(
+    createEbookDto: CreateEbookDto,
+    userId: string,
+  ): Promise<Ebook> {
+    return await this.ebooksRepository.create({
+      ...createEbookDto,
+      createdBy: userId,
+    });
   }
 
   async findAll(filter: FilterDto): Promise<Ebook[]> {
@@ -37,39 +45,23 @@ export class EbooksService {
     if (files?.pdf && files.pdf[0]) {
       // Delete the old PDF file
       if (ebook.pdfURL) {
-        try {
-          const oldPdfPath = join(__dirname, '../../uploads', ebook.pdfURL);
-          fs.unlinkSync(oldPdfPath);
-        } catch (error) {
-          throw new NotFoundException(
-            'The current file on the ebook could not be found',
-          );
-        }
+        //TODO: Delete old file
       }
 
       // Update with new file name
-      updateEbookDto.pdfURL = files.pdf[0].filename;
+      updateEbookDto.pdfURL = await this.s3Service.uploadFile(files.pdf[0]);
     }
 
     if (files?.thumbnail && files.thumbnail[0]) {
       // Delete the old thumbnail file
       if (ebook.thumbnailURL) {
-        try {
-          const oldThumbnailPath = join(
-            __dirname,
-            '../../uploads',
-            ebook.thumbnailURL,
-          );
-          fs.unlinkSync(oldThumbnailPath);
-        } catch (error) {
-          throw new NotFoundException(
-            'The current file on the ebook could not be found',
-          );
-        }
+        //TODO: Delete old file
       }
 
       // Update with new file name
-      updateEbookDto.thumbnailURL = files.thumbnail[0].filename;
+      updateEbookDto.thumbnailURL = await this.s3Service.uploadFile(
+        files.thumbnail[0],
+      );
     }
 
     return await this.ebooksRepository.findOneAndUpdate({ id }, updateEbookDto);

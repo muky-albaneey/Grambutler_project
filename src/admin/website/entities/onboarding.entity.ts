@@ -31,17 +31,22 @@ export class Onboarding extends DefaultEntity {
     onDelete: 'CASCADE',
   })
   questions: Question[];
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  creator: User;
 }
 
 @Entity('questions')
 export class Question {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
-  createdBy: string;
-
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: false, type: 'uuid', name: 'category_id' })
+  categoryId: string;
+
   @ManyToOne(() => Onboarding, (onboarding) => onboarding.questions)
+  @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
   category: Onboarding;
 
   @Column()
@@ -66,8 +71,4 @@ export class Question {
   @IsArray()
   @IsString({ each: true })
   options: string[];
-
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  creator: User;
 }

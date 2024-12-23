@@ -24,8 +24,21 @@ import { S3Service } from './s3/s3.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Onboarding, ProfileImage, Settings, ResponseEntity, PromptEntity, Post, Comment, Like, Category, PostImage, Task]),
-    ConfigModule, 
+    TypeOrmModule.forFeature([
+      User,
+      Onboarding,
+      ProfileImage,
+      Settings,
+      ResponseEntity,
+      PromptEntity,
+      Post,
+      Comment,
+      Like,
+      Category,
+      PostImage,
+      Task,
+    ]),
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -35,7 +48,7 @@ import { S3Service } from './s3/s3.service';
       inject: [ConfigService],
     }),
   ],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, S3Service],
   controllers: [UserController],
   providers: [OpenaiService, JwtService, UserService, MailService, S3Service],
 })

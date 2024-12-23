@@ -23,6 +23,7 @@ export class FeedbackService {
 
   async createFeedback(
     createFeedbackDto: CreateFeedbackDto,
+    userId: string,
   ): Promise<Feedback> {
     const recommendation = await this.recommendationRepository.findOne({
       id: createFeedbackDto.recommendationId,
@@ -34,13 +35,15 @@ export class FeedbackService {
 
     return await this.feedbackRepository.create({
       feedbackText: createFeedbackDto.feedbackText,
-      recommendation,
+      recommendationId: recommendation.id,
+      createdBy: userId,
     });
   }
 
   async createReply(
     feedbackId: string,
     createReplyDto: CreateReplyDto,
+    userId: string,
   ): Promise<Reply> {
     const feedback = await this.feedbackRepository.findOne({
       id: feedbackId,
@@ -52,7 +55,8 @@ export class FeedbackService {
 
     return await this.replyRepository.create({
       comment: createReplyDto.comment,
-      feedback,
+      feedbackId: feedback.id,
+      createdBy: userId,
     });
   }
 

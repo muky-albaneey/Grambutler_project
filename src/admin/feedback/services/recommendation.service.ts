@@ -19,8 +19,12 @@ export class RecommendationService {
 
   create(
     createRecommendationDto: CreateRecommendationDto,
+    userId: string,
   ): Promise<Recommendation> {
-    return this.recommendationRepository.create(createRecommendationDto);
+    return this.recommendationRepository.create({
+      ...createRecommendationDto,
+      createdBy: userId,
+    });
   }
 
   findAll(filter: FilterDto): Promise<Recommendation[]> {

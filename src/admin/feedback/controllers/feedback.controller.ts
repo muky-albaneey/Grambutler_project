@@ -19,6 +19,7 @@ import {
   UpdateFeedbackStatusDto,
 } from '../dto/feedback.dto';
 import { FilterDto } from 'src/utils/filter.dto';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('feedback')
 export class FeedbackController {
@@ -27,16 +28,18 @@ export class FeedbackController {
   @Post()
   createFeedback(
     @Body() createFeedbackDto: CreateFeedbackDto,
+    @User('sub') userId: string,
   ): Promise<Feedback> {
-    return this.feedbackService.createFeedback(createFeedbackDto);
+    return this.feedbackService.createFeedback(createFeedbackDto, userId);
   }
 
   @Post(':feedbackId')
   createReply(
     @Param('feedbackId', new ParseUUIDPipe()) id: string,
     @Body() createReplyDto: CreateReplyDto,
+    @User('sub') userId: string,
   ): Promise<Reply> {
-    return this.feedbackService.createReply(id, createReplyDto);
+    return this.feedbackService.createReply(id, createReplyDto, userId);
   }
 
   @Get()

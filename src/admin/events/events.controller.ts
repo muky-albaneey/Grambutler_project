@@ -22,19 +22,25 @@ import { RegisteredUser } from './entities/registeredUsers.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileInterceptor } from 'src/utils/file.validator';
 import { FilterDto } from 'src/utils/filter.dto';
+import { User } from 'src/decorators/user.decorator';
+import { S3Service } from 'src/user/s3/s3.service';
 
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    private s3Service: S3Service,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('thumbnail', fileInterceptor))
-  create(
+  async create(
     @Body() createEventDto: CreateEventDto,
+    @User('sub') userId: string,
     @UploadedFile() thumbnail: Express.Multer.File,
   ): Promise<MentorshipEvent> {
-    createEventDto.thumbnailURL = thumbnail?.filename;
-    return this.eventsService.create(createEventDto);
+    createEventDto.thumbnailURL = await this.s3Service.uploadFile(thumbnail);
+    return this.eventsService.create(createEventDto, userId);
   }
 
   @Post('/register')
