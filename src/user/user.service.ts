@@ -307,13 +307,13 @@ export class UserService {
           // Include category information
           category: {
             id: true,
-            name: true,
+            name: true
           },
           post_image: {
             id: true,
             name: true,
             base64: true,
-            ext: true,
+            ext: true
           },
           comments: {
             id: true,
@@ -321,7 +321,7 @@ export class UserService {
             createdAt: true,
             user: {
               id: true,
-              full_name: true,
+              full_name: true
             },
           },
           
@@ -332,10 +332,10 @@ export class UserService {
           amount: true,
           currency: true,
           status: true,
-          createdAt: true,
+          createdAt: true
         }
         // Add other relations as needed...
-      },
+      }
     });
   
     // console.log("User found: ", user);
