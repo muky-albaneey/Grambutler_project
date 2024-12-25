@@ -126,7 +126,7 @@
   //     return  'successfull'
   //   }
   // }
-  async createCheckoutSession(priceId: string, userId): Promise<string> {
+  async createCheckoutSession(priceId: string): Promise<string> {
     // Create a checkout session
     const session = await this.stripe.checkout.sessions.create({
       line_items: [

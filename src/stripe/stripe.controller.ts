@@ -25,15 +25,15 @@ export class StripeController {
   //   res.status(200).json({ url });
   // }
   
-  @UseGuards(JwtGuard)
+  // @UseGuards(JwtGuard)
   @Post('create-checkout-session')
   async createCheckoutSession(
     @Body('priceId') priceId: string,
-    @User('sub') userId: string, // Extract user ID
+    // @User('sub') userId: string, // Extract user ID
     @Res() res: Response,
   ) {
     try {
-      const url = await this.stripeService.createCheckoutSession(priceId, userId);
+      const url = await this.stripeService.createCheckoutSession(priceId,);
       res.status(200).json({ url });
     } catch (error) {
       res.status(400).send(`Error creating checkout session: ${error.message}`);
