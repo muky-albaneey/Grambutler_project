@@ -288,7 +288,8 @@ export class UserService {
         'posts.comments',
         'posts.likes',
         'posts.post_image',
-        'tasks'
+        'tasks',
+        'payments'
       ],
       select: {
         // Select user fields
