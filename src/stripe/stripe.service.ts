@@ -175,6 +175,7 @@
           },
           userId,
         );
+        console.log('its working: ', userId)
       } else {
         console.warn(`Payment not successful. Status: ${checkoutSession.payment_status}`);
       }

@@ -323,7 +323,16 @@ export class UserService {
               full_name: true,
             },
           },
+          
         },
+        payments: { // Include payments select
+          id: true,
+          paymentIntentId: true,
+          amount: true,
+          currency: true,
+          status: true,
+          createdAt: true,
+        }
         // Add other relations as needed...
       },
     });
@@ -355,7 +364,8 @@ export class UserService {
         'posts.comments',
         'posts.likes',
         'posts.post_image',
-        'tasks'
+        'tasks',
+        'payments'
       ],
       select: {
         // Select user fields
@@ -390,7 +400,16 @@ export class UserService {
               full_name: true,
             },
           },
+         
         },
+        payments: { // Include payments select
+          id: true,
+          paymentIntentId: true,
+          amount: true,
+          currency: true,
+          status: true,
+          createdAt: true,
+        }
         // Add other relations as needed...
       },
     });
