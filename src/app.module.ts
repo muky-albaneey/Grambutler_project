@@ -89,7 +89,6 @@ import { JwtModule } from '@nestjs/jwt';
           AdminCategory,
           Discussion,
           Payment
-    
         ],
         synchronize: true
         // migrations: ['src/migrations/*.ts'],

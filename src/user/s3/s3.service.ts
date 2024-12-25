@@ -38,6 +38,7 @@
 // }
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
+// import { S3 } from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
