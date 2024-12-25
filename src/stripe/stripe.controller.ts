@@ -90,10 +90,13 @@ export class StripeController {
   //   }
   // }
 
+  @UseGuards(JwtGuard)
   @Get('session')
-  async getSession(@Query('session_id') sessionId: string, @Res() res: Response) {
+  async getSession(@Query('session_id') sessionId: string,
+  @User('sub') userId: string,               // Extract user ID from JWT
+  @Res() res: Response,) {
     try {
-      const session = await this.stripeService.fetchSession(sessionId);
+      const session = await this.stripeService.fetchSessionAndSavePayment(sessionId, userId);
       res.status(200).json(session);
     } catch (error) {
       res.status(400).send(`Error fetching session: ${error.message}`);
