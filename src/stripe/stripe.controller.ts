@@ -40,6 +40,7 @@ export class StripeController {
     }
   }
   
+  
   // @UseGuards(JwtGuard)
   @Post('webhook')
   async handleWebhook(@Req() req: Request, @Headers('stripe-signature') sig: string, @Res() res: Response) {

@@ -59,25 +59,22 @@ export class StripeService {
       cancel_url: "https://grambutler.vercel.app/pricing", // Add your failure URL here
     });
   
-    // Retrieve the payment intent associated with the session
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(
-      session.payment_intent as string
-    );
+    // Retrieve the checkout session
+    const checkoutSession = await this.stripe.checkout.sessions.retrieve(session.id);
   
-    // Check if the payment is successful
-    if (paymentIntent.status === 'succeeded') {
+    if (checkoutSession.payment_status === 'paid') {
       // Save payment details in the database
       await this.paymentService.savePayment(
         {
-          paymentIntentId: paymentIntent.id,
-          amount: paymentIntent.amount,
-          currency: paymentIntent.currency,
-          status: paymentIntent.status,
+          paymentIntentId: checkoutSession.id, // Use session ID instead
+          amount: checkoutSession.amount_total,
+          currency: checkoutSession.currency,
+          status: checkoutSession.payment_status,
         },
         userId, // Save with user ID
       );
     } else {
-      console.warn(`Payment not successful. Status: ${paymentIntent.status}`);
+      console.warn(`Payment not successful. Status: ${checkoutSession.payment_status}`);
     }
   
     return session.url;
