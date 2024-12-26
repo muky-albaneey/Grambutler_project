@@ -38,15 +38,16 @@ import { Category as AdminCategory } from './admin/community/entities/category.e
 import { Discussion } from './admin/community/entities/discussion.entity';
 import { Comment_task } from './tasks/entities/comment.entity';
 // import { Comment_task } from 'src/tasks/entities/comment.entity.ts';
-import { PaymentService } from './payment/payment.service';
+// import { PaymentService } from './payment/payment.service';
 import { Payment } from './user/entities/payment.entity';
 import { PaymentModule } from './payment/payment.module';
 import { JwtModule } from '@nestjs/jwt';
+import { Subscription } from './user/entities/subscription.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -88,11 +89,12 @@ import { JwtModule } from '@nestjs/jwt';
           Contact,
           AdminCategory,
           Discussion,
-          Payment
+          Payment,
+          Subscription
         ],
         synchronize: true
         // migrations: ['src/migrations/*.ts'],
-      }),
+      })
     }),
     UserModule,
     PaymentModule,
@@ -104,6 +106,6 @@ import { JwtModule } from '@nestjs/jwt';
     
   ],
   controllers: [AppController],
-  providers: [AppService, MailService],
+  providers: [AppService, MailService]
 })
 export class AppModule {}

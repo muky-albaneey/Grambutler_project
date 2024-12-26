@@ -21,6 +21,7 @@ import { PostImage } from './entities/post-image.entity';
 import { Task } from 'src/tasks/entities/task.entity';
 import { OpenaiService } from 'src/openai/openai.service';
 import { S3Service } from './s3/s3.service';
+import { Subscription } from './entities/subscription.entity';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { S3Service } from './s3/s3.service';
       Category,
       PostImage,
       Task,
+      Subscription
     ]),
     ConfigModule,
     JwtModule.registerAsync({
