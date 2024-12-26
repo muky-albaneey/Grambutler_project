@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode, NotFoundException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseInterceptors,UploadedFile, Res, ParseUUIDPipe, HttpStatus, UsePipes, ValidationPipe, Delete, HttpCode, NotFoundException, Query, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateAuthDto, ForgotPass,  } from './dto/create-user.dto';
 import { OnboardingDto, SettingDto } from './dto/update-user.dto';
@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UserRole } from './entities/user.entity';
 import { PeriodDto } from 'src/utils/filter.dto';
+import { CreateSubscriptionDto } from './dto/subscription.dto';
 
 @Controller('user')
 export class UserController {
@@ -258,7 +259,63 @@ async reset(@Body() body: { token: string }) {
     return await this.userService.updateSetting(id, body)
   }
 
-  // In your UserController
+
+//  user subscriptions
+  @Get(':id/subscriptions')
+async getUserSubscriptions(
+  @Param('id', ParseUUIDPipe) id: string,
+  @Res({ passthrough: true }) response: Response
+) {
+  try {
+    const subscriptions = await this.userService.getUserSubscriptions(id);
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'User subscriptions fetched successfully',
+      data: subscriptions,
+    });
+  } catch (error) {
+    console.error('Failed to fetch subscriptions', error);
+    throw new NotFoundException('Subscriptions not found');
+  }
+}
+
+@Post(':id/subscribe')
+async subscribeUser(
+  @Param('id', ParseUUIDPipe) id: string,
+  @Body() createSubscriptionDto: CreateSubscriptionDto, // For plan details
+  @Res({ passthrough: true }) response: Response
+) {
+  try {
+    const subscription = await this.userService.subscribeUser(id, createSubscriptionDto);
+    return response.status(HttpStatus.CREATED).json({
+      statusCode: HttpStatus.CREATED,
+      message: 'User subscribed successfully',
+      data: subscription,
+    });    
+  } catch (error) {
+    console.error('Subscription failed', error);
+    throw new BadRequestException(error.message);
+  }
+}
+@Delete(':id/unsubscribe')
+async unsubscribeUser(
+  @Param('id', ParseUUIDPipe) id: string,
+  @Res({ passthrough: true }) response: Response
+) {
+  try {
+    await this.userService.unsubscribeUser(id);
+    return response.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'User unsubscribed successfully',
+    });
+  } catch (error) {
+    console.error('Unsubscription failed', error);
+    throw new BadRequestException(error.message);
+  }
+}
+
+
+  // follow and unfollow section
 
 @Post(':userId/follow/:targetUserId')
 async followUser(@Param('userId', ParseUUIDPipe) userId: string, @Param('targetUserId', ParseUUIDPipe) targetUserId: string, @Res({ passthrough: true }) response: Response) {

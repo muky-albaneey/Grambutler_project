@@ -21,6 +21,8 @@ import { PeriodEnum } from 'src/utils/filter.dto';
 import { getStartDate } from 'src/utils/date.helper';
 import { OpenaiService } from 'src/openai/openai.service';
 import { S3Service } from './s3/s3.service';
+import { CreateSubscriptionDto } from './dto/subscription.dto';
+import { Plan, Subscription } from './entities/subscription.entity';
 // import {} from './'
 @Injectable()
 export class UserService {
@@ -57,6 +59,9 @@ export class UserService {
 
     @InjectRepository(PostImage)
     @InjectRepository(PostImage) private postImageRepository: Repository<PostImage>,
+
+    @InjectRepository(Subscription)
+    @InjectRepository(Subscription) private subscriptionRepository: Repository<Subscription>,
 
     private readonly openaiService : OpenaiService,
 
@@ -269,6 +274,55 @@ export class UserService {
     console.log("User updated successfully: ", user);
     return await this.userRepository.save(user);
   }
+  async getUserSubscriptions(userId): Promise<any> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['subscriptions'] // Assuming you have a relation called 'subscriptions'
+    });
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    return user.subscriptions; // Return the user's subscriptions
+  }
+
+  async subscribeUser(
+    userId: string,
+    createSubscriptionDto: CreateSubscriptionDto
+  ): Promise<Subscription> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    // Create new subscription
+    const subscription = this.subscriptionRepository.create({
+      user: { id: user.id }, // Use ID reference instead of passing the full user object
+      plan: createSubscriptionDto.plan as Plan, // Ensure type compatibility
+      startDate: new Date(),
+      endDate: new Date(createSubscriptionDto.endDate), // Parse as Date
+      status: 'active'// Default status
+    });
+  
+    return await this.subscriptionRepository.save(subscription);
+  }
+  
+  async unsubscribeUser(userId): Promise<void> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { user: { id: userId }, status: 'active' }
+    });
+  
+    if (!subscription) {
+      throw new NotFoundException('Active subscription not found');
+    }
+  
+    // Update status to 'cancelled'
+    subscription.status = 'cancelled';
+    await this.subscriptionRepository.save(subscription);
+  }
+  
+  
   async findOne(id) {
     const user = await this.userRepository.findOne({
       where: { id },

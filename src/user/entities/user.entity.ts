@@ -21,11 +21,18 @@ import { Like } from './like.entity';
 import { Task } from 'src/tasks/entities/task.entity';
 import { DefaultEntity } from 'src/utils/default.entity';
 import { Payment } from './payment.entity';
+import { Subscription } from './subscription.entity';
 
 
 export enum UserRole {
     ADMIN = "admin",
     USER = "user",
+}
+
+export enum SubscriptionType {
+    FREE = 'free',
+    PREMIUM = 'premium',
+    PRO = 'pro',
 }
 
 
@@ -79,12 +86,12 @@ export class User extends DefaultEntity {
         name: 'user_followers',
         joinColumn: {
             name: 'userId',
-            referencedColumnName: 'id',
+            referencedColumnName: 'id'
         },
         inverseJoinColumn: {
             name: 'followerId',
-            referencedColumnName: 'id',
-        },
+            referencedColumnName: 'id'
+        }
     })
     following: User[];
 
@@ -94,7 +101,7 @@ export class User extends DefaultEntity {
 
      @OneToMany(() => Post, (post) => post.user, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE'  })
      posts: Post[];
-   
+    
      @OneToMany(() => Comment, (comment) => comment.user, { cascade: true , onUpdate: 'CASCADE', onDelete: 'CASCADE' })
      comments: Comment[];
    
@@ -106,6 +113,19 @@ export class User extends DefaultEntity {
 
     @OneToMany(() => Payment, (payment) => payment.user, { cascade: true, onDelete: 'CASCADE' })
     payments: Payment[];
+
+    @Column({ type: 'boolean', nullable: true })
+    isActiveSubscriber: boolean;
+    
+    // @Column({ type: 'boolean', nullable: true })
+    // isPremiumSubscription: boolean;
+    
+    // @Column({ type: 'enum', enum: SubscriptionType, nullable: true })
+    // subscriptionLevel: SubscriptionType;
+
+      // Relationships
+  @OneToMany(() => Subscription, (subscription) => subscription.user, { cascade: true })
+  subscriptions: Subscription[];
 
     constructor(user :Partial<User>){
         super();
