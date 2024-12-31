@@ -211,7 +211,7 @@ export class UserService {
       user.onboard_info.about_new_features = body.about_new_features;
       user.onboard_info.contact_information = body.contact_information;
   
-      console.log("Updating existing onboarding info: ", user.onboard_info);
+      // console.log("Updating existing onboarding info: ", user.onboard_info);
       await this.onboardingRepository.save(user.onboard_info);
     } else {
       // Create new onboarding entity
@@ -223,7 +223,7 @@ export class UserService {
   
     // Save the updated user entity with new or updated onboarding info
     
-    console.log("User updated successfully: ", user);
+    // console.log("User updated successfully: ", user);
     return await this.userRepository.save(user);
   }
 
@@ -234,7 +234,7 @@ export class UserService {
       relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
      });
   
-    console.log("User found: ", user);
+    // console.log("User found: ", user);
   
     if (!user) {
       throw new NotFoundException('User not found');
@@ -271,7 +271,7 @@ export class UserService {
   
     // Save the updated user entity with new or updated onboarding info
     
-    console.log("User updated successfully: ", user);
+    // console.log("User updated successfully: ", user);
     return await this.userRepository.save(user);
   }
   async getUserSubscriptions(userId): Promise<any> {
@@ -343,7 +343,8 @@ export class UserService {
         'posts.likes',
         'posts.post_image',
         'tasks',
-        'payments'
+        'payments',
+        'subscriptions'
       ],
       select: {
         // Select user fields
@@ -387,6 +388,17 @@ export class UserService {
           currency: true,
           status: true,
           createdAt: true
+        },
+        subscriptions:{
+          id: true,
+          plan: true,
+          startDate: true,
+          endDate: true,
+          status: true,
+          user: {
+            id: true,
+            full_name: true
+          },
         }
         // Add other relations as needed...
       }
@@ -420,7 +432,8 @@ export class UserService {
         'posts.likes',
         'posts.post_image',
         'tasks',
-        'payments'
+        'payments',
+        'subscriptions'
       ],
       select: {
         // Select user fields
@@ -464,6 +477,17 @@ export class UserService {
           currency: true,
           status: true,
           createdAt: true,
+        },
+        subscriptions:{
+          id: true,
+          plan: true,
+          startDate: true,
+          endDate: true,
+          status: true,
+          user: {
+            id: true,
+            full_name: true
+          },
         }
         // Add other relations as needed...
       },

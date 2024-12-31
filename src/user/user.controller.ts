@@ -261,7 +261,7 @@ async reset(@Body() body: { token: string }) {
 
 
 //  user subscriptions
-  @Get(':id/subscriptions')
+@Get(':id/subscriptions')
 async getUserSubscriptions(
   @Param('id', ParseUUIDPipe) id: string,
   @Res({ passthrough: true }) response: Response
