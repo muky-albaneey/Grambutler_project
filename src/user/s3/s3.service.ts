@@ -51,8 +51,8 @@ export class S3Service {
     this.s3 = new S3({
         accessKeyId:  process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      region: 'Europe (Stockholm) eu-north-1',
-      endpoint: ' https://grambutlerteam.s3.eu-north-1.amazonaws.com/9HFdlE3tXLGX83FLETlJWz1Da50.avif',
+      region: 'eu-north-1',
+      // endpoint: ' https://grambutlerteam.s3.eu-north-1.amazonaws.com/9HFdlE3tXLGX83FLETlJWz1Da50.avif',
     });
   }
 
