@@ -542,7 +542,7 @@ export class UserService {
   // }
   async updateProfileBg(id: string, file: Express.Multer.File): Promise<User> {
     // Validate file format
-    if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].includes(file.originalname.toLowerCase().slice(-5))) {
+    if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].some((extension) => file.originalname.endsWith(extension))) {
       throw new BadRequestException('Invalid image file format');
     }
 
