@@ -22,6 +22,7 @@ import { Task } from 'src/tasks/entities/task.entity';
 import { DefaultEntity } from 'src/utils/default.entity';
 import { Payment } from './payment.entity';
 import { Subscription } from './subscription.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
 
 
 export enum UserRole {
@@ -117,6 +118,9 @@ export class User extends DefaultEntity {
     @Column({ type: 'boolean', nullable: true })
     isActiveSubscriber: boolean;
     
+    @OneToMany(() => Notification, (notification) => notification.user, { cascade: true, onDelete: 'CASCADE' })
+    notifications: Notification[];
+
     // @Column({ type: 'boolean', nullable: true })
     // isPremiumSubscription: boolean;
     

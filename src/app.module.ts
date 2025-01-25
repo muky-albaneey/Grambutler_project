@@ -43,6 +43,7 @@ import { Payment } from './user/entities/payment.entity';
 import { PaymentModule } from './payment/payment.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Subscription } from './user/entities/subscription.entity';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -102,7 +103,8 @@ import { Subscription } from './user/entities/subscription.entity';
     OpenaiModule,
     TasksModule,
     AdminModule,
-    JwtModule
+    JwtModule,
+    NotificationModule
     
   ],
   controllers: [AppController],
