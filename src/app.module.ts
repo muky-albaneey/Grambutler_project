@@ -91,7 +91,8 @@ import { NotificationModule } from './notification/notification.module';
           AdminCategory,
           Discussion,
           Payment,
-          Subscription
+          Subscription,
+          Notification
         ],
         synchronize: true
         // migrations: ['src/migrations/*.ts'],
