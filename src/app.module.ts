@@ -44,6 +44,7 @@ import { PaymentModule } from './payment/payment.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Subscription } from './user/entities/subscription.entity';
 import { NotificationModule } from './notification/notification.module';
+import { Notification } from './notification/entities/notification.entity';
 
 @Module({
   imports: [
@@ -92,9 +93,9 @@ import { NotificationModule } from './notification/notification.module';
           Discussion,
           Payment,
           Subscription,
-          Notification
+          Notification,
         ],
-        synchronize: true
+        synchronize: true,
         // migrations: ['src/migrations/*.ts'],
       })
     }),
