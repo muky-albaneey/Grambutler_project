@@ -25,12 +25,13 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
     this.server.to(userId).emit('notification', payload);
   }
 
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(@MessageBody() userId: string, client: Socket) {
-    console.log(`User ${userId} joined room`);
-    client.join(userId);
+  
+ @SubscribeMessage('joinRoom')
+ handleJoinRoom(@MessageBody() data: { userId: string }, client: Socket) {
+   console.log(`User ${data.userId} joined room`);
+   client.join(data.userId);
+ }
   }
 
 
- 
-}
+
