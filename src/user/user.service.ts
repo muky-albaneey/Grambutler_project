@@ -23,6 +23,7 @@ import { OpenaiService } from 'src/openai/openai.service';
 import { S3Service } from './s3/s3.service';
 import { CreateSubscriptionDto } from './dto/subscription.dto';
 import { Plan, Subscription } from './entities/subscription.entity';
+import { Payment } from './entities/payment.entity';
 // import {} from './'
 @Injectable()
 export class UserService {
@@ -62,6 +63,9 @@ export class UserService {
 
     @InjectRepository(Subscription)
     @InjectRepository(Subscription) private subscriptionRepository: Repository<Subscription>,
+
+    @InjectRepository(Payment)
+    @InjectRepository(Payment) private paymentRepository: Repository<Payment>,
 
     private readonly openaiService : OpenaiService,
 
@@ -496,50 +500,29 @@ export class UserService {
     return users;
   }
   
-  
-  // async updateProfileBg(id, image: { originalname: string, buffer: Buffer }): Promise<User> {
-  //   // Check if the user exists    
-  //   const user = await this.userRepository.findOne({
-  //     where: { id },
-  //     relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
-  //     // relations: {profile_bg: true, profile_image : true},
-  //   });
+  async calculateTotalAmount(): Promise<number> {
+    const total = await this.paymentRepository
+      .createQueryBuilder('payment')
+      .select('SUM(payment.amount)', 'total')
+      .getRawOne();
     
-    
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
+    return total.total || 0;
+  }
+  async calculateTotalAmountForUser(userId): Promise<number> {
+    try {
+      const totalAmount = await this.paymentRepository
+        .createQueryBuilder('payment')
+        .where('payment.userId = :userId', { userId })
+        .select('SUM(payment.amount)', 'total')
+        .getRawOne();
   
-  //   // Validate image file format
-  //   if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].includes(path.extname(image.originalname).toLowerCase())) {
-  //     throw new BadRequestException('Invalid image file format');
-  //   }
+      return totalAmount.total || 0;
+    } catch (error) {
+      console.error(`Error calculating total amount for user ${userId}:`, error);
+      throw new InternalServerErrorException('Could not calculate total amount');
+    }
+  }
   
-  //   if (user.profile_image) {
-  //     // Update existing profile background entity
-  //     user.profile_image.name = image.originalname;
-  //     user.profile_image.content = image.buffer;
-  //     user.profile_image.ext = path.extname(image.originalname).toLowerCase().slice(1).trim();
-  //     user.profile_image.base64 = image.buffer.toString('base64');
-  
-  //     // Save the updated profile background entity to the database
-  //     await this.ProfileBgRepository.save(user.profile_image);
-  //   } else {
-  //     // Create new profile background entity
-  //     const newProfileBg = new ProfileImage({
-  //       name: image.originalname,
-  //       content: image.buffer,
-  //       ext: path.extname(image.originalname).toLowerCase().slice(1).trim(),
-  //       base64: image.buffer.toString('base64'),
-  //     });
-  
-  //     // Save the new profile background entity to the database
-  //     user.profile_image = await this.ProfileBgRepository.save(newProfileBg);
-  //   }
-  
-  //   // Save the updated user entity to the database
-  //   return await this.userRepository.save(user);
-  // }
   async updateProfileBg(id: string, file: Express.Multer.File): Promise<User> {
     // Validate file format
     if (!['.jpeg', '.png', '.gif', '.jpg', '.avif'].some((extension) => file.originalname.endsWith(extension))) {

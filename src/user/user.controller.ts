@@ -201,7 +201,12 @@ async reset(@Body() body: { token: string }) {
       
       });
     }
-
+    @Get('total-amount')
+    async getTotalAmount(): Promise<{ total: number }> {
+      const total = await this.userService.calculateTotalAmount();
+      return { total };
+    }
+    
   @Get(':id/single_user')
   async findOne(@Param('id', ParseUUIDPipe) id: string,  @Res({ passthrough: true }) response: Response) {
       const result = await this.userService.findOne(id);
@@ -212,6 +217,13 @@ async reset(@Body() body: { token: string }) {
       
       });
     }
+
+    @Get('total-amount/:userId')
+async getTotalAmountForUser(@Param('userId') userId: string): Promise<{ total: number }> {
+  const total = await this.userService.calculateTotalAmountForUser(userId);
+  return { total };
+}
+
 
   @Patch(':id/onboard')
   async onboardingScreen(@Param('id', ParseUUIDPipe) id: string, @Body() body : OnboardingDto, @Res({ passthrough: true }) response: Response){
