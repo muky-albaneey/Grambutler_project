@@ -13,6 +13,6 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
    imports: [ TypeOrmModule.forFeature([Notification, User,]),HttpModule, UserModule],
   providers: [NotificationService, NotificationGateway],
-  controllers: [NotificationController, NotificationGateway]
+  controllers: [NotificationController]
 })
 export class NotificationModule {}
