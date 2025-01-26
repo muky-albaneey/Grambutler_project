@@ -1,4 +1,3 @@
-# version: '3.8'
 
 # services:
 #   nestjs_api_prod:
@@ -6,28 +5,32 @@
 #       context: .
 #       dockerfile: Dockerfile.prod
 #     ports:
-#       - '3001:3001'
+#       - '3000:3000'
 #     environment:
-#       - PORT=${PORT}
 #       - NODE_ENV=production
+#       - PORT=3000
 #       - DATABASE_USERNAME=${DATABASE_USERNAME}
 #       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
 #       - DATABASE_NAME=${DATABASE_NAME}
 #       - ACCESS_TOKEN=${ACCESS_TOKEN}
 #       - REFRESH_TOKEN=${REFRESH_TOKEN}
 #       - ROLE_TOKEN=${ROLE_TOKEN}
-#     volumes:
-#       - ./src:/usr/src/app/src
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+
 services:
   nestjs_api_prod:
     build:
       context: .
       dockerfile: Dockerfile.prod
     ports:
-      - '3000:3000'
+      - "3001:3001"  # ✅ Match the EXPOSED port in Dockerfile
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=3001  # ✅ Use the same port as EXPOSED in Dockerfile
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${DATABASE_NAME}
@@ -35,7 +38,7 @@ services:
       - REFRESH_TOKEN=${REFRESH_TOKEN}
       - ROLE_TOKEN=${ROLE_TOKEN}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
