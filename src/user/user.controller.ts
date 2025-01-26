@@ -420,23 +420,7 @@ async countFollowers(@Param('userId', ParseUUIDPipe) userId: string, @Res({ pass
     });
   }
 
-// @Post(':userId/post_create')
-// @UseInterceptors(FileInterceptor('file')) // Handle file upload
-// async createPostWithImage(
-//   @Param('userId') userId: string,
-//   @Body() createPostDto: CreatePostDto,
-//   @UploadedFile() file?: Express.Multer.File, // Image is optional
-//   // @Res({ passthrough: true }) response: Response
-// ) {
-//   const result = await this.userService.createPostWithImage(createPostDto, userId, file);
-// return result;
-//     //  return response.status(HttpStatus.OK).json({
-//     //   statusCode: HttpStatus.OK,
-//     //   message: 'Get all posts from users that the current user follows',
-//     //   data: result,
-    
-//     // });
-// }
+
 @Post(':userId/post_create')
 @UseInterceptors(FileInterceptor('file')) // Handle file upload
 async createPostWithImage(

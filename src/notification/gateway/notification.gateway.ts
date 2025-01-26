@@ -1,18 +1,33 @@
 /* eslint-disable prettier/prettier */
-  import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody } from '@nestjs/websockets';
-  import { Server } from 'socket.io';
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
-  @WebSocketGateway({ cors: true })
-  export class NotificationGateway {
-    @WebSocketServer()
-    server: Server;
-
-    sendNotification(userId: string, payload: any) {
-      this.server.to(userId).emit('notification', payload);
-    }
-
-    @SubscribeMessage('joinRoom') // Allows clients to listen for their notifications
-    handleJoinRoom(@MessageBody() userId: string, client: any) {
-      client.join(userId);
-    }
+@WebSocketGateway({ 
+  cors: {
+    origin: '*', // Allow all origins (adjust for security)
+    methods: ['GET', 'POST']
   }
+})
+export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
+
+  handleConnection(client: Socket) {
+    console.log(`Client connected: ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(`Client disconnected: ${client.id}`);
+  }
+
+  sendNotification(userId: string, payload: any) {
+    console.log(`Sending notification to ${userId}`, payload);
+    this.server.to(userId).emit('notification', payload);
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(@MessageBody() userId: string, client: Socket) {
+    console.log(`User ${userId} joined room`);
+    client.join(userId);
+  }
+}

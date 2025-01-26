@@ -1,10 +1,14 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { NotificationService } from './notification.service';
+import { NotificationGateway } from './gateway/notification.gateway';
 
 @Controller('notifications')
 export class NotificationController {
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private notificationGateway: NotificationGateway // ✅ Inject NotificationGateway
+  ) {}
 
   @Post()
   async createNotification(@Body() body: any) {
@@ -19,5 +23,11 @@ export class NotificationController {
   @Post(':id/read')
   async markAsRead(@Param('id') id: string) {
     return this.notificationService.markAsRead(id);
+  }
+
+  @Post('send')
+  async sendNotification(@Body() body: { userId: string; message: string }) {
+    this.notificationGateway.sendNotification(body.userId, { message: body.message }); // ✅ Use injected instance
+    return { success: true };
   }
 }
