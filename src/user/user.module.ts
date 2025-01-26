@@ -22,6 +22,7 @@ import { Task } from 'src/tasks/entities/task.entity';
 import { OpenaiService } from 'src/openai/openai.service';
 import { S3Service } from './s3/s3.service';
 import { Subscription } from './entities/subscription.entity';
+import { Payment } from './entities/payment.entity';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { Subscription } from './entities/subscription.entity';
       Category,
       PostImage,
       Task,
-      Subscription
+      Subscription,
+      Payment
     ]),
     ConfigModule,
     JwtModule.registerAsync({
