@@ -42,7 +42,7 @@ RUN npm run build
 RUN npm prune --production
 
 # ✅ Ensure the public folder with _redirects is copied
-COPY public /usr/src/app/public
+COPY public /usr/src/public
 
 RUN rm -rf ./src
 
