@@ -29,7 +29,7 @@
 # CMD ["npm", "run", "start:prod"]
 FROM node:20.15.0
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src
 
 COPY package*.json ./
 
@@ -41,9 +41,13 @@ RUN npm run build
 
 RUN npm prune --production
 
+# ✅ Ensure the public folder with _redirects is copied
+COPY public /usr/src/app/public
+
 RUN rm -rf ./src
 
 # ✅ Fix the port to match WebSocket
 EXPOSE 3001
 
 CMD ["npm", "run", "start:prod"]
+
