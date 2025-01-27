@@ -85,3 +85,6 @@ RUN rm -rf ./src
 
 # Document that the service listens on port 3001
 EXPOSE 3001
+
+# Run the web service on container startup
+CMD ["npm", "run", "start:prod"]
