@@ -99,8 +99,8 @@ export class UserService {
 
       return { user: userSaved };
     } catch (error) {
-      console.error('User creation failed', error);
-      console.error('User creation failed', error);
+      // console.error('User creation failed', error);
+      // console.error('User creation failed', error);
       throw error;
     }
   }
@@ -122,7 +122,7 @@ export class UserService {
 
       return userValidate;
     } catch (error) {
-      console.error('User login failed', error);
+      // console.error('User login failed', error);
       throw error;
     }
   }
@@ -167,7 +167,7 @@ export class UserService {
   }
 
   async changePassword(tokenNum: string, newPassword: string) {
-    console.log('Changing password for token:', tokenNum);
+    // console.log('Changing password for token:', tokenNum);
 
     const userValidate = await this.userRepository.findOne({
       where: { rememberToken: tokenNum },
@@ -177,13 +177,13 @@ export class UserService {
       throw new UnauthorizedException('The tokens are incorrect!');
     }
 
-    console.log('User found for password change:', userValidate);
+    // console.log('User found for password change:', userValidate);
 
     userValidate.password = await this.hashPassword(newPassword);
     userValidate.rememberToken = ''; // Clear token after successful password change
     await this.userRepository.save(userValidate);
 
-    console.log('Password changed and token cleared for user:', userValidate);
+    // console.log('Password changed and token cleared for user:', userValidate);
     return userValidate;
   }
 
@@ -195,7 +195,7 @@ export class UserService {
       relations: {onboard_info: true, profile_image: true, settings: true, caption_responses: true, prompt_responses:true}  
     });
   
-    console.log("User found: ", user);
+    // console.log("User found: ", user);
   
     if (!user) {
       throw new NotFoundException('User not found');
@@ -225,7 +225,7 @@ export class UserService {
       // Create new onboarding entity
       const newonboarding = this.onboardingRepository.create(body);
   
-      console.log("Creating new onboarding info: ", newonboarding);
+      // console.log("Creating new onboarding info: ", newonboarding);
       user.onboard_info = await this.onboardingRepository.save(newonboarding);
     }
   
@@ -267,7 +267,7 @@ export class UserService {
       if(body.location !== "") user.settings.location = body?.location;
       else user.settings.location = user.settings.location;
       
-      console.log("Updating existing profile info: ", user.settings);
+      // console.log("Updating existing profile info: ", user.settings);
       await this.SettingsRepository.save(user.settings);
     } else {
       // Create new onboarding entity
@@ -539,7 +539,7 @@ export class UserService {
   
       return totalAmount.total || 0;
     } catch (error) {
-      console.error(`Error calculating total amount for user ${userId}:`, error);
+      // console.error(`Error calculating total amount for user ${userId}:`, error);
       throw new InternalServerErrorException('Could not calculate total amount');
     }
   }
@@ -612,24 +612,24 @@ export class UserService {
       });
     
       if (!user || !targetUser) {
-        console.log('User or Target User not found.');
+        // console.log('User or Target User not found.');
         return;
       }
     
-      console.log('Following List Before:', user.following);
+      // console.log('Following List Before:', user.following);
     
       // Check if the target user is in the following list
       const isFollowing = user.following.some(followingUser => followingUser.id === targetUserId);
     
       if (!isFollowing) {
-        console.log('Target user is not in the following list.');
+        // console.log('Target user is not in the following list.');
         return;
       }
     
       // Remove the target user from the following list
       user.following = user.following.filter(followingUser => followingUser.id !== targetUserId);
     
-      console.log('Following List After:', user.following);
+      // console.log('Following List After:', user.following);
     
       // Save the updated user with the modified following list
       await this.userRepository.save(user);
@@ -759,7 +759,7 @@ export class UserService {
   
           savedPostImage = await this.postImageRepository.save(postImage);
         } catch (error) {
-          console.error('Error uploading image to S3:', error);
+          // console.error('Error uploading image to S3:', error);
           throw new InternalServerErrorException('Error uploading image');
         }
       }
@@ -1032,22 +1032,7 @@ export class UserService {
       return await this.userRepository.save(user);
     }
 
-    // async deleteUser(id): Promise<void> {
-    //   // Find the user by ID
-    //   const user = await this.userRepository.findOne({
-    //     where: { id },
-    //   });
-
-    //   // If the user is not found, throw an exception
-    //   if (!user) {
-    //     throw new NotFoundException('User not found');
-    //   }
-
-    //   // Delete the user by ID
-    //   await this.userRepository.delete(id);
-
-    //   console.log(`User with ID ${id} deleted successfully.`);
-    // }
+   
     async deleteUser(id: string): Promise<void> {
       // Find the user with followers and related entities
       const user = await this.userRepository.findOne({
@@ -1080,14 +1065,14 @@ export class UserService {
       // Delete the user account
       await this.userRepository.delete(id);
     
-      console.log(`User with ID ${id} deleted successfully.`);
+      // console.log(`User with ID ${id} deleted successfully.`);
     }
     
 
     async deleteAllUsers(): Promise<void> {
       const users = await this.userRepository.find();
       await this.userRepository.remove(users);
-      console.log('All users have been deleted.');
+      // console.log('All users have been deleted.');
     }
 
 }
