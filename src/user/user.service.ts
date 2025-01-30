@@ -24,6 +24,8 @@ import { S3Service } from './s3/s3.service';
 import { CreateSubscriptionDto } from './dto/subscription.dto';
 import { Plan, Subscription } from './entities/subscription.entity';
 import { Payment } from './entities/payment.entity';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/entities/notification.entity';
 // import {} from './'
 @Injectable()
 export class UserService {
@@ -70,6 +72,8 @@ export class UserService {
     private readonly openaiService : OpenaiService,
 
     private s3Service: S3Service,
+
+    private notificationService: NotificationService,
     
   ) {}
 
@@ -309,7 +313,18 @@ export class UserService {
       status: 'active'// Default status
     });
   
-    return await this.subscriptionRepository.save(subscription);
+    // return await this.subscriptionRepository.save(subscription);
+    const savedSubscription = await this.subscriptionRepository.save(subscription);
+
+    // Notify user about successful subscription
+    await this.notificationService.createNotification(
+      user.id,
+      NotificationType.SUBSCRIPTION,
+      'Subscription Activated',
+      `You have successfully subscribed to the ${createSubscriptionDto.plan} plan.`
+    );
+  
+    return savedSubscription;
   }
   
   async unsubscribeUser(userId): Promise<void> {
@@ -324,6 +339,12 @@ export class UserService {
     // Update status to 'cancelled'
     subscription.status = 'cancelled';
     await this.subscriptionRepository.save(subscription);
+    await this.notificationService.createNotification(
+      userId,
+      NotificationType.SUBSCRIPTION,
+      'Subscription Cancelled',
+      'Your subscription has been cancelled successfully.'
+    );
   }
   
   
@@ -569,6 +590,13 @@ export class UserService {
         user.following.push(targetUser);
         await this.userRepository.save(user);
       }
+
+      await this.notificationService.createNotification(
+        targetUserId, // Notification is for the user being followed
+        NotificationType.FOLLOW, // Type of notification
+        'New Follower', // Notification title
+        `${user.email} started following you.`, // Notification message
+      );
     }
 
     async unfollowUser(userId: string, targetUserId: string): Promise<void> {
@@ -606,7 +634,12 @@ export class UserService {
       // Save the updated user with the modified following list
       await this.userRepository.save(user);
     
-      console.log('Successfully unfollowed the user.');
+      await this.notificationService.createNotification(
+        targetUserId, // Notification is for the user being unfollowed
+        NotificationType.UNFOLLOW, // Type of notification
+        'User Unfollowed', // Notification title
+        `${user.email} unfollowed you.` // Notification message
+      );
     }
     
     async getFollowers(userId: string): Promise<User[]> {
@@ -740,7 +773,20 @@ export class UserService {
         post_image: savedPostImage ?? null, // Add image only if available
       });
   
-      return await this.postRepository.save(newPost);
+      // return await this.postRepository.save(newPost);
+      const savedPost = await this.postRepository.save(newPost);
+
+          // Notify followers of the new post
+    for (const follower of user.followers) {
+      await this.notificationService.createNotification(
+        follower.id, // Notify each follower
+        NotificationType.POST, // Type of notification
+        'New Post', // Notification title
+        `${user.email} posted: "${title}"` // Notification message
+      );
+    }
+
+    return savedPost;
     }
 
   // Add a comment to a post
@@ -765,7 +811,20 @@ export class UserService {
       });
 
       // Save the comment to the database
-      return await this.commentRepository.save(comment);
+      // return await this.commentRepository.save(comment);
+      const savedComment = await this.commentRepository.save(comment);
+
+      // Notify post owner about the new comment
+      if (post.user.id !== userId) {
+        await this.notificationService.createNotification(
+          post.user.id, // Notify the post owner
+          NotificationType.COMMENT, // Type of notification
+          'New Comment', // Notification title
+          `${user.email} commented on your post: "${content}"` // Notification message
+        );
+      }
+  
+      return savedComment;
     }
 
   // Like a post
@@ -795,7 +854,20 @@ export class UserService {
         });
 
         // Save the like to the database
-        return await this.likeRepository.save(like);
+        // return await this.likeRepository.save(like);
+        const savedLike = await this.likeRepository.save(like);
+
+        // Notify post owner about the like
+        if (post.user.id !== userId) {
+          await this.notificationService.createNotification(
+            post.user.id, // Notify the post owner
+            NotificationType.LIKE, // Type of notification
+            'New Like', // Notification title
+            `${user.email} liked your post.` // Notification message
+          );
+        }
+  
+        return savedLike;
       }
 
       // Return the existing like (user has already liked the post)
@@ -960,22 +1032,57 @@ export class UserService {
       return await this.userRepository.save(user);
     }
 
-    async deleteUser(id): Promise<void> {
-      // Find the user by ID
+    // async deleteUser(id): Promise<void> {
+    //   // Find the user by ID
+    //   const user = await this.userRepository.findOne({
+    //     where: { id },
+    //   });
+
+    //   // If the user is not found, throw an exception
+    //   if (!user) {
+    //     throw new NotFoundException('User not found');
+    //   }
+
+    //   // Delete the user by ID
+    //   await this.userRepository.delete(id);
+
+    //   console.log(`User with ID ${id} deleted successfully.`);
+    // }
+    async deleteUser(id: string): Promise<void> {
+      // Find the user with followers and related entities
       const user = await this.userRepository.findOne({
         where: { id },
+        relations: ['followers', 'posts', 'comments', 'likes'],
       });
-
+    
       // If the user is not found, throw an exception
       if (!user) {
         throw new NotFoundException('User not found');
       }
-
-      // Delete the user by ID
+    
+      // Notify followers about account deletion
+      if (user.followers.length > 0) {
+        for (const follower of user.followers) {
+          await this.notificationService.createNotification(
+            follower.id,
+            NotificationType.ACCOUNT_DELETION,
+            'User Account Deleted',
+            `${user.email} has deleted their account.`
+          );
+        }
+      }
+    
+      // Delete related data before removing the user
+      await this.postRepository.delete({ user: { id } });
+      await this.commentRepository.delete({ user: { id } });
+      await this.likeRepository.delete({ user: { id } });
+    
+      // Delete the user account
       await this.userRepository.delete(id);
-
+    
       console.log(`User with ID ${id} deleted successfully.`);
     }
+    
 
     async deleteAllUsers(): Promise<void> {
       const users = await this.userRepository.find();
