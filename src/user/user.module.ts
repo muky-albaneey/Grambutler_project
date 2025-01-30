@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -53,7 +53,7 @@ import { NotificationModule } from 'src/notification/notification.module';
       }),
       inject: [ConfigService],
     }),
-    NotificationModule,
+    forwardRef(() => NotificationModule),  // Use forwardRef here too,
   ],
   exports: [TypeOrmModule, S3Service],
   controllers: [UserController],

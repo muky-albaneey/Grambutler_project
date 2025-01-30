@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NotificationService } from './notification.service';
 import { NotificationController } from './notification.controller';
@@ -11,12 +11,12 @@ import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Notification, User]), // Ensure Notification is included
+    TypeOrmModule.forFeature([Notification, User]),
     HttpModule,
-    UserModule
+    forwardRef(() => UserModule),  // Use forwardRef to resolve circular dependency
   ],
   providers: [NotificationService, NotificationGateway],
   controllers: [NotificationController],
-  exports: [NotificationService, TypeOrmModule], // Export TypeOrmModule
+  exports: [NotificationService, TypeOrmModule],
 })
 export class NotificationModule {}
