@@ -23,6 +23,7 @@ import { OpenaiService } from 'src/openai/openai.service';
 import { S3Service } from './s3/s3.service';
 import { Subscription } from './entities/subscription.entity';
 import { Payment } from './entities/payment.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Module({
   imports: [
@@ -54,6 +55,6 @@ import { Payment } from './entities/payment.entity';
   ],
   exports: [TypeOrmModule, S3Service],
   controllers: [UserController],
-  providers: [OpenaiService, JwtService, UserService, MailService, S3Service],
+  providers: [OpenaiService, JwtService, UserService, MailService, S3Service, NotificationService],
 })
 export class UserModule {}
