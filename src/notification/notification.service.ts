@@ -10,8 +10,10 @@ import { User } from 'src/user/entities/user.entity';
 @Injectable()
 export class NotificationService {
   constructor(
+    // @InjectRepository(Notification)
+    // private notificationRepository: Repository<Notification>,
     @InjectRepository(Notification)
-    private notificationRepository: Repository<Notification>,
+    private readonly notificationRepository: Repository<Notification>,
     @InjectRepository(User)
     private userRepo: Repository<User>,  // Inject User repository
   ) {}

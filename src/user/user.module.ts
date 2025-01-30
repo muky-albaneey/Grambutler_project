@@ -24,6 +24,7 @@ import { S3Service } from './s3/s3.service';
 import { Subscription } from './entities/subscription.entity';
 import { Payment } from './entities/payment.entity';
 import { NotificationService } from 'src/notification/notification.service';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { NotificationService } from 'src/notification/notification.service';
       }),
       inject: [ConfigService],
     }),
+    NotificationModule,
   ],
   exports: [TypeOrmModule, S3Service],
   controllers: [UserController],
