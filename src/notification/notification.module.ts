@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+
 import { Module } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { NotificationController } from './notification.controller';
@@ -9,10 +10,14 @@ import { User } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { HttpModule } from '@nestjs/axios';
 
-
 @Module({
-   imports: [ TypeOrmModule.forFeature([Notification, User,]),HttpModule, UserModule],
+  imports: [ 
+    TypeOrmModule.forFeature([Notification, User]),
+    HttpModule, 
+    UserModule 
+  ],
   providers: [NotificationService, NotificationGateway],
-  controllers: [NotificationController]
+  controllers: [NotificationController],
+  exports: [NotificationService, TypeOrmModule], // Export the service and TypeOrmModule
 })
 export class NotificationModule {}
