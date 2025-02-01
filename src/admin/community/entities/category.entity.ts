@@ -5,7 +5,7 @@ import { DefaultEntity } from 'src/utils/default.entity';
 
 @Entity('categories')
 export class Category extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column()
@@ -20,7 +20,7 @@ export class Category extends DefaultEntity {
   })
   discussions: Discussion[];
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }

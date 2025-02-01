@@ -20,7 +20,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('onboarding')
 export class Onboarding extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column({ nullable: true })
@@ -32,7 +32,7 @@ export class Onboarding extends DefaultEntity {
   })
   questions: Question[];
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }

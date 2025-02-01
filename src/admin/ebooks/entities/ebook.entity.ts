@@ -5,7 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('ebook')
 export class Ebook extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column()
@@ -26,7 +26,7 @@ export class Ebook extends DefaultEntity {
   @Column()
   pdfURL: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }

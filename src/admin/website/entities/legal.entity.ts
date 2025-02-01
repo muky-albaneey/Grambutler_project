@@ -4,7 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('legal')
 export class Legal extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column()
@@ -16,7 +16,7 @@ export class Legal extends DefaultEntity {
   @Column()
   securityURL: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }

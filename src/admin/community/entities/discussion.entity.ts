@@ -5,7 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('discussions')
 export class Discussion extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @ManyToOne(() => Category, (category) => category.discussions)
@@ -20,13 +20,13 @@ export class Discussion extends DefaultEntity {
   @Column(() => Comment)
   comments: Comment[];
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }
 
 export class Comment {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column()

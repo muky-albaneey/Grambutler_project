@@ -5,7 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('mentorship_events')
 export class MentorshipEvent extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column()
@@ -29,7 +29,7 @@ export class MentorshipEvent extends DefaultEntity {
   @Column()
   link: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }

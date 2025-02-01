@@ -13,7 +13,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('feedbacks')
 export class Feedback extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column({ nullable: false, type: 'uuid', name: 'recommendation_id' })
@@ -49,7 +49,7 @@ export class Reply {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column({ nullable: false, type: 'uuid', name: 'feedback_id' })

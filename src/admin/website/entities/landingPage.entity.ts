@@ -5,7 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('images')
 export class PageImage extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column({ type: 'enum', enum: ImageCategory })
@@ -17,14 +17,14 @@ export class PageImage extends DefaultEntity {
   @Column()
   imageURL: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }
 
 @Entity('plans')
 export class Plans extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column()
@@ -39,7 +39,7 @@ export class Plans extends DefaultEntity {
   @Column('text', { array: true })
   features: string[];
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }

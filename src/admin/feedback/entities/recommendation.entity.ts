@@ -6,7 +6,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity('recommendations')
 export class Recommendation extends DefaultEntity {
-  @Column({ nullable: false, type: 'uuid', name: 'created_by' })
+  @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
   @Column({
@@ -28,7 +28,7 @@ export class Recommendation extends DefaultEntity {
   })
   feedbacks: Feedback[];
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   creator: User;
 }
