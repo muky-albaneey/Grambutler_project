@@ -1,6 +1,4 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 
 export const customFileFilter = (req, file, callback) => {
   let mimeTypes = [];
@@ -37,14 +35,14 @@ export const customFileFilter = (req, file, callback) => {
 };
 
 export const fileInterceptor = {
-  storage: diskStorage({
-    destination: './uploads',
-    filename: (req, file, callback) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileExt = extname(file.originalname);
-      callback(null, `${file.fieldname}-${uniqueSuffix}${fileExt}`);
-    },
-  }),
+  // storage: diskStorage({
+  //   destination: './uploads',
+  //   filename: (req, file, callback) => {
+  //     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+  //     const fileExt = extname(file.originalname);
+  //     callback(null, `${file.fieldname}-${uniqueSuffix}${fileExt}`);
+  //   },
+  // }),
   fileFilter: customFileFilter, // Validate file type
   limits: { fileSize: 1024 * 1024 * 5 },
 };

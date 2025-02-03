@@ -30,9 +30,6 @@ export class S3Service {
     };
 
     try {
-      console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID);
-  console.log('AWS_SECRET_ACCESS_KEY:', process.env.AWS_SECRET_ACCESS_KEY);
-
       const uploadResult = await this.s3.upload(params).promise();
       return uploadResult.Location; // Return file URL
     } catch (error) {
