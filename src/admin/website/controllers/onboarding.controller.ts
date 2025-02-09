@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { OnboardingService } from '../services';
-import { Onboarding } from '../entities/onboarding.entity';
+import { AdminOnboarding } from '../entities/onboarding.entity';
 import {
   CreateOnboardingDto,
   UpdateOnboardingDto,
@@ -26,17 +26,19 @@ export class OnboardingController {
   create(
     @Body() createOnboardingDto: CreateOnboardingDto,
     @User('sub') userId: string,
-  ): Promise<Onboarding> {
+  ): Promise<AdminOnboarding> {
     return this.onboardingService.create(createOnboardingDto, userId);
   }
 
   @Get()
-  findAll(@Query() filter: FilterDto): Promise<Onboarding[]> {
+  findAll(@Query() filter: FilterDto): Promise<AdminOnboarding[]> {
     return this.onboardingService.findAll(filter);
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Onboarding> {
+  findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<AdminOnboarding> {
     return this.onboardingService.findOne(id);
   }
 
@@ -44,7 +46,7 @@ export class OnboardingController {
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateOnboardingDto: UpdateOnboardingDto,
-  ): Promise<Onboarding> {
+  ): Promise<AdminOnboarding> {
     return this.onboardingService.update(id, updateOnboardingDto);
   }
 

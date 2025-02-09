@@ -18,13 +18,19 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PageImage, Plans } from './entities/landingPage.entity';
 import { Legal } from './entities/legal.entity';
-import { Onboarding, Question } from './entities/onboarding.entity';
+import { AdminOnboarding, Question } from './entities/onboarding.entity';
 import { QuestionRepository } from './repositories/onboarding.repository';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PageImage, Plans, Legal, Question, Onboarding]),
+    TypeOrmModule.forFeature([
+      PageImage,
+      Plans,
+      Legal,
+      Question,
+      AdminOnboarding,
+    ]),
     UserModule,
   ],
   controllers: [LandingPageController, LegalController, OnboardingController],

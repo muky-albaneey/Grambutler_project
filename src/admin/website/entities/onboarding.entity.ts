@@ -18,8 +18,8 @@ import {
 } from 'class-validator';
 import { User } from 'src/user/entities/user.entity';
 
-@Entity('onboarding')
-export class Onboarding extends DefaultEntity {
+@Entity({ name: 'admin_onboarding' })
+export class AdminOnboarding extends DefaultEntity {
   @Column({ nullable: true, type: 'uuid', name: 'created_by' })
   createdBy: string;
 
@@ -45,9 +45,9 @@ export class Question {
   @Column({ nullable: false, type: 'uuid', name: 'category_id' })
   categoryId: string;
 
-  @ManyToOne(() => Onboarding, (onboarding) => onboarding.questions)
+  @ManyToOne(() => AdminOnboarding, (onboarding) => onboarding.questions)
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
-  category: Onboarding;
+  category: AdminOnboarding;
 
   @Column()
   @IsString()

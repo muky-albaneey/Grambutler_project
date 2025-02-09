@@ -29,7 +29,7 @@ import { PageImage, Plans } from './admin/website/entities/landingPage.entity';
 import { Legal } from './admin/website/entities/legal.entity';
 import {
   Question,
-  Onboarding as AdminOnboarding,
+  AdminOnboarding,
 } from './admin/website/entities/onboarding.entity';
 import { Recommendation } from './admin/feedback/entities/recommendation.entity';
 import { Feedback, Reply } from './admin/feedback/entities/feedback.entity';
@@ -49,7 +49,7 @@ import { Notification } from './notification/entities/notification.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -97,7 +97,7 @@ import { Notification } from './notification/entities/notification.entity';
         ],
         synchronize: true,
         // migrations: ['src/migrations/*.ts'],
-      })
+      }),
     }),
     UserModule,
     PaymentModule,
@@ -106,10 +106,9 @@ import { Notification } from './notification/entities/notification.entity';
     TasksModule,
     AdminModule,
     JwtModule,
-    NotificationModule
-    
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService, MailService]
+  providers: [AppService, MailService],
 })
 export class AppModule {}
