@@ -63,6 +63,10 @@ export class User extends DefaultEntity {
     })
     role: UserRole
 
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+
     @OneToOne(() => Onboarding, { cascade: true, nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @JoinColumn()
     onboard_info?: Onboarding;

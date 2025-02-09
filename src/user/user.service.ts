@@ -377,6 +377,9 @@ export class UserService {
         full_name: true,
         email: true,
         role:true,
+        country:true,
+        createdAt:true,
+        state:true,
         // Optionally include other user-related fields...
   
         // Include posts with specific fields
@@ -466,6 +469,9 @@ export class UserService {
         full_name: true,
         email: true,
         role:true,
+        country:true,
+        state:true,
+        createdAt:true,
         // Optionally include other user-related fields...
   
         // Include posts with specific fields
