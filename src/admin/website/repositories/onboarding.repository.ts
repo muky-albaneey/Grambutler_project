@@ -1,17 +1,17 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Onboarding, Question } from '../entities/onboarding.entity';
+import { AdminOnboarding, Question } from '../entities/onboarding.entity';
 import { EntityRepository } from 'src/utils/entity.repository';
 
-export class OnboardingRepository extends EntityRepository<Onboarding> {
+export class OnboardingRepository extends EntityRepository<AdminOnboarding> {
   constructor(
-    @InjectRepository(Onboarding)
-    readonly onboardingModel: Repository<Onboarding>,
+    @InjectRepository(AdminOnboarding)
+    readonly onboardingModel: Repository<AdminOnboarding>,
   ) {
     super(onboardingModel);
   }
 
-  async saveOnboarding(onboarding: Onboarding): Promise<Onboarding> {
+  async saveOnboarding(onboarding: AdminOnboarding): Promise<AdminOnboarding> {
     return await this.onboardingModel.save(onboarding);
   }
 }

@@ -7,7 +7,7 @@ import {
   CreateOnboardingDto,
   UpdateOnboardingDto,
 } from '../dto/onboarding.dto';
-import { Onboarding, Question } from '../entities/onboarding.entity';
+import { AdminOnboarding, Question } from '../entities/onboarding.entity';
 import { OnboardingRepository } from '../repositories';
 import { FilterDto } from 'src/utils/filter.dto';
 import { QuestionRepository } from '../repositories/onboarding.repository';
@@ -22,7 +22,7 @@ export class OnboardingService {
   async create(
     createOnboardingDto: CreateOnboardingDto,
     userId: string,
-  ): Promise<Onboarding> {
+  ): Promise<AdminOnboarding> {
     const onboarding = await this.onboardingRepository.create({
       category: createOnboardingDto.category,
       createdBy: userId,
@@ -46,21 +46,21 @@ export class OnboardingService {
     return await this.onboardingRepository.saveOnboarding(onboarding);
   }
 
-  findAll(filter: FilterDto): Promise<Onboarding[]> {
+  findAll(filter: FilterDto): Promise<AdminOnboarding[]> {
     return this.onboardingRepository.find(
       {},
       { ...filter, populate: ['questions'] },
     );
   }
 
-  findOne(id: string): Promise<Onboarding> {
+  findOne(id: string): Promise<AdminOnboarding> {
     return this.onboardingRepository.findOne({ id }, null, { questions: true });
   }
 
   async update(
     id: string,
     updateOnboardingDto: UpdateOnboardingDto,
-  ): Promise<Onboarding> {
+  ): Promise<AdminOnboarding> {
     const { category, questions } = updateOnboardingDto;
 
     const onboarding = await this.onboardingRepository.findOne({ id }, null, {
