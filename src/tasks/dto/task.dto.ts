@@ -55,7 +55,7 @@ export class CreateTaskDto {
   taskStar: string; 
 
   @IsEnum(TaskColor)
-  taskColor: TaskColor;
+  TaskColor: TaskColor;
 
   @IsString()
   userId: string; 
@@ -142,7 +142,7 @@ export class UpdateTaskDto {
 
   @IsEnum(TaskColor)
   @IsOptional()
-  taskColor?: TaskColor;
+  TaskColor?: TaskColor;
 
   @IsString()
   @IsOptional()
