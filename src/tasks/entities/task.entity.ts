@@ -54,7 +54,7 @@ import { Comment_task } from './comment.entity';
     taskStar: string;
 
     @Column({ type: 'varchar', length: 50 })
-    TaskColor: string;
+    taskColor: string;
   
     @Column({ type: 'int', nullable: true })
     startReminder: number;
