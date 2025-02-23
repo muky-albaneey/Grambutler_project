@@ -41,22 +41,22 @@ import axios from 'axios';
 
 @Injectable()
 export class MailService {
-    private readonly klaviyoApiKey = 'your_klaviyo_private_api_key'; // Replace with your Klaviyo private API key
+    private readonly klaviyoApiKey = 'pk_5dcce9c78ab6b179e919dc254111e0c12b'; // Replace with your Klaviyo private API key
     private readonly klaviyoUrl = 'https://a.klaviyo.com/api/v1/email/send'; // Klaviyo email API endpoint
 
     async dispatchEmail(to: string, subject: string, text: string, html?: string): Promise<void> {
         const payload = {
             to: [{ email: to }],
-            from_email: "your-email@example.com", // Use a verified Klaviyo sender email
+            from_email: "Tim@grambutler.com", // Use a verified Klaviyo sender email
             subject: subject,
             text: text,
-            html: html || text, // Default to text if HTML isn't provided
+            html: html || text, 
         };
 
         try {
             const response = await axios.post(this.klaviyoUrl, payload, {
                 headers: {
-                    'Authorization': `Klaviyo-API-Key ${this.klaviyoApiKey}`,
+                    'Authorization': `${this.klaviyoApiKey}`,
                     'Content-Type': 'application/json',
                 }
             });
