@@ -26,6 +26,7 @@ import { Plan, Subscription } from './entities/subscription.entity';
 import { Payment } from './entities/payment.entity';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotificationType } from 'src/notification/entities/notification.entity';
+import { KlaviyoService } from 'src/klaviyoMailer/klaviyo.service';
 // import {} from './'
 @Injectable()
 export class UserService {
@@ -69,6 +70,8 @@ export class UserService {
     @InjectRepository(Payment)
     @InjectRepository(Payment) private paymentRepository: Repository<Payment>,
 
+    private readonly klaviyoService : KlaviyoService,
+
     private readonly openaiService : OpenaiService,
 
     private s3Service: S3Service,
@@ -96,6 +99,12 @@ export class UserService {
 
       const newUser = await this.userRepository.create(createAuthDto);
       const userSaved = await this.userRepository.save(newUser);
+
+      //send email for the newly created user
+      await this.klaviyoService.sendAccountCreationEmail({
+        email: newUser.email,
+        fullName: newUser.full_name,
+      });
 
       return { user: userSaved };
     } catch (error) {
