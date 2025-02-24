@@ -68,37 +68,51 @@
 //     }
 // }
 
-import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class MailService {
-    private readonly klaviyoApiKey = 'pk_5dcce9c78ab6b179e919dc254111e0c12b'; // Replace with your Klaviyo API key
-    private readonly klaviyoTemplateId = 'TC7Pe7'; // Replace with your Klaviyo email template ID
-    private readonly klaviyoUrl = `https://a.klaviyo.com/api/email-template/${this.klaviyoTemplateId}/send`;
+export class UserService {
+  private klaviyoApiKey = 'YOUR_KLAVIYO_PRIVATE_API_KEY'; // Store this in an environment variable
 
-    async dispatchEmail(to: string, subject: string, text: string, html?: string): Promise<void> {
-        const payload = {
-            from_email: "mukyalbani1@gmail.com", // Must be a verified sender in Klaviyo
-            to: [{ email: to }],
-            subject: subject,
-            context: { // This is used to inject dynamic variables into your Klaviyo template
-                text_content: text,
-                html_content: html || text,
-            }
-        };
+  async sendEmail(to: string, subject: string, text: string, html?: string): Promise<void> {
+    const payload = {
+      to: [{ email: to }], // Array of recipients
+      from_email: 'your-email@example.com', // Your verified sender email
+      from_name: 'Your Business Name', // Sender name
+      subject: subject,
+      content: [
+        {
+          type: 'text/plain',
+          value: text, // Plain text content
+        },
+        {
+          type: 'text/html',
+          value: html || text, // HTML content
+        },
+      ],
+    };
 
-        try {
-            const response = await axios.post(this.klaviyoUrl, payload, {
-                headers: {
-                    'Authorization': `Klaviyo-API-Key ${this.klaviyoApiKey}`,
-                    'Content-Type': 'application/json',
-                }
-            });
+    try {
+      const response = await axios.post('https://a.klaviyo.com/api/emails/send', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Klaviyo-API-Key ${this.klaviyoApiKey}`,
+        },
+      });
 
-            console.log('Email sent successfully:', response.data);
-        } catch (error) {
-            console.error('Error sending email:', error.response?.data || error.message);
-        }
+      console.log('Email sent successfully:', response.data);
+    } catch (error) {
+      console.error('Error sending email:', error.response?.data || error.message);
     }
+  }
+
+  async registerUser(email: string, name: string): Promise<void> {
+    console.log(`User ${name} with email ${email} created!`);
+
+    // Send welcome email
+    await this.sendEmail(email, 'Welcome!', 'Thank you for signing up!');
+  }
 }
+
+
