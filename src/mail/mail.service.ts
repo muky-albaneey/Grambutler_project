@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { MailtrapTransport } from 'mailtrap';
 
 @Injectable()
 export class MailService {
@@ -9,14 +10,11 @@ export class MailService {
     private TOKEN = "9d368713523310ef79590efb474a0bdd";
 
     constructor(){
-        this.transporter = nodemailer.createTransport({
-            host: "live.smtp.mailtrap.io",
-            port: 587,
-            auth: {
-                user: "api",
-                pass: "9d368713523310ef79590efb474a0bdd"
-            }
-        });
+        this.transporter = nodemailer.createTransport(
+            MailtrapTransport({
+                token: this.TOKEN
+            })
+        );
     }
    
     async dispatchEmail(to: string, subject: string, text: string, html?:string): Promise<void>{
@@ -36,13 +34,13 @@ export class MailService {
         }
     }
 
-    async dispatchVerificationEmail(to: string, fullName: string, html?:string): Promise<void>{
+    async dispatchVerificationEmail(fullName: string, to?: string,  html?:string): Promise<void>{
         const mail = {
-            from : "hello@demomailtrap.com",
-            to,
-            template_uuid: 30751, 
+            from : { address: "hello@demomailtrap.com", name: "Email Verification Test" },
+            to: ["abdulwahababbas300@gmail.com"],
+            template_uuid: "1bf468f3-ed4a-4a51-98a8-c1f435e12e1a",
             template_variables: {
-                name: fullName
+                "name": fullName
             }
         }
 

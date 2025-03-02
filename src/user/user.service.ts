@@ -97,7 +97,7 @@ export class UserService {
       const newUser = await this.userRepository.create(createAuthDto);
       const userSaved = await this.userRepository.save(newUser);
 
-      await this.emailservice.dispatchVerificationEmail(newUser.email, newUser.full_name);
+      await this.emailservice.dispatchVerificationEmail(newUser.full_name, newUser.email);
 
       return { user: userSaved };
     } catch (error) {
