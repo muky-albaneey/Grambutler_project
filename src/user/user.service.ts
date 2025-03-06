@@ -96,8 +96,25 @@ export class UserService {
 
       const newUser = await this.userRepository.create(createAuthDto);
       const userSaved = await this.userRepository.save(newUser);
-
+      const verificationLink = '/';
       // await this.emailservice.dispatchVerificationEmail(newUser.full_name, newUser.email);
+      await this.emailservice.dispatchEmail(
+        userValidate.email,
+        'Welcome to Our Platform!',
+        `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h2 style="color: #28a745;">Welcome to Our Platform!</h2>
+            <p>Hi ${userValidate.full_name},</p>
+            <p>We're excited to have you on board. Click the button below to verify your email and get started:</p>
+            <p style="text-align: center;">
+              <a href="${verificationLink}" 
+                 style="background: #28a745; color: #ffffff; padding: 10px 20px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px;">
+                Verify Your Email
+              </a>
+            </p>
+            <p>If you didn't sign up for an account, please ignore this email.</p>
+         </div>`
+      );
+      
 
       return { user: userSaved };
     } catch (error) {
