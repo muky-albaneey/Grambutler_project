@@ -100,9 +100,9 @@ export class UserService {
       // await this.emailservice.dispatchVerificationEmail(newUser.full_name, newUser.email);
       await this.emailservice.dispatchEmail(
         userValidate.email,
-        'Welcome to Our Platform!',
+        'Welcome to Our Grambutler!',
         `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h2 style="color: #28a745;">Welcome to Our Platform!</h2>
+            <h2 style="color: #28a745;">Welcome to Our Grambutler!</h2>
             <p>Hi ${userValidate.full_name},</p>
             <p>We're excited to have you on board. Click the button below to verify your email and get started:</p>
             <p style="text-align: center;">
