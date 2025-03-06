@@ -142,15 +142,45 @@ export class UserService {
     userValidate.rememberToken = token;
     await this.userRepository.save(userValidate);
 
+    // await this.emailservice.dispatchEmail(
+    //   userValidate.email,
+    //   'FORGOT PASSWORD TOKEN',
+    //   `
+    //   this token will be expired imediately you changed your password
+    //   password reset token: ${token} `,
+    //   `<h1>${userValidate.rememberToken}</h1>`
+    // );
     await this.emailservice.dispatchEmail(
       userValidate.email,
       'FORGOT PASSWORD TOKEN',
       `
-      this token will be expired imediately you changed your password
-      password reset token: ${token} `,
-      `<h1>${userValidate.rememberToken}</h1>`
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333;">
+          <h2 style="color: #d9534f;">Forgot Password Request</h2>
+          <p>This token will expire immediately after you change your password.</p>
+          <p><strong>Password Reset Token:</strong></p>
+          <p style="background: #f8d7da; color: #721c24; padding: 10px; font-size: 18px; font-weight: bold; text-align: center; border-radius: 5px;">
+            ${token}
+          </p>
+          <p>If you didn't request this, please ignore this email.</p>
+        </div>
+      `,
+      `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333;">
+          <h2 style="color: #d9534f;">Forgot Password Request</h2>
+          <p>This token will expire immediately after you change your password.</p>
+          <p><strong>Password Reset Token:</strong></p>
+          <p style="background: #f8d7da; color: #721c24; padding: 10px; font-size: 18px; font-weight: bold; text-align: center; border-radius: 5px;">
+            ${token}
+          </p>
+          <h3 style="color: #5bc0de;">Your Remember Token:</h3>
+          <p style="background: #d1ecf1; color: #0c5460; padding: 10px; font-size: 18px; font-weight: bold; text-align: center; border-radius: 5px;">
+            ${userValidate.rememberToken}
+          </p>
+          <p>If you didn't request this, please ignore this email.</p>
+        </div>
+      `
     );
-
+    
     return `Message has been sent to your email, ${userValidate.full_name}`;
   }
 
