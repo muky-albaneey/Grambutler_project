@@ -19,22 +19,22 @@ export class MailService {
 
     }
 
-    async dispatchEmail(to: string, subject: string, text: string, html?:string): Promise<void>{
-        const mail = {
-            from : "mukyalbani1@ggmail.com",
-            to,
-            subject,
-            text
-        }
-
-        try {
-            await this.transporter.sendMail(mail);
-            console.log('email is working');
-            
-        } catch (error) {
-            console.log(error, 'in sending emails');
-        }
-    }
+    async dispatchEmail(to: string, subject: string, html: string): Promise<void> {
+      const mail = {
+          from: "mukyalbani1@gmail.com", // Fix sender email
+          to,
+          subject,
+          html, // Only send HTML, no text field
+      };
+  
+      try {
+          await this.transporter.sendMail(mail);
+          console.log('Email sent successfully');
+      } catch (error) {
+          console.error('Error sending email:', error);
+      }
+  }
+  
 }
 
 // import axios from 'axios';

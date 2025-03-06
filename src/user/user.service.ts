@@ -147,8 +147,7 @@ export class UserService {
     await this.emailservice.dispatchEmail(
       userValidate.email,
       'FORGOT PASSWORD TOKEN',
-      '', // Remove text since HTML is formatted
-      `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333;">
+      `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <h2 style="color: #d9534f;">Forgot Password Request</h2>
           <p>This token will expire immediately after you change your password.</p>
           <p><strong>Password Reset Token:</strong></p>
@@ -158,6 +157,7 @@ export class UserService {
           <p>If you didn't request this, please ignore this email.</p>
        </div>`
     );
+    
     
     // await this.emailservice.dispatchEmail(
     //   userValidate.email,
